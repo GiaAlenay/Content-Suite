@@ -12,10 +12,9 @@ class BrandManualVectorMapper:
     def to_domain(db_dict: dict) -> BrandManualVectorEntity:
         return BrandManualVectorEntity(
             id=db_dict.get("id"),
-            brand_id=db_dict.get("brand_id", "Sin nombre"),
+            brand_id=db_dict.get("brand_id", ""),
             content_chunk=db_dict.get("content_chunk"),
             embedding=db_dict.get("embedding"),
-            raw_parameters=db_dict.get("raw_parameters", {}),
             metadata=db_dict.get("metadata", 1),
             creator_id=db_dict.get("creator_id"),
             status=db_dict.get("status", "ACTIVE"),
@@ -29,7 +28,6 @@ class BrandManualVectorMapper:
             "brand_id": entity.brand_id,
             "content_chunk": entity.content_chunk,
             "embedding": entity.embedding,
-            "raw_parameters": entity.raw_parameters,
             "metadata": entity.metadata,
             "creator_id": entity.creator_id,
             "status": entity.status,
@@ -44,7 +42,6 @@ class BrandManualVectorMapper:
             "brand_id": brand_manual_vector.brand_id,
             "content_chunk": brand_manual_vector.content_chunk,
             "embedding": brand_manual_vector.embedding,
-            "raw_parameters": brand_manual_vector.raw_parameters,
             "creator_id": brand_manual_vector.creator_id,
             "metadata": brand_manual_vector.metadata,
         }
