@@ -15,7 +15,7 @@ class BrandQueryUseCase:
         logging.info("BrandQueryUseCase initialized")
         self.repository = repository
 
-    def get_by_id(self, id: int) -> Optional[BrandEntity]:
+    def get_by_id(self, id: str) -> Optional[BrandEntity]:
         logging.info(f"Delegating brand fetch by id={id}")
         return self.repository.get_by_id(id)
 

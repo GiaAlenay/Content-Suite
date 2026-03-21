@@ -11,9 +11,9 @@ class BrandCmdRepository(ABC):
         pass
 
     @abstractmethod
-    def update(self, id: int, brand: UpdateBrandData) -> Optional[BrandEntity]:
+    def update(self, id: str, brand: UpdateBrandData) -> Optional[BrandEntity]:
         pass
 
     @abstractmethod
-    def delete(self, id: int) -> bool:
+    def delete(self, id: str) -> bool:
         pass

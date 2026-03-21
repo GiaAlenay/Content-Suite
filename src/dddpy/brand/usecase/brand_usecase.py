@@ -27,13 +27,13 @@ from dddpy.brand.domain.brand_success import BrandSucessMessage
 
 class BrandUseCase:
     def __init__(self):
-        logging.add_inside_method("__init__")
+        logging.info("__init__")
         self.brand_cmd_usecase: BrandCmdUseCase = brand_cmd_usecase_factory()
         self.brand_query_usecase: BrandQueryUseCase = brand_query_usecase_factory()
         logging.info("BrandUseCase initialized")
 
     def create(self, brand_data: CreateBrandSchema):
-        logging.add_inside_method("create")
+        logging.info("create")
         logging.info(f"Creating a new brand with data: {brand_data}")
 
         existing_code = self.brand_query_usecase.get_by_code(brand_data.code)
@@ -54,8 +54,8 @@ class BrandUseCase:
         logging.info(f"Brand created successfully: {success}")
         return success
 
-    def get_by_id(self, id: int):
-        logging.add_inside_method("get_by_id")
+    def get_by_id(self, id: str):
+        logging.info("get_by_id")
         brand = self.brand_query_usecase.get_by_id(id)
         if not brand:
             raise BrandNotFound()
@@ -66,7 +66,7 @@ class BrandUseCase:
         return success
 
     def get_by_code(self, code: str):
-        logging.add_inside_method("get_by_code")
+        logging.info("get_by_code")
         brand = self.brand_query_usecase.get_by_code(code)
         if not brand:
             raise BrandNotFound()
@@ -77,7 +77,7 @@ class BrandUseCase:
         return success
 
     def get_by_brand_name(self, brand_name: str):
-        logging.add_inside_method("get_by_code")
+        logging.info("get_by_code")
         brand = self.brand_query_usecase.get_by_brand_name(brand_name)
         if not brand:
             raise BrandNotFound()
@@ -87,8 +87,8 @@ class BrandUseCase:
         logging.info(f"Brand retrieved successfully by name={brand_name}")
         return success
 
-    def update(self, id: int, brand_data: UpdateBrandSchema):
-        logging.add_inside_method("update")
+    def update(self, id: str, brand_data: UpdateBrandSchema):
+        logging.info("update")
         logging.info(f"Updating brand {id} with data: {brand_data}")
 
         if brand_data.name:
@@ -110,8 +110,8 @@ class BrandUseCase:
         logging.info(f"Brand updated successfully: {success}")
         return success
 
-    def delete(self, id: int):
-        logging.add_inside_method("delete")
+    def delete(self, id: str):
+        logging.info("delete")
         logging.info(f"Deleting brand {id}")
 
         deleted = self.brand_cmd_usecase.delete(id)
@@ -124,7 +124,7 @@ class BrandUseCase:
         return success
 
     def list_all(self):
-        logging.add_inside_method("list_all")
+        logging.info("list_all")
         brand = self.brand_query_usecase.list_all()
         success = ResponseSuccessSchema(
             success=True,

@@ -23,12 +23,6 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
         logging.info(f"Creating brand: {brand.name}", method="create")
 
         try:
-            data = {
-                "name": brand.name,
-                "code": brand.code.upper(),
-                "description": brand.description,
-                "full_manual": brand.full_manual,
-            }
 
             data = BrandMapper.to_infrastructure_from_create(brand)
 
@@ -74,7 +68,7 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
             logging.error(f"Error al actualizar en Supabase: {str(e)}")
             raise e
 
-    def delete(self, brand_id: int) -> bool:
+    def delete(self, brand_id: str) -> bool:
         logging.info(f"Deleting brand with id={brand_id}", method="delete")
         try:
             response = (

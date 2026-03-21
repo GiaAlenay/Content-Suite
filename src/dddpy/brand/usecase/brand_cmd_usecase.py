@@ -30,7 +30,7 @@ class BrandCmdUseCase:
 
         return self.repository.create(data)
 
-    def update(self, id: int, brand_data: UpdateBrandSchema) -> Optional[BrandEntity]:
+    def update(self, id: str, brand_data: UpdateBrandSchema) -> Optional[BrandEntity]:
         logging.info(f"Delegating brand update for id={id}")
         data = UpdateBrandData(
             name=brand_data.name,
@@ -42,6 +42,6 @@ class BrandCmdUseCase:
         )
         return self.repository.update(id, data)
 
-    def delete(self, id: int) -> bool:
+    def delete(self, id: str) -> bool:
         logging.info(f"Delegating brand delete for id={id}")
         return self.repository.delete(id)

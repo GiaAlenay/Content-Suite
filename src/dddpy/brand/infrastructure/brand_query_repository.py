@@ -17,7 +17,7 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
         self._table = "companies_companies"
         logging.info("BrandQueryRepositoryImpl initialized with Supabase")
 
-    def get_by_id(self, id: int) -> Optional[BrandEntity]:
+    def get_by_id(self, id: str) -> Optional[BrandEntity]:
         logging.info(f"Fetching brand with id={id}", method="get_by_id")
 
         # .select("*") es como SELECT *

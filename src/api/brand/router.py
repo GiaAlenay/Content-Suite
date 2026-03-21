@@ -24,7 +24,7 @@ logging = Logger("routing_usecase")
 #     ],
 # )
 # def get_all():
-#     logging.add_inside_method("list_brand Route")
+#     logging.info("list_brand Route")
 #     logging.info("Listing all brand")
 #     result_brand = BrandUseCase().list_all()
 #     return result_brand
@@ -34,7 +34,7 @@ logging = Logger("routing_usecase")
 #     "/create", dependencies=[Depends(require_permissions(["backAdmin:brand.create"]))]
 # )
 # def create(new_brand: CreateBrandSchema):
-#     logging.add_inside_method("create_brand Route")
+#     logging.info("create_brand Route")
 #     logging.info("Creating new brand")
 #     response = BrandUseCase().create(new_brand)
 #     return response.dict()
@@ -62,7 +62,7 @@ logging = Logger("routing_usecase")
 #     "/update/{brand_id}",
 #     dependencies=[Depends(require_permissions(["backAdmin:brand.read"]))],
 # )
-# def update(brand_id: int, brand: UpdateBrandSchema):
+# def update(brand_id: str, brand: UpdateBrandSchema):
 #     result_brand = BrandUseCase().update(brand_id, brand)
 #     return result_brand
 
@@ -71,6 +71,6 @@ logging = Logger("routing_usecase")
 #     "/delete/{brand_id}",
 #     dependencies=[Depends(require_permissions(["backAdmin:brand.read"]))],
 # )
-# def delete(brand_id: int):
+# def delete(brand_id: str):
 #     result_brand = BrandUseCase().delete(brand_id)
 #     return result_brand

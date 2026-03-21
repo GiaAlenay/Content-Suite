@@ -7,7 +7,7 @@ from dddpy.brand.domain.brand_entity import BrandEntity
 class BrandQueryRepository(ABC):
 
     @abstractmethod
-    def get_by_id(self, id: int) -> Optional[BrandEntity]:
+    def get_by_id(self, id: str) -> Optional[BrandEntity]:
         pass
 
     @abstractmethod

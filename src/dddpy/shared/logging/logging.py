@@ -4,14 +4,14 @@ import sys
 # Configuración global (va en tu app/core/config.py o main.py)
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - [%(method)s] - %(message)s",
+    format="%(asctime)s - %(brand_id)s - %(levelbrand_id)s - [%(method)s] - %(message)s",
     handlers=[logging.StreamHandler(sys.stdout)],
 )
 
 
 class Logger:
-    def __init__(self, name: str):
-        self.logger = logging.getLogger(name)
+    def __init__(self, brand_id: str):
+        self.logger = logging.getLogger(brand_id)
 
     def info(self, message: str, method: str = "N/A"):
         # Usamos 'extra' para pasar datos dinámicos al formato del log

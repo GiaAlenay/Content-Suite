@@ -26,7 +26,7 @@ logging = Logger("routing_usecase")
 #     ],
 # )
 # def get_all():
-#     logging.add_inside_method("list_generatedcontent Route")
+#     logging.info("list_generatedcontent Route")
 #     logging.info("Listing all generatedcontent")
 #     result_generatedcontent = GeneratedContentUseCase().list_all()
 #     return result_generatedcontent
@@ -36,7 +36,7 @@ logging = Logger("routing_usecase")
 #     "/create", dependencies=[Depends(require_permissions(["backAdmin:generatedcontent.create"]))]
 # )
 # def create(new_generatedcontent: CreateGeneratedContentSchema):
-#     logging.add_inside_method("create_generatedcontent Route")
+#     logging.info("create_generatedcontent Route")
 #     logging.info("Creating new generatedcontent")
 #     response = GeneratedContentUseCase().create(new_generatedcontent)
 #     return response.dict()
@@ -64,7 +64,7 @@ logging = Logger("routing_usecase")
 #     "/update/{generatedcontent_id}",
 #     dependencies=[Depends(require_permissions(["backAdmin:generatedcontent.read"]))],
 # )
-# def update(generatedcontent_id: int, generatedcontent: UpdateGeneratedContentSchema):
+# def update(generatedcontent_id: str, generatedcontent: UpdateGeneratedContentSchema):
 #     result_generatedcontent = GeneratedContentUseCase().update(generatedcontent_id, generatedcontent)
 #     return result_generatedcontent
 
@@ -73,6 +73,6 @@ logging = Logger("routing_usecase")
 #     "/delete/{generatedcontent_id}",
 #     dependencies=[Depends(require_permissions(["backAdmin:generatedcontent.read"]))],
 # )
-# def delete(generatedcontent_id: int):
+# def delete(generatedcontent_id: str):
 #     result_generatedcontent = GeneratedContentUseCase().delete(generatedcontent_id)
 #     return result_generatedcontent
