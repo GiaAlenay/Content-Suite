@@ -1,0 +1,99 @@
+from dddpy.brand.domain.brand_entity import BrandEntity
+from dddpy.brand.infrastructure.brand_mapper import BrandMapper
+from dddpy.brand.domain.brand_cmd_repository import BrandCmdRepository
+
+from dddpy.brand.domain.brand_data import (
+    CreateBrandData,
+    UpdateBrandData,
+)
+from dddpy.shared.supabase.supabase_manager import supabase
+
+from dddpy.shared.logging.logging import Logger
+
+logging = Logger("BrandCmdRepositoryImpl")
+
+
+class BrandCmdRepositoryImpl(BrandCmdRepository):
+    def __init__(self):
+        self._client = supabase
+        logging.info("BrandCmdRepositoryImpl initialized with Supabase Client")
+
+    def create(self, brand: CreateBrandData) -> BrandEntity:
+        logging.info(f"Creating brand: {brand.name}", method="create")
+
+        try:
+            data = {
+                "name": brand.name,
+                "code": brand.code.upper(),
+                "description": brand.description,
+                "full_manual": brand.full_manual,
+            }
+
+            response = self._client.table("brands").insert(data).execute()
+
+            if not response.data:
+                raise Exception("No se pudo insertar la marca")
+
+            db_brand = response.data[0]
+            logging.info(
+                f"Brand created successfully with ID: {db_brand['id']}", method="create"
+            )
+
+            return BrandMapper.to_domain(db_brand)
+
+        except Exception as e:
+            logging.error(
+                f"Error creating brand in Supabase: {str(e)}", method="create"
+            )
+            raise e
+
+    def update(self, brand_id: int, data: UpdateBrandData) -> bool:
+        logging.info(f"Updating brand with id={brand_id}", method="update")
+        try:
+            update_values = {
+                k: v
+                for k, v in {
+                    "name": data.name,
+                    "description": data.description,
+                    "full_manual": data.full_manual,
+                }.items()
+                if v is not None
+            }
+
+            if not update_values:
+                logging.warning("No values provided to update", method="update")
+                return False
+
+            response = (
+                self._client.table(self._table)
+                .update(update_values)
+                .eq("id", brand_id)
+                .execute()
+            )
+
+            success = len(response.data) > 0
+            logging.info(f"Update status for id={brand_id}: {success}", method="update")
+            return success
+
+        except Exception as e:
+            logging.error(
+                f"Error updating brand in Supabase: {str(e)}", method="update"
+            )
+            raise e
+
+    def delete(self, brand_id: int) -> bool:
+        logging.info(f"Deleting brand with id={brand_id}", method="delete")
+        try:
+            response = (
+                self._client.table(self._table).delete().eq("id", brand_id).execute()
+            )
+
+            success = len(response.data) > 0
+            logging.info(f"Delete status for id={brand_id}: {success}", method="delete")
+            return success
+
+        except Exception as e:
+            logging.error(
+                f"Error deleting brand in Supabase: {str(e)}", method="delete"
+            )
+            raise e
