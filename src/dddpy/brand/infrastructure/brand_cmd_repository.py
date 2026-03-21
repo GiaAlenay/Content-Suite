@@ -9,6 +9,7 @@ from dddpy.brand.domain.brand_data import (
 from dddpy.shared.supabase.supabase_manager import supabase
 
 from dddpy.shared.logging.logging import Logger
+from typing import Optional
 
 logging = Logger("BrandCmdRepositoryImpl")
 
@@ -29,7 +30,9 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
                 "full_manual": brand.full_manual,
             }
 
-            response = self._client.table("brands").insert(data).execute()
+            data = BrandMapper.to_infrastructure_from_create(brand)
+
+            response = self._client.table(self._table).insert(data).execute()
 
             if not response.data:
                 raise Exception("No se pudo insertar la marca")
@@ -47,22 +50,15 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
             )
             raise e
 
-    def update(self, brand_id: int, data: UpdateBrandData) -> bool:
+    def update(self, brand_id: str, data: UpdateBrandData) -> Optional[BrandEntity]:
         logging.info(f"Updating brand with id={brand_id}", method="update")
+
         try:
-            update_values = {
-                k: v
-                for k, v in {
-                    "name": data.name,
-                    "description": data.description,
-                    "full_manual": data.full_manual,
-                }.items()
-                if v is not None
-            }
+            update_values = BrandMapper.to_infrastructure_from_update(data)
 
             if not update_values:
-                logging.warning("No values provided to update", method="update")
-                return False
+                logging.warning("No hay valores para actualizar", method="update")
+                return {}
 
             response = (
                 self._client.table(self._table)
@@ -71,14 +67,11 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
                 .execute()
             )
 
-            success = len(response.data) > 0
-            logging.info(f"Update status for id={brand_id}: {success}", method="update")
-            return success
+            logging.info(f"Update success for id={brand_id}: {response.data}")
+            return response.data
 
         except Exception as e:
-            logging.error(
-                f"Error updating brand in Supabase: {str(e)}", method="update"
-            )
+            logging.error(f"Error al actualizar en Supabase: {str(e)}")
             raise e
 
     def delete(self, brand_id: int) -> bool:

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+from typing import Optional
 from dddpy.brand.domain.brand_entity import BrandEntity
 from dddpy.brand.domain.brand_data import CreateBrandData, UpdateBrandData
 
@@ -11,7 +11,7 @@ class BrandCmdRepository(ABC):
         pass
 
     @abstractmethod
-    def update(self, id: int, brand: UpdateBrandData) -> BrandEntity:
+    def update(self, id: int, brand: UpdateBrandData) -> Optional[BrandEntity]:
         pass
 
     @abstractmethod
