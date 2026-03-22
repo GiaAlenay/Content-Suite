@@ -6,15 +6,14 @@ from typing import Optional, Dict, Any
 class CreateContentLogData:
     brand_id: str
     creator_id: str
-    content_data: str
+    content_data: Dict[str, Any]
     content_type: str
-    agent_feedback: Optional[str] = None
-    audit_by: Optional[str] = None
-    status: Optional[str] = "PENDING"
+    status: str = "PENDING"
 
 
 @dataclass(frozen=True)
 class UpdateContentLogData:
+    # Solo los campos editables según tu requerimiento
+    status: Optional[str] = None
     agent_feedback: Optional[str] = None
     audit_by: Optional[str] = None
-    status: Optional[str] = None

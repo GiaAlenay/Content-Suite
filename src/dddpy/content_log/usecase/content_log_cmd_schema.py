@@ -3,16 +3,15 @@ from typing import Optional, Dict, Any
 
 
 class CreateContentLogSchema(BaseModel):
-    brand_id: str = Field(..., max_length=100)
-    creator_id: str = Field(..., max_length=100)
-    content_data: Optional[str] = Field(None, max_length=255)
-    content_type: Optional[str] = Field(None)
-    agent_feedback: Optional[str] = None
-    audit_by: Optional[str] = Field(None)
-    status: Optional[str] = Field(None, pattern="^(PENDING|)$")
+    brand_id: str
+    creator_id: str
+    content_data: Dict[str, Any] = Field(
+        ..., example={"text": "Hola mundo", "image_url": "..."}
+    )
+    content_type: str = Field(..., example="INSTAGRAM_POST")
 
 
 class UpdateContentLogSchema(BaseModel):
+    status: Optional[str] = Field(None, pattern="^(PENDING|APPROVED|REJECTED)$")
     agent_feedback: Optional[str] = None
     audit_by: Optional[str] = None
-    status: Optional[str] = Field(None, pattern="^(PENDING|)$")

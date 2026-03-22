@@ -1,0 +1,68 @@
+from typing import Optional, List
+from dddpy.manual_record.domain.manual_record_entity import ManualRecordEntity
+from dddpy.manual_record.domain.manual_record_query_repository import (
+    ManualRecordQueryRepository,
+)
+from dddpy.manual_record.infrastructure.manual_record_mapper import ManualRecordMapper
+
+from dddpy.shared.supabase.supabase_manager import supabase
+
+from dddpy.shared.logging.logging import Logger
+
+logging = Logger("ManualRecordCmdRepositoryImpl")
+
+
+class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
+
+    def __init__(self):
+        self._client = supabase
+        self._table = "companies_companies"
+        logging.info("ManualRecordQueryRepositoryImpl initialized with Supabase")
+
+    def get_by_id(self, id: str) -> Optional[ManualRecordEntity]:
+        logging.info(f"Fetching manual_record with id={id}", method="get_by_id")
+
+        # .select("*") es como SELECT *
+        # .eq("id", id) es como WHERE id = id
+        # .maybe_single() es ideal para traer 1 o nada (evita excepciones si no existe)
+        response = (
+            self._client.table(self._table)
+            .select("*")
+            .eq("id", id)
+            .maybe_single()
+            .execute()
+        )
+
+        db_manual_record = response.data
+        return (
+            ManualRecordMapper.to_domain(db_manual_record) if db_manual_record else None
+        )
+
+    def get_by_manual_record_brand_id(
+        self, manual_record_brand_id: str
+    ) -> Optional[ManualRecordEntity]:
+        logging.info(
+            f"Fetching manual_record with manual_record_brand_id={manual_record_brand_id}",
+            method="get_by_manual_record_brand_id",
+        )
+
+        response = (
+            self._client.table(self._table)
+            .select("*")
+            .eq("brand_id", manual_record_brand_id)
+            .maybe_single()
+            .execute()
+        )
+
+        db_manual_record = response.data
+        return (
+            ManualRecordMapper.to_domain(db_manual_record) if db_manual_record else None
+        )
+
+    def list_all(self) -> List[ManualRecordEntity]:
+        logging.info("Fetching all companies", method="list_all")
+
+        response = self._client.table(self._table).select("*").execute()
+
+        db_manual_records = response.data  # response.data es una lista de diccionarios
+        return [ManualRecordMapper.to_domain(db) for db in db_manual_records]

@@ -112,8 +112,8 @@ if __name__ == "__main__":
     params = {
         "old_nombre_modulo": "brand",
         "old_nombre_general": "Brand",
-        "new_nombre_modulo": "content_log",
-        "new_nombre_general": "ContentLog",
+        "new_nombre_modulo": "manual_record",
+        "new_nombre_general": "ManualRecord",
     }
 
     generar_modulo_completo(**params)

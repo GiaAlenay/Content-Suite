@@ -21,11 +21,8 @@ class BrandCmdUseCase:
         data = CreateBrandData(
             code=brand_data.code,
             name=brand_data.name,
-            full_manual=brand_data.full_manual,
             description=brand_data.description,
-            raw_parameters=brand_data.raw_parameters,
             logo_url=brand_data.logo_url,
-            current_version=brand_data.current_version,
         )
 
         return self.repository.create(data)
@@ -34,11 +31,9 @@ class BrandCmdUseCase:
         logging.info(f"Delegating brand update for id={id}")
         data = UpdateBrandData(
             name=brand_data.name,
-            full_manual=brand_data.full_manual,
             description=brand_data.description,
             logo_url=brand_data.description,
             status=brand_data.status,
-            current_version=brand_data.current_version,
         )
         return self.repository.update(id, data)
 

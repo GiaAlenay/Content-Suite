@@ -1,14 +1,16 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any
+from typing import List, Optional, Dict, Any
 
 
 class CreateBrandManualVectorSchema(BaseModel):
-    brand_id: str = Field(..., max_length=100)
-    content_chunk: str = Field(..., max_length=255)
-    embedding: str = Field(...)
-    creator_id: str = Field(...)
-    metadata: str = Field(...)
+    brand_id: str
+    manual_record_id: str
+    content_chunk: str
+    embedding: List[float] = Field(..., min_items=1536, max_items=1536)
+    creator_id: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
 
 
 class UpdateBrandManualVectorSchema(BaseModel):
     status: Optional[str] = Field(None, pattern="^(ACTIVE|INACTIVE)$")
+    metadata: Optional[Dict[str, Any]] = None
