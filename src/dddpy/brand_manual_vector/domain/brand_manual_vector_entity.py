@@ -35,5 +35,9 @@ class BrandManualVectorEntity:
             "creator_id": self.creator_id,
             "metadata": self.metadata,
             "status": self.status,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "created_at": (
+                self.created_at
+                if isinstance(self.created_at, str)
+                else (self.created_at.isoformat() if self.created_at else None)
+            ),
         }

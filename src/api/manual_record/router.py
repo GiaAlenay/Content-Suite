@@ -44,7 +44,7 @@ logging = Logger("routing_usecase")
 #     "/get_by_id/{id_manual_record}",
 #     dependencies=[Depends(require_permissions(["backAdmin:manual_record.read"]))],
 # )
-# def get_by_id(id_manual_record: int):
+# def get_by_id(id_manual_record: str):
 #     result_manual_record = ManualRecordUseCase().get_by_id(id_manual_record)
 #     return result_manual_record
 

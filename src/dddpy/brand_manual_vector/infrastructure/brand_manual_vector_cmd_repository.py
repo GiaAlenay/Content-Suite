@@ -23,13 +23,14 @@ logging = Logger("BrandManualVectorCmdRepositoryImpl")
 class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
     def __init__(self):
         self._client = supabase
+        self._table = "brand_manuals_vectors"
         logging.info(
             "BrandManualVectorCmdRepositoryImpl initialized with Supabase Client"
         )
 
     def create(
         self, brand_manual_vector: CreateBrandManualVectorData
-    ) -> BrandManualVectorEntity:
+    ) -> Optional[BrandManualVectorEntity]:
         logging.info(
             f"Creating brand_manual_vector: {brand_manual_vector.brand_id}",
             method="create",
@@ -44,7 +45,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             response = self._client.table(self._table).insert(data).execute()
 
             if not response.data:
-                raise Exception("No se pudo insertar el vector")
+                return None
 
             db_brand_manual_vector = response.data[0]
             logging.info(

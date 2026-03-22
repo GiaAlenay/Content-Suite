@@ -20,7 +20,7 @@ class BrandQueryUseCase:
         return self.repository.get_by_id(id)
 
     def get_by_code(self, code: str) -> Optional[BrandEntity]:
-        logging.info(f"Delegating brand fetch by id={id}")
+        logging.info(f"Delegating brand fetch by code={code}")
         return self.repository.get_by_code(code)
 
     def get_by_brand_name(self, brand_name: str) -> Optional[BrandEntity]:

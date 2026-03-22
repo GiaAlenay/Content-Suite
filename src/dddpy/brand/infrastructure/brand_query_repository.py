@@ -7,14 +7,14 @@ from dddpy.shared.supabase.supabase_manager import supabase
 
 from dddpy.shared.logging.logging import Logger
 
-logging = Logger("BrandCmdRepositoryImpl")
+logging = Logger("BrandQueryRepositoryImpl")
 
 
 class BrandQueryRepositoryImpl(BrandQueryRepository):
 
     def __init__(self):
         self._client = supabase
-        self._table = "companies_companies"
+        self._table = "brands"
         logging.info("BrandQueryRepositoryImpl initialized with Supabase")
 
     def get_by_id(self, id: str) -> Optional[BrandEntity]:
@@ -30,12 +30,16 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
             .maybe_single()
             .execute()
         )
+        print("response by id brand")
+        print(response)
+        if not response or not response.data:
+            return None
 
         db_brand = response.data
         return BrandMapper.to_domain(db_brand) if db_brand else None
 
     def get_by_code(self, code: str) -> Optional[BrandEntity]:
-        logging.info(f"Fetching brand with code={code}", method="get_by_code")
+        logging.info(f"Fetching brand with code={code}")
 
         response = (
             self._client.table(self._table)
@@ -44,6 +48,9 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
             .maybe_single()
             .execute()
         )
+
+        if not response or not response.data:
+            return None
 
         db_brand = response.data
         return BrandMapper.to_domain(db_brand) if db_brand else None
@@ -61,11 +68,14 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
             .execute()
         )
 
+        if not response or not response.data:
+            return None
+
         db_brand = response.data
         return BrandMapper.to_domain(db_brand) if db_brand else None
 
     def list_all(self) -> List[BrandEntity]:
-        logging.info("Fetching all companies", method="list_all")
+        logging.info("Fetching all  ", method="list_all")
 
         response = self._client.table(self._table).select("*").execute()
 

@@ -23,7 +23,7 @@ class BrandManualVectorQueryUseCase:
         logging.info(f"Delegating brand_manual_vector fetch by id={id}")
         return self.repository.get_by_id(id)
 
-    def get_by_brand_id(self, brand_id: str) -> Optional[BrandManualVectorEntity]:
+    def get_by_brand_id(self, brand_id: str) -> List[BrandManualVectorEntity]:
         logging.info(f"Delegating brand_manual_vector fetch by brand_id={brand_id}")
         return self.repository.get_by_brand_id(brand_id)
 

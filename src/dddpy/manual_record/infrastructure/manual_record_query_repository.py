@@ -16,15 +16,12 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
 
     def __init__(self):
         self._client = supabase
-        self._table = "companies_companies"
+        self._table = "manual_record"
         logging.info("ManualRecordQueryRepositoryImpl initialized with Supabase")
 
     def get_by_id(self, id: str) -> Optional[ManualRecordEntity]:
         logging.info(f"Fetching manual_record with id={id}", method="get_by_id")
 
-        # .select("*") es como SELECT *
-        # .eq("id", id) es como WHERE id = id
-        # .maybe_single() es ideal para traer 1 o nada (evita excepciones si no existe)
         response = (
             self._client.table(self._table)
             .select("*")
@@ -32,6 +29,8 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
             .maybe_single()
             .execute()
         )
+        if not response or not response.data:
+            return None
 
         db_manual_record = response.data
         return (
@@ -40,7 +39,7 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
 
     def get_by_manual_record_brand_id(
         self, manual_record_brand_id: str
-    ) -> Optional[ManualRecordEntity]:
+    ) -> List[ManualRecordEntity]:
         logging.info(
             f"Fetching manual_record with manual_record_brand_id={manual_record_brand_id}",
             method="get_by_manual_record_brand_id",
@@ -50,7 +49,6 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
             self._client.table(self._table)
             .select("*")
             .eq("brand_id", manual_record_brand_id)
-            .maybe_single()
             .execute()
         )
 
@@ -60,9 +58,9 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
         )
 
     def list_all(self) -> List[ManualRecordEntity]:
-        logging.info("Fetching all companies", method="list_all")
+        logging.info("Fetching all  ", method="list_all")
 
         response = self._client.table(self._table).select("*").execute()
 
-        db_manual_records = response.data  # response.data es una lista de diccionarios
+        db_manual_records = response.data
         return [ManualRecordMapper.to_domain(db) for db in db_manual_records]

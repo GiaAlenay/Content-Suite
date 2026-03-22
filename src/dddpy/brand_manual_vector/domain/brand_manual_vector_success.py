@@ -1,6 +1,6 @@
 class BrandManualVectorSucessMessage(str):
-    COMPANY_CREATED = "BrandManualVector successfully created."
-    COMPANY_GET = "BrandManualVector retrieved successfully."
-    COMPANYS_GET = "BrandManualVectors listed successfully"
-    COMPANY_DELETED = "BrandManualVector successfully deleted."
-    COMPANY_UPDATED = "BrandManualVector successfully updated."
+    BRANDMANUALVECTOR_CREATED = "Brand Manual Vector successfully created."
+    BRANDMANUALVECTOR_GET = "Brand Manual Vector retrieved successfully."
+    BRANDMANUALVECTORS_GET = "Brand Manual Vectors listed successfully"
+    BRANDMANUALVECTOR_DELETED = "Brand Manual Vector successfully deleted."
+    BRANDMANUALVECTOR_UPDATED = "Brand Manual Vector successfully updated."

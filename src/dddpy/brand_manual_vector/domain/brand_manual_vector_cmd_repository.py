@@ -14,7 +14,7 @@ class BrandManualVectorCmdRepository(ABC):
     @abstractmethod
     def create(
         self, brand_manual_vector: CreateBrandManualVectorData
-    ) -> BrandManualVectorEntity:
+    ) -> Optional[BrandManualVectorEntity]:
         pass
 
     @abstractmethod

@@ -46,7 +46,3 @@ class ManualRecordCmdUseCase:
             is_current_version=manual_record_data.is_current_version,
         )
         return self.repository.update(id, data)
-
-    def delete(self, id: str) -> bool:
-        logging.info(f"Delegating manual_record delete for id={id}")
-        return self.repository.delete(id)

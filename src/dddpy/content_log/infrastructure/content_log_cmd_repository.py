@@ -17,9 +17,10 @@ logging = Logger("ContentLogCmdRepositoryImpl")
 class ContentLogCmdRepositoryImpl(ContentLogCmdRepository):
     def __init__(self):
         self._client = supabase
+        self._table = "content_log"
         logging.info("ContentLogCmdRepositoryImpl initialized with Supabase Client")
 
-    def create(self, content_log: CreateContentLogData) -> ContentLogEntity:
+    def create(self, content_log: CreateContentLogData) -> Optional[ContentLogEntity]:
         logging.info(f"Creating content_log: {content_log.brand_id}", method="create")
 
         try:
@@ -29,7 +30,7 @@ class ContentLogCmdRepositoryImpl(ContentLogCmdRepository):
             response = self._client.table(self._table).insert(data).execute()
 
             if not response.data:
-                raise Exception("No se pudo insertar la marca")
+                return None
 
             db_content_log = response.data[0]
             logging.info(

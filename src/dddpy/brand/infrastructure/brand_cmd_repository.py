@@ -17,41 +17,43 @@ logging = Logger("BrandCmdRepositoryImpl")
 class BrandCmdRepositoryImpl(BrandCmdRepository):
     def __init__(self):
         self._client = supabase
+        self._table = "brands"
         logging.info("BrandCmdRepositoryImpl initialized with Supabase Client")
 
-    def create(self, brand: CreateBrandData) -> BrandEntity:
-        logging.info(f"Creating brand: {brand.name}", method="create")
+    def create(self, brand: CreateBrandData) -> Optional[BrandEntity]:
+        logging.info(
+            f"Creating brand: {brand.name}",
+        )
 
         try:
 
             data = BrandMapper.to_infrastructure_from_create(brand)
-
             response = self._client.table(self._table).insert(data).execute()
-
-            if not response.data:
-                raise Exception("No se pudo insertar la marca")
+            if not response or not response.data:
+                return None
 
             db_brand = response.data[0]
             logging.info(
-                f"Brand created successfully with ID: {db_brand['id']}", method="create"
+                f"Brand created successfully with ID: {db_brand['id']}",
             )
-
             return BrandMapper.to_domain(db_brand)
 
         except Exception as e:
             logging.error(
-                f"Error creating brand in Supabase: {str(e)}", method="create"
+                f"Error creating brand in Supabase: {str(e)}",
             )
             raise e
 
     def update(self, brand_id: str, data: UpdateBrandData) -> Optional[BrandEntity]:
-        logging.info(f"Updating brand with id={brand_id}", method="update")
-
+        logging.info(
+            f"Updating brand with id={brand_id}",
+        )
         try:
             update_values = BrandMapper.to_infrastructure_from_update(data)
-
             if not update_values:
-                logging.warning("No hay valores para actualizar", method="update")
+                logging.warning(
+                    "No hay valores para actualizar",
+                )
                 return {}
 
             response = (
@@ -60,7 +62,6 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
                 .eq("id", brand_id)
                 .execute()
             )
-
             logging.info(f"Update success for id={brand_id}: {response.data}")
             return response.data
 
@@ -69,18 +70,22 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
             raise e
 
     def delete(self, brand_id: str) -> bool:
-        logging.info(f"Deleting brand with id={brand_id}", method="delete")
+        logging.info(
+            f"Deleting brand with id={brand_id}",
+        )
         try:
             response = (
                 self._client.table(self._table).delete().eq("id", brand_id).execute()
             )
 
             success = len(response.data) > 0
-            logging.info(f"Delete status for id={brand_id}: {success}", method="delete")
+            logging.info(
+                f"Delete status for id={brand_id}: {success}",
+            )
             return success
 
         except Exception as e:
             logging.error(
-                f"Error deleting brand in Supabase: {str(e)}", method="delete"
+                f"Error deleting brand in Supabase: {str(e)}",
             )
             raise e

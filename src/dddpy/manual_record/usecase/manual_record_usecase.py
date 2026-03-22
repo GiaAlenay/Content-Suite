@@ -65,8 +65,7 @@ class ManualRecordUseCase:
         manual_record = self.manual_record_query_usecase.get_by_manual_record_brand_id(
             manual_record_brand_id
         )
-        if not manual_record:
-            raise ManualRecordNotFound()
+
         success = ResponseSuccessSchema(
             success=True,
             message=ManualRecordSucessMessage.COMPANY_GET,
@@ -93,19 +92,6 @@ class ManualRecordUseCase:
             data=updated_manual_record.to_dict(),
         )
         logging.info(f"ManualRecord updated successfully: {success}")
-        return success
-
-    def delete(self, id: str):
-        logging.info("delete")
-        logging.info(f"Deleting manual_record {id}")
-
-        deleted = self.manual_record_cmd_usecase.delete(id)
-        if not deleted:
-            raise ManualRecordNotFound()
-        success = ResponseSuccessSchema(
-            success=True, message=ManualRecordSucessMessage.COMPANY_DELETED, data={}
-        )
-        logging.info(f"ManualRecord deleted successfully: {success}")
         return success
 
     def list_all(self):

@@ -9,6 +9,8 @@ class CreateContentLogData:
     content_data: Dict[str, Any]
     content_type: str
     status: str = "PENDING"
+    agent_feedback: Optional[str] = None
+    audit_by: Optional[str] = None
 
 
 @dataclass(frozen=True)

@@ -5,11 +5,12 @@ from dddpy.brand_manual_vector.domain.brand_manual_vector_data import (
     CreateBrandManualVectorData,
     UpdateBrandManualVectorData,
 )
+from typing import Optional
 
 
 class BrandManualVectorMapper:
     @staticmethod
-    def to_domain(db_dict: dict) -> BrandManualVectorEntity:
+    def to_domain(db_dict: dict) -> Optional[BrandManualVectorEntity]:
         return BrandManualVectorEntity(
             id=db_dict.get("id"),
             brand_id=db_dict.get("brand_id"),

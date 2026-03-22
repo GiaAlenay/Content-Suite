@@ -23,7 +23,7 @@ class ContentLogQueryUseCase:
 
     def get_by_content_log_brand_id(
         self, content_log_brand_id: str
-    ) -> Optional[ContentLogEntity]:
+    ) -> List[ContentLogEntity]:
         logging.info(f"Delegating content_log fetch by brand_id={content_log_brand_id}")
         return self.repository.get_by_content_log_brand_id(content_log_brand_id)
 

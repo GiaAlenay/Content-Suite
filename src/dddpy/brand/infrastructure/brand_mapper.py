@@ -3,11 +3,12 @@ from dddpy.brand.domain.brand_data import (
     CreateBrandData,
     UpdateBrandData,
 )
+from typing import Optional
 
 
 class BrandMapper:
     @staticmethod
-    def to_domain(db_dict: dict) -> BrandEntity:
+    def to_domain(db_dict: dict) -> Optional[BrandEntity]:
         return BrandEntity(
             id=db_dict.get("id"),
             name=db_dict.get("name", "Sin nombre"),

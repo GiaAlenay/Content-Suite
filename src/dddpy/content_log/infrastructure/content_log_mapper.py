@@ -29,6 +29,8 @@ class ContentLogMapper:
             "content_data": data.content_data,
             "content_type": data.content_type,
             "status": data.status,
+            "agent_feedback": data.agent_feedback,
+            "audit_by": data.audit_by,
         }
 
     @staticmethod

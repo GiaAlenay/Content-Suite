@@ -13,7 +13,7 @@ class BrandManualVectorQueryRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_brand_id(self, brand_id: str) -> Optional[BrandManualVectorEntity]:
+    def get_by_brand_id(self, brand_id: str) -> List[BrandManualVectorEntity]:
         pass
 
     @abstractmethod

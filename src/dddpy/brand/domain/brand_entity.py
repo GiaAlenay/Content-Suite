@@ -31,6 +31,14 @@ class BrandEntity:
             "description": self.description,
             "logo_url": self.logo_url,
             "status": self.status,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "created_at": (
+                self.created_at
+                if isinstance(self.created_at, str)
+                else (self.created_at.isoformat() if self.created_at else None)
+            ),
+            "updated_at": (
+                self.updated_at
+                if isinstance(self.updated_at, str)
+                else (self.updated_at.isoformat() if self.updated_at else None)
+            ),
         }

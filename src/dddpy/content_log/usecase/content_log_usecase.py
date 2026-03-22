@@ -109,18 +109,7 @@ class ContentLogUseCase:
         logging.info("update")
         logging.info(f"Updating content_log {id} with data: {content_log_data}")
 
-        if content_log_data.brand_id:
-            existing_content_log_brand_id = (
-                self.content_log_query_usecase.get_by_content_log_brand_id(
-                    content_log_data.brand_id
-                )
-            )
-            if existing_content_log_brand_id:
-                raise RepeatedContentLogName()
-
         updated_content_log = self.content_log_cmd_usecase.update(id, content_log_data)
-        if not updated_content_log:
-            raise ContentLogNotFound()
 
         success = ResponseSuccessSchema(
             success=True,
@@ -128,19 +117,6 @@ class ContentLogUseCase:
             data=updated_content_log.to_dict(),
         )
         logging.info(f"ContentLog updated successfully: {success}")
-        return success
-
-    def delete(self, id: str):
-        logging.info("delete")
-        logging.info(f"Deleting content_log {id}")
-
-        deleted = self.content_log_cmd_usecase.delete(id)
-        if not deleted:
-            raise ContentLogNotFound()
-        success = ResponseSuccessSchema(
-            success=True, message=ContentLogSucessMessage.COMPANY_DELETED, data={}
-        )
-        logging.info(f"ContentLog deleted successfully: {success}")
         return success
 
     def list_all(self):

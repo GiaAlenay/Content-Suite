@@ -18,7 +18,3 @@ class ManualRecordCmdRepository(ABC):
         self, id: str, manual_record: UpdateManualRecordData
     ) -> Optional[ManualRecordEntity]:
         pass
-
-    @abstractmethod
-    def delete(self, id: str) -> bool:
-        pass

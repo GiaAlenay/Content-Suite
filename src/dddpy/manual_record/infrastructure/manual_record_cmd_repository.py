@@ -19,9 +19,12 @@ logging = Logger("ManualRecordCmdRepositoryImpl")
 class ManualRecordCmdRepositoryImpl(ManualRecordCmdRepository):
     def __init__(self):
         self._client = supabase
+        self._table = "manual_record"
         logging.info("ManualRecordCmdRepositoryImpl initialized with Supabase Client")
 
-    def create(self, manual_record: CreateManualRecordData) -> ManualRecordEntity:
+    def create(
+        self, manual_record: CreateManualRecordData
+    ) -> Optional[ManualRecordEntity]:
         logging.info(
             f"Creating manual_record: {manual_record.brand_id}", method="create"
         )
@@ -33,7 +36,7 @@ class ManualRecordCmdRepositoryImpl(ManualRecordCmdRepository):
             response = self._client.table(self._table).insert(data).execute()
 
             if not response.data:
-                raise Exception("No se pudo insertar la marca")
+                return None
 
             db_manual_record = response.data[0]
             logging.info(
@@ -47,4 +50,32 @@ class ManualRecordCmdRepositoryImpl(ManualRecordCmdRepository):
             logging.error(
                 f"Error creating manual_record in Supabase: {str(e)}", method="create"
             )
+            raise e
+
+    def update(
+        self, manual_record_id: str, data: UpdateManualRecordData
+    ) -> Optional[ManualRecordEntity]:
+        logging.info(
+            f"Updating manual_record with id={manual_record_id}", method="update"
+        )
+
+        try:
+            update_values = ManualRecordMapper.to_infrastructure_from_update(data)
+
+            if not update_values:
+                logging.warning("No hay valores para actualizar", method="update")
+                return {}
+
+            response = (
+                self._client.table(self._table)
+                .update(update_values)
+                .eq("id", manual_record_id)
+                .execute()
+            )
+
+            logging.info(f"Update success for id={manual_record_id}: {response.data}")
+            return response.data
+
+        except Exception as e:
+            logging.error(f"Error al actualizar en Supabase: {str(e)}")
             raise e

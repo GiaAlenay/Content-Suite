@@ -1,20 +1,32 @@
 import sys
 import os
 
-# Agregamos la carpeta 'src' al path de búsqueda
-# Esto permite que 'from api.brand...' funcione
 current_dir = os.path.dirname(os.path.abspath(__file__))
 src_path = os.path.join(current_dir, "src")
 sys.path.insert(0, src_path)
 
+from dddpy.shared.logging.logging import Logger
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
+
 from api.brand.router import router as router_brand
+from api.manual_record.router import router as router_manual_record
+from api.brand_manual_vector.router import router as router_brand_manual_vector
+from api.content_log.router import router as router_content_log
+
+
 from dddpy.shared.schemas.response_schema import (
     ResponseErrorSchema,
 )
+
+
+logger = Logger("content_suite")
+logger.add_inside_method("startup")
+logger.info("Starting content_suite app")
+print("aca toy")
+
 
 app = FastAPI(title="Content Suite AI API")
 
@@ -59,3 +71,6 @@ async def general_exception_handler(request: Request, exc: Exception):
 
 
 app.include_router(router_brand, prefix="/brand")
+app.include_router(router_manual_record, prefix="/manual_record")
+app.include_router(router_brand_manual_vector, prefix="/brand_manual_vector")
+app.include_router(router_content_log, prefix="/content_log")

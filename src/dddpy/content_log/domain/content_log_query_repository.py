@@ -17,7 +17,7 @@ class ContentLogQueryRepository(ABC):
     @abstractmethod
     def get_by_content_log_brand_id(
         self, content_log_brand_id: str
-    ) -> Optional[ContentLogEntity]:
+    ) -> List[ContentLogEntity]:
         pass
 
     @abstractmethod

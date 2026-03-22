@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from dddpy.brand.usecase.brand_cmd_schema import (
     UpdateBrandSchema,
@@ -7,70 +7,54 @@ from dddpy.brand.usecase.brand_cmd_schema import (
 from dddpy.brand.usecase.brand_usecase import BrandUseCase
 
 
-# from dddpy.shared.security.require_roles_and_permissions import require_permissions
-
 router = APIRouter()
 
 
 from dddpy.shared.logging.logging import Logger
 
-logging = Logger("routing_usecase")
+logging = Logger("brand_router")
 
 
-# @router.get(
-#     "/list",
-#     dependencies=[
-#         Depends(require_permissions(["backAdmin:brand.read", "intranet:brand.read"]))
-#     ],
-# )
-# def get_all():
-#     logging.info("list_brand Route")
-#     logging.info("Listing all brand")
-#     result_brand = BrandUseCase().list_all()
-#     return result_brand
+@router.get("/list")
+def get_all():
+    logging.info("list_brand Route")
+    logging.info("Listing all brand")
+    result_brand = BrandUseCase().list_all()
+    return result_brand
 
 
-# @router.post(
-#     "/create", dependencies=[Depends(require_permissions(["backAdmin:brand.create"]))]
-# )
-# def create(new_brand: CreateBrandSchema):
-#     logging.info("create_brand Route")
-#     logging.info("Creating new brand")
-#     response = BrandUseCase().create(new_brand)
-#     return response.dict()
+@router.post("/create")
+def create(new_brand: CreateBrandSchema):
+    logging.info("create_brand Route")
+    response = BrandUseCase().create(new_brand)
+    return response
 
 
-# @router.get(
-#     "/get_by_id/{id_brand}",
-#     dependencies=[Depends(require_permissions(["backAdmin:brand.read"]))],
-# )
-# def get_by_id(id_brand: int):
-#     result_brand = BrandUseCase().get_by_id(id_brand)
-#     return result_brand
+@router.get("/get_by_id/{id_brand}")
+def get_by_id(id_brand: str):
+    result_brand = BrandUseCase().get_by_id(id_brand)
+    return result_brand
 
 
-# @router.get(
-#     "/get_by_brand_name/{brand_name}",
-#     dependencies=[Depends(require_permissions(["backAdmin:brand.read"]))],
-# )
-# def get_by_brand_name(brand_name: str):
-#     result_brand = BrandUseCase().get_by_brand_name(brand_name)
-#     return result_brand
+@router.get(
+    "/get_by_brand_name/{brand_name}",
+)
+def get_by_brand_name(brand_name: str):
+    result_brand = BrandUseCase().get_by_brand_name(brand_name)
+    return result_brand
 
 
-# @router.put(
-#     "/update/{brand_id}",
-#     dependencies=[Depends(require_permissions(["backAdmin:brand.read"]))],
-# )
-# def update(brand_id: str, brand: UpdateBrandSchema):
-#     result_brand = BrandUseCase().update(brand_id, brand)
-#     return result_brand
+@router.put(
+    "/update/{brand_id}",
+)
+def update(brand_id: str, brand: UpdateBrandSchema):
+    result_brand = BrandUseCase().update(brand_id, brand)
+    return result_brand
 
 
-# @router.delete(
-#     "/delete/{brand_id}",
-#     dependencies=[Depends(require_permissions(["backAdmin:brand.read"]))],
-# )
-# def delete(brand_id: str):
-#     result_brand = BrandUseCase().delete(brand_id)
-#     return result_brand
+@router.delete(
+    "/delete/{brand_id}",
+)
+def delete(brand_id: str):
+    result_brand = BrandUseCase().delete(brand_id)
+    return result_brand

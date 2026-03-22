@@ -10,7 +10,7 @@ from dddpy.content_log.domain.content_log_data import (
 class ContentLogCmdRepository(ABC):
 
     @abstractmethod
-    def create(self, content_log: CreateContentLogData) -> ContentLogEntity:
+    def create(self, content_log: CreateContentLogData) -> Optional[ContentLogEntity]:
         pass
 
     @abstractmethod

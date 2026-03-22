@@ -23,7 +23,6 @@ logging = Logger("brand_manual_vector_usecase")
 
 from dddpy.brand_manual_vector.domain.brand_manual_vector_exception import (
     BrandManualVectorNotFound,
-    RepeatedBrandManualVectorName,
 )
 from dddpy.brand_manual_vector.domain.brand_manual_vector_success import (
     BrandManualVectorSucessMessage,
@@ -47,19 +46,12 @@ class BrandManualVectorUseCase:
             f"Creating a new brand_manual_vector with data: {brand_manual_vector_data}"
         )
 
-        existing_brand_id = self.brand_manual_vector_query_usecase.get_by_brand_id(
-            brand_manual_vector_data.brand_id
-        )
-
-        if existing_brand_id:
-            raise RepeatedBrandManualVectorName()
-
         new_brand_manual_vector = self.brand_manual_vector_cmd_usecase.create(
             brand_manual_vector_data
         )
         success = ResponseSuccessSchema(
             success=True,
-            message=BrandManualVectorSucessMessage.COMPANY_CREATED,
+            message=BrandManualVectorSucessMessage.BRANDMANUALVECTOR_CREATED,
             data=new_brand_manual_vector.to_dict(),
         )
         logging.info(f"BrandManualVector created successfully: {success}")
@@ -72,7 +64,7 @@ class BrandManualVectorUseCase:
             raise BrandManualVectorNotFound()
         success = ResponseSuccessSchema(
             success=True,
-            message=BrandManualVectorSucessMessage.COMPANY_GET,
+            message=BrandManualVectorSucessMessage.BRANDMANUALVECTOR_GET,
             data=brand_manual_vector.to_dict(),
         )
         logging.info(f"BrandManualVector retrieved successfully by id={id}")
@@ -85,7 +77,7 @@ class BrandManualVectorUseCase:
             raise BrandManualVectorNotFound()
         success = ResponseSuccessSchema(
             success=True,
-            message=BrandManualVectorSucessMessage.COMPANY_GET,
+            message=BrandManualVectorSucessMessage.BRANDMANUALVECTOR_GET,
             data=brand_manual_vector.to_dict(),
         )
         logging.info(f"BrandManualVector retrieved successfully by id={id}")
@@ -100,7 +92,7 @@ class BrandManualVectorUseCase:
             raise BrandManualVectorNotFound()
         success = ResponseSuccessSchema(
             success=True,
-            message=BrandManualVectorSucessMessage.COMPANY_GET,
+            message=BrandManualVectorSucessMessage.BRANDMANUALVECTOR_GET,
             data=brand_manual_vector.to_dict(),
         )
         logging.info(f"BrandManualVector retrieved successfully by brand_id={brand_id}")
@@ -115,14 +107,6 @@ class BrandManualVectorUseCase:
         logging.info(
             f"Updating brand_manual_vector {id} with data: {brand_manual_vector_data}"
         )
-
-        if brand_manual_vector_data.brand_id:
-            existing_brand_id = self.brand_manual_vector_query_usecase.get_by_brand_id(
-                brand_manual_vector_data.brand_id
-            )
-            if existing_brand_id:
-                raise RepeatedBrandManualVectorName()
-
         updated_brand_manual_vector = self.brand_manual_vector_cmd_usecase.update(
             id, brand_manual_vector_data
         )
@@ -131,22 +115,22 @@ class BrandManualVectorUseCase:
 
         success = ResponseSuccessSchema(
             success=True,
-            message=BrandManualVectorSucessMessage.COMPANY_UPDATED,
+            message=BrandManualVectorSucessMessage.BRANDMANUALVECTOR_UPDATED,
             data=updated_brand_manual_vector.to_dict(),
         )
         logging.info(f"BrandManualVector updated successfully: {success}")
         return success
 
-    def delete(self, id: str):
-        logging.info("delete")
-        logging.info(f"Deleting brand_manual_vector {id}")
+    def delete_by_brand_id(self, brand_id: str):
+        logging.info("delete_by_brand_id")
+        logging.info(f"Deleting brand_manual_vectors by brand_id= {brand_id}")
 
-        deleted = self.brand_manual_vector_cmd_usecase.delete(id)
+        deleted = self.brand_manual_vector_cmd_usecase.delete(brand_id)
         if not deleted:
             raise BrandManualVectorNotFound()
         success = ResponseSuccessSchema(
             success=True,
-            message=BrandManualVectorSucessMessage.COMPANY_DELETED,
+            message=BrandManualVectorSucessMessage.BRANDMANUALVECTOR_DELETED,
             data={},
         )
         logging.info(f"BrandManualVector deleted successfully: {success}")
@@ -157,7 +141,7 @@ class BrandManualVectorUseCase:
         brand_manual_vector = self.brand_manual_vector_query_usecase.list_all()
         success = ResponseSuccessSchema(
             success=True,
-            message=BrandManualVectorSucessMessage.COMPANYS_GET,
+            message=BrandManualVectorSucessMessage.BRANDMANUALVECTORS_GET,
             data=[c.to_dict() for c in brand_manual_vector],
         )
         logging.info(

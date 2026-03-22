@@ -16,15 +16,12 @@ class ContentLogQueryRepositoryImpl(ContentLogQueryRepository):
 
     def __init__(self):
         self._client = supabase
-        self._table = "companies_companies"
+        self._table = "content_log"
         logging.info("ContentLogQueryRepositoryImpl initialized with Supabase")
 
     def get_by_id(self, id: str) -> Optional[ContentLogEntity]:
         logging.info(f"Fetching content_log with id={id}", method="get_by_id")
 
-        # .select("*") es como SELECT *
-        # .eq("id", id) es como WHERE id = id
-        # .maybe_single() es ideal para traer 1 o nada (evita excepciones si no existe)
         response = (
             self._client.table(self._table)
             .select("*")
@@ -32,13 +29,15 @@ class ContentLogQueryRepositoryImpl(ContentLogQueryRepository):
             .maybe_single()
             .execute()
         )
+        if not response or not response.data:
+            return None
 
         db_content_log = response.data
         return ContentLogMapper.to_domain(db_content_log) if db_content_log else None
 
     def get_by_content_log_brand_id(
         self, content_log_brand_id: str
-    ) -> Optional[ContentLogEntity]:
+    ) -> List[ContentLogEntity]:
         logging.info(
             f"Fetching content_log with content_log_brand_id={content_log_brand_id}",
             method="get_by_content_log_brand_id",
@@ -48,7 +47,6 @@ class ContentLogQueryRepositoryImpl(ContentLogQueryRepository):
             self._client.table(self._table)
             .select("*")
             .eq("brand_id", content_log_brand_id)
-            .maybe_single()
             .execute()
         )
 
@@ -56,7 +54,7 @@ class ContentLogQueryRepositoryImpl(ContentLogQueryRepository):
         return ContentLogMapper.to_domain(db_content_log) if db_content_log else None
 
     def list_all(self) -> List[ContentLogEntity]:
-        logging.info("Fetching all companies", method="list_all")
+        logging.info("Fetching all  ", method="list_all")
 
         response = self._client.table(self._table).select("*").execute()
 

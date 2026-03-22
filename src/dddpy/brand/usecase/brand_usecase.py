@@ -20,7 +20,6 @@ logging = Logger("brand_usecase")
 from dddpy.brand.domain.brand_exception import (
     BrandNotFound,
     RepeatedBrandCode,
-    RepeatedBrandName,
 )
 from dddpy.brand.domain.brand_success import BrandSucessMessage
 
@@ -33,22 +32,19 @@ class BrandUseCase:
         logging.info("BrandUseCase initialized")
 
     def create(self, brand_data: CreateBrandSchema):
+        print("estoy en create brand")
         logging.info("create")
         logging.info(f"Creating a new brand with data: {brand_data}")
 
         existing_code = self.brand_query_usecase.get_by_code(brand_data.code)
-        existing_brand_name = self.brand_query_usecase.get_by_brand_name(
-            brand_data.name
-        )
+
         if existing_code:
             raise RepeatedBrandCode()
-        if existing_brand_name:
-            raise RepeatedBrandName()
 
         new_brand = self.brand_cmd_usecase.create(brand_data)
         success = ResponseSuccessSchema(
             success=True,
-            message=BrandSucessMessage.COMPANY_CREATED,
+            message=BrandSucessMessage.BRAND_CREATED,
             data=new_brand.to_dict(),
         )
         logging.info(f"Brand created successfully: {success}")
@@ -57,10 +53,10 @@ class BrandUseCase:
     def get_by_id(self, id: str):
         logging.info("get_by_id")
         brand = self.brand_query_usecase.get_by_id(id)
-        if not brand:
+        if not brand or brand.status != "ACTIVE":
             raise BrandNotFound()
         success = ResponseSuccessSchema(
-            success=True, message=BrandSucessMessage.COMPANY_GET, data=brand.to_dict()
+            success=True, message=BrandSucessMessage.BRAND_GET, data=brand.to_dict()
         )
         logging.info(f"Brand retrieved successfully by id={id}")
         return success
@@ -68,10 +64,10 @@ class BrandUseCase:
     def get_by_code(self, code: str):
         logging.info("get_by_code")
         brand = self.brand_query_usecase.get_by_code(code)
-        if not brand:
+        if not brand or brand.status != "ACTIVE":
             raise BrandNotFound()
         success = ResponseSuccessSchema(
-            success=True, message=BrandSucessMessage.COMPANY_GET, data=brand.to_dict()
+            success=True, message=BrandSucessMessage.BRAND_GET, data=brand.to_dict()
         )
         logging.info(f"Brand retrieved successfully by id={id}")
         return success
@@ -79,10 +75,10 @@ class BrandUseCase:
     def get_by_brand_name(self, brand_name: str):
         logging.info("get_by_code")
         brand = self.brand_query_usecase.get_by_brand_name(brand_name)
-        if not brand:
+        if not brand or brand.status != "ACTIVE":
             raise BrandNotFound()
         success = ResponseSuccessSchema(
-            success=True, message=BrandSucessMessage.COMPANY_GET, data=brand.to_dict()
+            success=True, message=BrandSucessMessage.BRAND_GET, data=brand.to_dict()
         )
         logging.info(f"Brand retrieved successfully by name={brand_name}")
         return success
@@ -91,20 +87,16 @@ class BrandUseCase:
         logging.info("update")
         logging.info(f"Updating brand {id} with data: {brand_data}")
 
-        if brand_data.name:
-            existing_brand_name = self.brand_query_usecase.get_by_brand_name(
-                brand_data.name
-            )
-            if existing_brand_name:
-                raise RepeatedBrandName()
+        if not brand_data.status:
+            brand = self.brand_query_usecase.get_by_id(id)
+            if not brand or brand.status != "ACTIVE":
+                raise BrandNotFound()
 
         updated_brand = self.brand_cmd_usecase.update(id, brand_data)
-        if not updated_brand:
-            raise BrandNotFound()
 
         success = ResponseSuccessSchema(
             success=True,
-            message=BrandSucessMessage.COMPANY_UPDATED,
+            message=BrandSucessMessage.BRAND_UPDATED,
             data=updated_brand.to_dict(),
         )
         logging.info(f"Brand updated successfully: {success}")
@@ -118,7 +110,7 @@ class BrandUseCase:
         if not deleted:
             raise BrandNotFound()
         success = ResponseSuccessSchema(
-            success=True, message=BrandSucessMessage.COMPANY_DELETED, data={}
+            success=True, message=BrandSucessMessage.BRAND_DELETED, data={}
         )
         logging.info(f"Brand deleted successfully: {success}")
         return success
@@ -128,7 +120,7 @@ class BrandUseCase:
         brand = self.brand_query_usecase.list_all()
         success = ResponseSuccessSchema(
             success=True,
-            message=BrandSucessMessage.COMPANYS_GET,
+            message=BrandSucessMessage.BRANDS_GET,
             data=[c.to_dict() for c in brand],
         )
         logging.info(f"Brands listed successfully: {len(brand)} brand")

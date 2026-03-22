@@ -7,7 +7,7 @@ from dddpy.brand.domain.brand_data import CreateBrandData, UpdateBrandData
 class BrandCmdRepository(ABC):
 
     @abstractmethod
-    def create(self, brand: CreateBrandData) -> BrandEntity:
+    def create(self, brand: CreateBrandData) -> Optional[BrandEntity]:
         pass
 
     @abstractmethod

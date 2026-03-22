@@ -13,14 +13,14 @@ from dddpy.shared.supabase.supabase_manager import supabase
 
 from dddpy.shared.logging.logging import Logger
 
-logging = Logger("BrandManualVectorCmdRepositoryImpl")
+logging = Logger("BrandManualVectorQueryRepositoryImpl")
 
 
 class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
 
     def __init__(self):
         self._client = supabase
-        self._table = "companies_companies"
+        self._table = "brand_manuals_vectors"
         logging.info("BrandManualVectorQueryRepositoryImpl initialized with Supabase")
 
     def get_by_id(self, id: str) -> Optional[BrandManualVectorEntity]:
@@ -32,6 +32,8 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
             .maybe_single()
             .execute()
         )
+        if not response or not response.data:
+            return None
 
         db_brand_manual_vector = response.data
         return (
@@ -40,9 +42,9 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
             else None
         )
 
-    def get_by_brand_id(self, brand_id: str) -> Optional[BrandManualVectorEntity]:
+    def get_by_brand_id(self, brand_id: str) -> List[BrandManualVectorEntity]:
         logging.info(
-            f"Fetching brand_manual_vector with brand_id={brand_id}",
+            f"Fetching brand manual vectors with brand_id={brand_id}",
             method="get_by_brand_id",
         )
 
@@ -50,23 +52,18 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
             self._client.table(self._table)
             .select("*")
             .eq("brand_id", brand_id)
-            .maybe_single()
             .execute()
         )
+        if not response or not response.data:
+            return []
 
-        db_brand_manual_vector = response.data
-        return (
-            BrandManualVectorMapper.to_domain(db_brand_manual_vector)
-            if db_brand_manual_vector
-            else None
-        )
+        db_brand_manual_vectors = response.data
+        return [BrandManualVectorMapper.to_domain(db) for db in db_brand_manual_vectors]
 
     def list_all(self) -> List[BrandManualVectorEntity]:
-        logging.info("Fetching all companies", method="list_all")
+        logging.info("Fetching all  ", method="list_all")
 
         response = self._client.table(self._table).select("*").execute()
 
-        db_brand_manual_vectors = (
-            response.data
-        )  # response.data es una lista de diccionarios
+        db_brand_manual_vectors = response.data
         return [BrandManualVectorMapper.to_domain(db) for db in db_brand_manual_vectors]

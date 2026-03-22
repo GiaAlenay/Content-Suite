@@ -13,7 +13,7 @@ class ManualRecordQueryRepository(ABC):
     @abstractmethod
     def get_by_manual_record_brand_id(
         self, manual_record_brand_id: str
-    ) -> Optional[ManualRecordEntity]:
+    ) -> List[ManualRecordEntity]:
         pass
 
     @abstractmethod
