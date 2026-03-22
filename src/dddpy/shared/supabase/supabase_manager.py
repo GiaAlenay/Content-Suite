@@ -18,8 +18,7 @@ def get_supabase_client() -> Client:
         raise ValueError("Faltan las credenciales de Supabase en el archivo .env")
 
     client = create_client(url, key)
-    print("client supabase")
-    print(client)
+
     return client
 
 

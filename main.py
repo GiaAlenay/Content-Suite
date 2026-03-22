@@ -20,7 +20,7 @@ from api.content_log.router import router as router_content_log
 from dddpy.shared.schemas.response_schema import (
     ResponseErrorSchema,
 )
-
+from postgrest.exceptions import APIError
 
 logger = Logger("content_suite")
 logger.add_inside_method("startup")
@@ -68,6 +68,15 @@ async def valueError_exception_handler(request: Request, exc: ValueError):
 async def general_exception_handler(request: Request, exc: Exception):
     error_response = ResponseErrorSchema(success=False, message=str(exc))
     return JSONResponse(content=error_response.dict(), status_code=500)
+
+
+@app.exception_handler(APIError)
+async def supabase_api_exception_handler(request: Request, exc: APIError):
+    # Aquí transformamos el error crudo de Supabase en algo legible
+    return JSONResponse(
+        status_code=400,
+        content={"success": False, "message": "Error de base de datos: " + exc.message},
+    )
 
 
 app.include_router(router_brand, prefix="/brand")
