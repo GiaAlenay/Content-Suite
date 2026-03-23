@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 
 from dddpy.manual_record.usecase.manual_record_usecase import ManualRecordUseCase

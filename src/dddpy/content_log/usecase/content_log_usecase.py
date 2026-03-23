@@ -135,7 +135,6 @@ class ContentLogUseCase:
 
         self.content_log_cmd_usecase.create(to_create_content_log)
 
-        # 3. Retornar resultado (Check verde o explicación)
         return ResponseSuccessSchema(
             success=True,
             message="Auditoría multimodal completada",

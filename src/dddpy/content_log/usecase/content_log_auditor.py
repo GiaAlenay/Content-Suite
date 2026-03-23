@@ -45,7 +45,6 @@ class GovernanceService:
         ).partial(format_instructions=self.parser.get_format_instructions())
 
         chain = prompt | self.llm_text | self.parser
-        # Forzamos la salida a JSON para que tu UseCase pueda procesarla fácilmente
         audit_result = chain.invoke(
             {"context": brand_manual_context, "content": content_to_audit}
         )
@@ -54,7 +53,6 @@ class GovernanceService:
     def audit_image_compliance(
         self, file_url: str, brand_manual_context: str
     ) -> AuditResponseSchema:
-        # Instrucciones de sistema con el formato de salida Pydantic
         system_instruction = (
             "Eres un Auditor Visual de Marca. Tu objetivo es contrastar la imagen contra el manual. "
             "Responde siguiendo estas instrucciones de formato: {format_instructions}"

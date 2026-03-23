@@ -1,22 +1,25 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from dddpy.brand.usecase.brand_cmd_schema import (
     UpdateBrandSchema,
     CreateBrandSchema,
 )
 from dddpy.brand.usecase.brand_usecase import BrandUseCase
-
+from dddpy.auth.usecase.auth_cmd_schema import UserRole
 
 router = APIRouter()
 
-
+from dddpy.auth.usecase.auth_checker_service import AuthChecker
 from dddpy.shared.logging.logging import Logger
 
 logging = Logger("brand_router")
 
 
 @router.get("/list")
-def get_all():
+def get_all(
+    current_user: dict = Depends(AuthChecker([UserRole.APPROVER, UserRole.ADMIN]))
+):
+    logging.info(f"El usuario {current_user['email']} está listando marcas")
     logging.info("list_brand Route")
     logging.info("Listing all brand")
     result_brand = BrandUseCase().list_all()

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from dddpy.content_log.usecase.content_log_cmd_schema import (
     UpdateContentLogSchema,

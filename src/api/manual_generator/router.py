@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from typing import Dict, Any
 from dddpy.manual_generator.usecase.manual_generator_usecase import (

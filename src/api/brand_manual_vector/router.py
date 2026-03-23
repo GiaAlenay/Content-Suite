@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Depends
 
 from dddpy.brand_manual_vector.usecase.brand_manual_vector_cmd_schema import (
     UpdateBrandManualVectorSchema,
