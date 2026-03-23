@@ -15,7 +15,8 @@ from dddpy.brand_manual_vector.domain.brand_manual_vector_data import (
 from dddpy.shared.supabase.supabase_manager import supabase
 
 from dddpy.shared.logging.logging import Logger
-from typing import Optional
+from typing import Optional, List
+from typing import Dict, Any
 
 logging = Logger("BrandManualVectorCmdRepositoryImpl")
 
@@ -37,22 +38,17 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
         )
 
         try:
-
             data = BrandManualVectorMapper.to_infrastructure_from_create(
                 brand_manual_vector
             )
-
             response = self._client.table(self._table).insert(data).execute()
-
             if not response.data:
                 return None
-
             db_brand_manual_vector = response.data[0]
             logging.info(
                 f"BrandManualVector created successfully with ID: {db_brand_manual_vector['id']}",
                 method="create",
             )
-
             return BrandManualVectorMapper.to_domain(db_brand_manual_vector)
 
         except Exception as e:
@@ -65,32 +61,54 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
     def update(
         self, brand_manual_vector_id: str, data: UpdateBrandManualVectorData
     ) -> Optional[BrandManualVectorEntity]:
-        logging.info(
-            f"Updating brand_manual_vector with id={brand_manual_vector_id}",
-            method="update",
-        )
+        logging.info(f"Updating brand_manual_vector with id={brand_manual_vector_id}")
 
         try:
             update_values = BrandManualVectorMapper.to_infrastructure_from_update(data)
-
             if not update_values:
                 logging.warning("No hay valores para actualizar", method="update")
-                return {}
-
+                return None
             response = (
                 self._client.table(self._table)
                 .update(update_values)
                 .eq("id", brand_manual_vector_id)
                 .execute()
             )
-
             logging.info(
                 f"Update success for id={brand_manual_vector_id}: {response.data}"
             )
-            return response.data
+            return BrandManualVectorMapper.to_domain(response.data)
 
         except Exception as e:
             logging.error(f"Error al actualizar en Supabase: {str(e)}")
+            raise e
+
+    def deactivate_by_manual_record_id(
+        self, manual_record_id: str
+    ) -> List[Dict[str, Any]]:
+        logging.info(
+            f"Deactivating all ACTIVE vectors for manual_record_id={manual_record_id}"
+        )
+
+        try:
+            update_values = {"status": "INACTIVE"}
+
+            response = (
+                self._client.table(self._table)
+                .update(update_values)
+                .eq("manual_record_id", manual_record_id)
+                .eq("status", "ACTIVE")
+                .execute()
+            )
+
+            logging.info(f"Mass update success. Records affected: {len(response.data)}")
+
+            return response.data
+
+        except Exception as e:
+            logging.error(
+                f"Error al realizar actualización masiva en Supabase: {str(e)}"
+            )
             raise e
 
     def delete(self, brand_manual_vector_id: str) -> bool:
@@ -118,4 +136,20 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
                 f"Error deleting brand_manual_vector in Supabase: {str(e)}",
                 method="delete",
             )
+            raise e
+
+    def bulk_insert_vectors(self, vector_list: list[CreateBrandManualVectorData]):
+
+        try:
+            data_list = [
+                BrandManualVectorMapper.to_infrastructure_from_create(
+                    brand_manual_vector
+                )
+                for brand_manual_vector in vector_list
+            ]
+            result = self._client.table(self._table).insert(data_list).execute()
+            logging.info(f"Se insertaron {len(vector_list)} fragmentos vectorizados.")
+            return result.data
+        except Exception as e:
+            logging.error(f"Error en inserción masiva: {str(e)}")
             raise e

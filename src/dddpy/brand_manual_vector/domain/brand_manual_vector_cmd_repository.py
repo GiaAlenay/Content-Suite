@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, List, Dict, Any
 from dddpy.brand_manual_vector.domain.brand_manual_vector_entity import (
     BrandManualVectorEntity,
 )
@@ -25,4 +25,14 @@ class BrandManualVectorCmdRepository(ABC):
 
     @abstractmethod
     def delete(self, id: str) -> bool:
+        pass
+
+    @abstractmethod
+    def deactivate_by_manual_record_id(
+        self, manual_record_id: str
+    ) -> List[Dict[str, Any]]:
+        pass
+
+    @abstractmethod
+    def bulk_insert_vectors(self, vector_list: list[CreateBrandManualVectorData]):
         pass

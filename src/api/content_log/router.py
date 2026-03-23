@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from dddpy.content_log.usecase.content_log_cmd_schema import (
     UpdateContentLogSchema,
@@ -6,8 +6,6 @@ from dddpy.content_log.usecase.content_log_cmd_schema import (
 )
 from dddpy.content_log.usecase.content_log_usecase import ContentLogUseCase
 
-
-# from dddpy.shared.security.require_roles_and_permissions import require_permissions
 
 router = APIRouter()
 

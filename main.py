@@ -15,7 +15,7 @@ from api.brand.router import router as router_brand
 from api.manual_record.router import router as router_manual_record
 from api.brand_manual_vector.router import router as router_brand_manual_vector
 from api.content_log.router import router as router_content_log
-
+from api.manual_generator.router import router as router_manual_generator
 
 from dddpy.shared.schemas.response_schema import (
     ResponseErrorSchema,
@@ -80,6 +80,7 @@ async def supabase_api_exception_handler(request: Request, exc: APIError):
 
 
 app.include_router(router_brand, prefix="/brand")
+app.include_router(router_manual_generator, prefix="/manual_generator")
 app.include_router(router_manual_record, prefix="/manual_record")
 app.include_router(router_brand_manual_vector, prefix="/brand_manual_vector")
 app.include_router(router_content_log, prefix="/content_log")

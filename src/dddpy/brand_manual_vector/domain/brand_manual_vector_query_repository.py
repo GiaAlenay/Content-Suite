@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
-
 from dddpy.brand_manual_vector.domain.brand_manual_vector_entity import (
     BrandManualVectorEntity,
 )

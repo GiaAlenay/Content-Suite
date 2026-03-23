@@ -41,7 +41,7 @@ class ManualRecordUseCase:
         new_manual_record = self.manual_record_cmd_usecase.create(manual_record_data)
         success = ResponseSuccessSchema(
             success=True,
-            message=ManualRecordSucessMessage.COMPANY_CREATED,
+            message=ManualRecordSucessMessage.MANUALRECORD_CREATED,
             data=new_manual_record.to_dict(),
         )
         logging.info(f"ManualRecord created successfully: {success}")
@@ -54,21 +54,21 @@ class ManualRecordUseCase:
             raise ManualRecordNotFound()
         success = ResponseSuccessSchema(
             success=True,
-            message=ManualRecordSucessMessage.COMPANY_GET,
+            message=ManualRecordSucessMessage.MANUALRECORD_GET,
             data=manual_record.to_dict(),
         )
         logging.info(f"ManualRecord retrieved successfully by id={id}")
         return success
 
     def get_by_manual_record_brand_id(self, manual_record_brand_id: str):
-        logging.info("get_by_code")
+        logging.info("get_by_manual_record_brand_id")
         manual_record = self.manual_record_query_usecase.get_by_manual_record_brand_id(
             manual_record_brand_id
         )
 
         success = ResponseSuccessSchema(
             success=True,
-            message=ManualRecordSucessMessage.COMPANY_GET,
+            message=ManualRecordSucessMessage.MANUALRECORD_GET,
             data=manual_record.to_dict(),
         )
         logging.info(
@@ -88,7 +88,7 @@ class ManualRecordUseCase:
 
         success = ResponseSuccessSchema(
             success=True,
-            message=ManualRecordSucessMessage.COMPANY_UPDATED,
+            message=ManualRecordSucessMessage.MANUALRECORD_UPDATED,
             data=updated_manual_record.to_dict(),
         )
         logging.info(f"ManualRecord updated successfully: {success}")
@@ -99,7 +99,7 @@ class ManualRecordUseCase:
         manual_record = self.manual_record_query_usecase.list_all()
         success = ResponseSuccessSchema(
             success=True,
-            message=ManualRecordSucessMessage.COMPANYS_GET,
+            message=ManualRecordSucessMessage.MANUALRECORDS_GET,
             data=[c.to_dict() for c in manual_record],
         )
         logging.info(

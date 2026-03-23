@@ -6,7 +6,7 @@ class CreateBrandManualVectorSchema(BaseModel):
     brand_id: str
     manual_record_id: str
     content_chunk: str
-    embedding: List[float] = Field(..., min_items=1536, max_items=1536)
+    embedding: List[float] = Field(..., min_items=768, max_items=768)
     creator_id: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
 

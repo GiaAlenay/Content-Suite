@@ -70,21 +70,8 @@ class BrandManualVectorUseCase:
         logging.info(f"BrandManualVector retrieved successfully by id={id}")
         return success
 
-    def get_by_code(self, code: str):
-        logging.info("get_by_code")
-        brand_manual_vector = self.brand_manual_vector_query_usecase.get_by_code(code)
-        if not brand_manual_vector:
-            raise BrandManualVectorNotFound()
-        success = ResponseSuccessSchema(
-            success=True,
-            message=BrandManualVectorSucessMessage.BRANDMANUALVECTOR_GET,
-            data=brand_manual_vector.to_dict(),
-        )
-        logging.info(f"BrandManualVector retrieved successfully by id={id}")
-        return success
-
     def get_by_brand_id(self, brand_id: str):
-        logging.info("get_by_code")
+        logging.info("get_by_brand_id")
         brand_manual_vector = self.brand_manual_vector_query_usecase.get_by_brand_id(
             brand_id
         )

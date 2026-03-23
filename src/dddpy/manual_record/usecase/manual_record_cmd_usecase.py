@@ -26,7 +26,7 @@ class ManualRecordCmdUseCase:
 
     def create(self, manual_record_data: CreateManualRecordSchema):
         logging.info(
-            f"Delegating manual_record creation for code={manual_record_data.code}"
+            f"Delegating manual_record creation for brand_id={manual_record_data.brand_id}"
         )
         data = CreateManualRecordData(
             brand_id=manual_record_data.brand_id,
