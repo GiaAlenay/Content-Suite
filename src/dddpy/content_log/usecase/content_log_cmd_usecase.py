@@ -34,6 +34,7 @@ class ContentLogCmdUseCase:
             agent_feedback=content_log_data.agent_feedback,
             audit_by=content_log_data.audit_by,
             status=content_log_data.status,
+            prompt_origin=content_log_data.prompt_origin,
         )
 
         return self.repository.create(data)
