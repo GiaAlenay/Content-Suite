@@ -1,6 +1,6 @@
 class BrandManualVectorNotFound(Exception):
     def __init__(self):
-        super().__init__("BrandManualVector not found")
+        super().__init__("BrandManualVector no encontrado")
 
 
 class RepeatedBrandManualVectorName(Exception):

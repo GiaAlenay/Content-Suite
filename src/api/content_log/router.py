@@ -45,13 +45,19 @@ def get_by_content_log_name(content_log_name: str):
     return result_content_log
 
 
-@router.put("/update/{content_log_id}")
-def update(content_log_id: str, content_log: UpdateContentLogSchema):
-    result_content_log = ContentLogUseCase().update(content_log_id, content_log)
+@router.put("/auditar/{content_log_id}")
+def auditar(content_log_id: str):
+    result_content_log = ContentLogUseCase().auditar(content_log_id)
     return result_content_log
 
 
-@router.delete("/delete/{content_log_id}")
-def delete(content_log_id: str):
-    result_content_log = ContentLogUseCase().delete(content_log_id)
+@router.post("/auditar-imagen/{brand_id}")
+async def auditar_imagen(brand_id: str, file_url: str):
+    result = ContentLogUseCase().auditar_multimodal(brand_id, file_url)
+    return result
+
+
+@router.put("/update/{content_log_id}")
+def update(content_log_id: str, content_log: UpdateContentLogSchema):
+    result_content_log = ContentLogUseCase().update(content_log_id, content_log)
     return result_content_log

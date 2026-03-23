@@ -45,5 +45,5 @@ class VectorizationService:
 
         return vector_items
 
-    def prepare_vector_for_user_prompt(self, prompt_origin: str):
+    def to_vectorize_one(self, prompt_origin: str):
         return self.embeddings.embed_query(prompt_origin)

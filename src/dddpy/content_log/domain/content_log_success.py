@@ -4,3 +4,4 @@ class ContentLogSucessMessage(str):
     CONTENTLOGS_GET = "Content Logs listed successfully"
     CONTENTLOG_DELETED = "Content Log successfully deleted."
     CONTENTLOG_UPDATED = "Content Log successfully updated."
+    CONTENTLOG_AUDITED = "Content Log successfully audited."
