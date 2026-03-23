@@ -11,6 +11,7 @@ class CreateContentLogData:
     status: str = "PENDING"
     agent_feedback: Optional[str] = None
     audit_by: Optional[str] = None
+    prompt_origin: Optional[str] = None
 
 
 @dataclass(frozen=True)

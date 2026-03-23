@@ -10,6 +10,7 @@ class CreateContentLogSchema(BaseModel):
     )
     content_type: str = Field(..., example="INSTAGRAM_POST")
     status: Optional[str] = Field(None, pattern="^(PENDING|APPROVED|REJECTED)$")
+    prompt_origin: Optional[str] = Field(None, example="Quiero un post")
     agent_feedback: Optional[str] = None
     audit_by: Optional[str] = None
 
@@ -18,3 +19,8 @@ class UpdateContentLogSchema(BaseModel):
     status: Optional[str] = Field(None, pattern="^(PENDING|APPROVED|REJECTED)$")
     agent_feedback: Optional[str] = None
     audit_by: Optional[str] = None
+
+
+class GenerateContentRequest(BaseModel):
+    user_prompt: str = Field(..., example="Crea un post para instagram...")
+    content_type: str = Field(..., example="INSTAGRAM_POST")

@@ -11,10 +11,6 @@ class ContentLogQueryRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_content_data(self, content_data: str) -> Optional[ContentLogEntity]:
-        pass
-
-    @abstractmethod
     def get_by_content_log_brand_id(
         self, content_log_brand_id: str
     ) -> List[ContentLogEntity]:

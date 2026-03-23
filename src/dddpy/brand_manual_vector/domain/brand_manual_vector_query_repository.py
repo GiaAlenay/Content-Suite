@@ -18,3 +18,7 @@ class BrandManualVectorQueryRepository(ABC):
     @abstractmethod
     def list_all(self) -> List[BrandManualVectorEntity]:
         pass
+
+    @abstractmethod
+    def search_brand_context(self, brand_id: str, vector: list[float], limit: int = 3):
+        pass

@@ -1,6 +1,7 @@
 from typing import Optional, List
 from dddpy.brand_manual_vector.domain.brand_manual_vector_entity import (
     BrandManualVectorEntity,
+    BrandManualVectorSimilarityEntity,
 )
 from dddpy.brand_manual_vector.domain.brand_manual_vector_query_repository import (
     BrandManualVectorQueryRepository,
@@ -22,6 +23,31 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
         self._client = supabase
         self._table = "brand_manuals_vectors"
         logging.info("BrandManualVectorQueryRepositoryImpl initialized with Supabase")
+
+    def search_brand_context(self, brand_id: str, vector: list[float], limit: int = 3):
+        logging.info(f"Invocando RPC match_brand_manuals para brand: {brand_id}")
+
+        rpc_params = {
+            "query_embedding": vector,
+            "match_threshold": 0.5,
+            "match_count": limit,
+            "target_brand_id": brand_id,
+        }
+
+        response = self._client.rpc("match_brand_manuals", rpc_params).execute()
+
+        if not response or not response.data:
+            logging.warning("No se encontró contexto relevante en el manual.")
+            return []
+
+        return [
+            BrandManualVectorSimilarityEntity(
+                id=item["id"],
+                content_chunk=item["content_chunk"],
+                similarity=item["similarity"],
+            )
+            for item in response.data
+        ]
 
     def get_by_id(self, id: str) -> Optional[BrandManualVectorEntity]:
         logging.info(f"Fetching brand_manual_vector with id={id}", method="get_by_id")

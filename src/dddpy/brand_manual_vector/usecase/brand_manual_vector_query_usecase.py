@@ -30,3 +30,7 @@ class BrandManualVectorQueryUseCase:
     def list_all(self) -> List[BrandManualVectorEntity]:
         logging.info("Delegating brand_manual_vector list_all")
         return self.repository.list_all()
+
+    def search_brand_context(self, brand_id: str, vector: list[float], limit: int = 3):
+        logging.info(f"Buscando contexto vectorial para brand_id: {brand_id}")
+        return self.repository.search_brand_context(brand_id, vector, limit)

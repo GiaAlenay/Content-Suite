@@ -41,3 +41,17 @@ class BrandManualVectorEntity:
                 else (self.created_at.isoformat() if self.created_at else None)
             ),
         }
+
+
+class BrandManualVectorSimilarityEntity:
+    def __init__(self, id: Optional[str], content_chunk: str, similarity: int) -> None:
+        self.id = id
+        self.similarity = similarity
+        self.content_chunk = content_chunk
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "similarity": self.similarity,
+            "content_chunk": self.content_chunk,
+        }

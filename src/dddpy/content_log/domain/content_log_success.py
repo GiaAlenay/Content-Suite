@@ -1,6 +1,6 @@
 class ContentLogSucessMessage(str):
-    COMPANY_CREATED = "Content Log successfully created."
-    COMPANY_GET = "Content Log retrieved successfully."
-    COMPANYS_GET = "Content Logs listed successfully"
-    COMPANY_DELETED = "Content Log successfully deleted."
-    COMPANY_UPDATED = "Content Log successfully updated."
+    CONTENTLOG_CREATED = "Content Log successfully created."
+    CONTENTLOG_GET = "Content Log retrieved successfully."
+    CONTENTLOGS_GET = "Content Logs listed successfully"
+    CONTENTLOG_DELETED = "Content Log successfully deleted."
+    CONTENTLOG_UPDATED = "Content Log successfully updated."

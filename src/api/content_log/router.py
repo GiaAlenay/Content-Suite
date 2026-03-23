@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from dddpy.content_log.usecase.content_log_cmd_schema import (
     UpdateContentLogSchema,
-    CreateContentLogSchema,
+    GenerateContentRequest,
 )
 from dddpy.content_log.usecase.content_log_usecase import ContentLogUseCase
 
@@ -25,11 +25,11 @@ def get_all():
     return result_content_log
 
 
-@router.post("/create")
-def create(new_content_log: CreateContentLogSchema):
+@router.post("/create/{brand_id}")
+def create(brand_id: str, content_log_request: GenerateContentRequest):
     logging.info("create_content_log Route")
     logging.info("Creating new content_log")
-    response = ContentLogUseCase().create(new_content_log)
+    response = ContentLogUseCase().create(brand_id, content_log_request)
     return response.dict()
 
 

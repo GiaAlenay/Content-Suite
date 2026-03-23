@@ -17,6 +17,7 @@ class ContentLogMapper:
             status=db_dict.get("status", "PENDING"),
             agent_feedback=db_dict.get("agent_feedback"),
             audit_by=db_dict.get("audit_by"),
+            prompt_origin=db_dict.get("prompt_origin"),
             created_at=db_dict.get("created_at"),
             updated_at=db_dict.get("updated_at"),
         )
@@ -31,11 +32,12 @@ class ContentLogMapper:
             "status": data.status,
             "agent_feedback": data.agent_feedback,
             "audit_by": data.audit_by,
+            "prompt_origin": data.prompt_origin,
         }
 
     @staticmethod
     def to_infrastructure_from_update(data: UpdateContentLogData) -> dict:
-        # Filtramos solo los campos permitidos
+
         raw_map = {
             "status": data.status,
             "agent_feedback": data.agent_feedback,

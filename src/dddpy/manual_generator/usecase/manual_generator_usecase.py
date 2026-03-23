@@ -41,7 +41,7 @@ from dddpy.manual_record.usecase.manual_record_cmd_schema import (
     UpdateManualRecordSchema,
 )
 
-from dddpy.manual_generator.usecase.vector_service import VectorizationService
+from src.dddpy.shared.vectorize.vector_service import VectorizationService
 from dddpy.shared.schemas.response_schema import (
     ResponseSuccessSchema,
 )
@@ -104,14 +104,16 @@ class ManualGeneratorUseCase:
         new_manual_record = self.manual_record_cmd_usecase.create(
             to_create_manual_record
         )
-        vector_data_list = self.vectorize.prepare_chunks_for_db(
-            manual_id=new_manual_record.id,
-            brand_id=brand_id,
-            full_manual=full_manual,
-            creator_id="e125dc69-eb45-4af8-8343-57092522f3fe",
+        to_create_vector_data_list = (
+            self.vectorize.prepare_chunks_for_brand_manual_vector(
+                manual_id=new_manual_record.id,
+                brand_id=brand_id,
+                full_manual=full_manual,
+                creator_id="e125dc69-eb45-4af8-8343-57092522f3fe",
+            )
         )
         self.brand_manual_vector_cmd_usecase.bulk_insert_vectors(
-            vector_list=vector_data_list
+            vector_list=to_create_vector_data_list
         )
 
         success = ResponseSuccessSchema(

@@ -13,6 +13,7 @@ class ContentLogEntity:
         status: str = "PENDING",
         agent_feedback: Optional[str] = None,
         audit_by: Optional[str] = None,
+        prompt_origin: Optional[str] = None,
         created_at: Optional[datetime] = None,
         updated_at: Optional[datetime] = None,
     ) -> None:
@@ -24,6 +25,7 @@ class ContentLogEntity:
         self.status = status
         self.agent_feedback = agent_feedback
         self.audit_by = audit_by
+        self.prompt_origin = prompt_origin
         self.created_at = created_at
         self.updated_at = updated_at
 
@@ -37,6 +39,7 @@ class ContentLogEntity:
             "status": self.status,
             "agent_feedback": self.agent_feedback,
             "audit_by": self.audit_by,
+            "prompt_origin": self.prompt_origin,
             "created_at": (
                 self.created_at
                 if isinstance(self.created_at, str)

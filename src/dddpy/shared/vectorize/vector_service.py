@@ -3,6 +3,8 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from dddpy.brand_manual_vector.usecase.brand_manual_vector_cmd_schema import (
     CreateBrandManualVectorSchema,
 )
+
+from dddpy.content_log.usecase.content_log_cmd_schema import CreateContentLogSchema
 import os
 from dotenv import load_dotenv
 
@@ -21,7 +23,7 @@ class VectorizationService:
         )
         self.splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=60)
 
-    def prepare_chunks_for_db(
+    def prepare_chunks_for_brand_manual_vector(
         self, manual_id: str, brand_id: str, full_manual: str, creator_id: str
     ):
         chunks = self.splitter.split_text(full_manual)
@@ -42,3 +44,6 @@ class VectorizationService:
             )
 
         return vector_items
+
+    def prepare_vector_for_user_prompt(self, prompt_origin: str):
+        return self.embeddings.embed_query(prompt_origin)
