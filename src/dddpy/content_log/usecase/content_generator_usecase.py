@@ -1,5 +1,6 @@
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
+from dddpy.shared.langfuse_tracing.observability import audit_trace
 
 
 class CreativeEngineService:
@@ -7,6 +8,7 @@ class CreativeEngineService:
         # Llama-3.3-70b es perfecto para seguir reglas de marca
         self.llm = ChatGroq(model_name="llama-3.3-70b-versatile", temperature=0.7)
 
+    @audit_trace(name="Generate Content with RAG")
     def generate_content_with_rag(
         self, user_prompt: str, brand_name: str, context_chunks: str, content_type: str
     ) -> str:

@@ -33,7 +33,7 @@ from dddpy.brand_manual_vector.usecase.brand_manual_vector_factory import (
 
 
 from dddpy.manual_generator.usecase.manual_generador_service import (
-    BrandGeneratorService,
+    BrandManualGeneratorService,
 )
 
 from dddpy.manual_record.usecase.manual_record_cmd_schema import (
@@ -67,7 +67,7 @@ class ManualGeneratorUseCase:
         self.brand_manual_vector_query_usecase: BrandManualVectorQueryUseCase = (
             brand_manual_vector_query_usecase_factory()
         )
-        self.generator = BrandGeneratorService()
+        self.generator = BrandManualGeneratorService()
         self.vectorize = VectorizationService()
         logging.info("ManualGeneratorUseCase initialized")
 

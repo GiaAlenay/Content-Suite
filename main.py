@@ -1,5 +1,6 @@
 import sys
 import os
+from langfuse import Langfuse
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 src_path = os.path.join(current_dir, "src")
@@ -24,6 +25,7 @@ from dddpy.shared.schemas.response_schema import (
 )
 from postgrest.exceptions import APIError
 
+
 logger = Logger("content_suite")
 logger.add_inside_method("startup")
 logger.info("Starting content_suite app")
@@ -31,7 +33,7 @@ print("aca toy")
 
 
 app = FastAPI(title="Content Suite AI API")
-
+langfuse = Langfuse()
 origins = [
     "http://localhost:8080",
     "http://localhost:3000",

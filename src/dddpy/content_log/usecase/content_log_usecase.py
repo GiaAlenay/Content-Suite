@@ -29,8 +29,10 @@ from dddpy.brand.usecase.brand_query_usecase import (
 )
 from dddpy.brand.usecase.brand_factory import brand_query_usecase_factory
 from dddpy.brand.domain.brand_exception import BrandNotFound
-from dddpy.content_log.usecase.content_generator_service import CreativeEngineService
-from src.dddpy.content_log.usecase.content_log_auditor import GovernanceService
+from src.dddpy.content_log.usecase.content_generator_usecase import (
+    CreativeEngineService,
+)
+from src.dddpy.content_log.usecase.content_log_auditor_usecase import GovernanceService
 from dddpy.brand_manual_vector.usecase.brand_manual_vector_query_usecase import (
     BrandManualVectorQueryUseCase,
 )

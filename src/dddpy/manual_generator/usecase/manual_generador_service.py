@@ -1,13 +1,15 @@
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from typing import Dict, Any
+from dddpy.shared.langfuse_tracing.observability import audit_trace
 
 
-class BrandGeneratorService:
+class BrandManualGeneratorService:
     def __init__(self):
 
         self.llm = ChatGroq(model_name="llama-3.3-70b-versatile", temperature=0.7)
 
+    @audit_trace(name="Generate Human Brand Manual")
     def generate_human_manual(self, brand_name: str, raw_params: Dict[str, Any]) -> str:
         prompt = ChatPromptTemplate.from_messages(
             [

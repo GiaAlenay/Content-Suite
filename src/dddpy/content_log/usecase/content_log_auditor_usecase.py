@@ -2,8 +2,8 @@ from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from dddpy.content_log.usecase.content_log_cmd_schema import AuditResponseSchema
 from langchain_core.output_parsers import JsonOutputParser
-import base64
 from langchain_core.messages import HumanMessage
+from dddpy.shared.langfuse_tracing.observability import audit_trace
 
 
 class GovernanceService:
@@ -15,6 +15,7 @@ class GovernanceService:
         )
         self.parser = JsonOutputParser(pydantic_object=AuditResponseSchema)
 
+    @audit_trace(name="Audit Text Compliance")
     def audit_text_compliance(
         self, content_to_audit: str, brand_manual_context: str
     ) -> dict:
@@ -50,6 +51,7 @@ class GovernanceService:
         )
         return audit_result
 
+    @audit_trace(name="Audit Image Compliance")
     def audit_image_compliance(
         self, file_url: str, brand_manual_context: str
     ) -> AuditResponseSchema:
