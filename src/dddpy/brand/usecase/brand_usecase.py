@@ -87,17 +87,16 @@ class BrandUseCase:
         logging.info("update")
         logging.info(f"Updating brand {id} with data: {brand_data}")
 
-        if not brand_data.status:
-            brand = self.brand_query_usecase.get_by_id(id)
-            if not brand or brand.status != "ACTIVE":
-                raise BrandNotFound()
+        brand = self.brand_query_usecase.get_by_id(id)
+        if not brand:
+            raise BrandNotFound()
 
         updated_brand = self.brand_cmd_usecase.update(id, brand_data)
 
         success = ResponseSuccessSchema(
             success=True,
             message=BrandSucessMessage.BRAND_UPDATED,
-            data=updated_brand.to_dict(),
+            data=updated_brand.to_dict() if updated_brand else None,
         )
         logging.info(f"Brand updated successfully: {success}")
         return success

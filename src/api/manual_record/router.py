@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 
 
 from dddpy.manual_record.usecase.manual_record_usecase import ManualRecordUseCase
-
+from dddpy.auth.usecase.auth_checker_service import AuthChecker
 
 router = APIRouter()
 
@@ -14,6 +14,7 @@ logging = Logger("routing_usecase")
 
 @router.get(
     "/list",
+    dependencies=[Depends(AuthChecker())],
 )
 def get_all():
     logging.info("list_manual_record Route")
@@ -23,6 +24,7 @@ def get_all():
 
 @router.get(
     "/get_by_id/{id_manual_record}",
+    dependencies=[Depends(AuthChecker())],
 )
 def get_by_id(id_manual_record: str):
     result_manual_record = ManualRecordUseCase().get_by_id(id_manual_record)

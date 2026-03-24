@@ -6,7 +6,8 @@ from enum import Enum
 
 class UserRole(str, Enum):
     CREATOR = "CREATOR"
-    APPROVER = "APPROVER"
+    APPROVER_A = "APPROVER_A"
+    APPROVER_B = "APPROVER_B"
     ADMIN = "ADMIN"
 
 

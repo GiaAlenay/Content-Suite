@@ -50,12 +50,12 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
         )
         try:
             update_values = BrandMapper.to_infrastructure_from_update(data)
+
             if not update_values:
                 logging.warning(
                     "No hay valores para actualizar",
                 )
-                return {}
-
+                return None
             response = (
                 self._client.table(self._table)
                 .update(update_values)
@@ -63,7 +63,14 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
                 .execute()
             )
             logging.info(f"Update success for id={brand_id}: {response.data}")
-            return response.data
+            db_brand = response.data[0]
+            logging.info(
+                f"Brand updates successfully with ID: {db_brand['id']}",
+            )
+
+            mapeado = BrandMapper.to_domain(db_brand)
+
+            return mapeado
 
         except Exception as e:
             logging.error(f"Error al actualizar en Supabase: {str(e)}")

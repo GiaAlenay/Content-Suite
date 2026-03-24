@@ -58,7 +58,12 @@ class ContentLogUseCase:
         self.auditor = GovernanceService()
         logging.info("ContentLogUseCase initialized")
 
-    def create(self, brand_id: str, content_log_request: GenerateContentRequest):
+    def create(
+        self,
+        brand_id: str,
+        content_log_request: GenerateContentRequest,
+        creator_id: str,
+    ):
         logging.info("create")
         logging.info(f"Creating a new content_log with data: {content_log_request}")
 
@@ -82,7 +87,7 @@ class ContentLogUseCase:
 
         to_create_content_log = CreateContentLogSchema(
             brand_id=brand_id,
-            creator_id="e125dc69-eb45-4af8-8343-57092522f3fe",
+            creator_id=creator_id,
             prompt_origin=content_log_request.user_prompt,
             status="PENDING",
             content_type=content_log_request.content_type,
@@ -111,7 +116,7 @@ class ContentLogUseCase:
         logging.info(f"ContentLog retrieved successfully by id={id}")
         return success
 
-    def auditar_multimodal(self, brand_id: str, file_url: str):
+    def auditar_multimodal(self, brand_id: str, file_url: str, user_id: str):
 
         to_search_prompt = "identidad visual, colores, logo, tipografía"
         visual_query_vector = self.vectorize.to_vectorize_one(to_search_prompt)
@@ -125,12 +130,12 @@ class ContentLogUseCase:
 
         to_create_content_log = CreateContentLogSchema(
             brand_id=brand_id,
-            creator_id="e125dc69-eb45-4af8-8343-57092522f3fe",
+            creator_id=user_id,
             status=audit_result.suggested_status,
             content_type="IMAGE_AUDIT",
             content_data={"image_url": file_url},
             agent_feedback=audit_result.feedback,
-            audit_by="e125dc69-eb45-4af8-8343-57092522f3fe",
+            audit_by=user_id,
         )
 
         self.content_log_cmd_usecase.create(to_create_content_log)
@@ -141,7 +146,10 @@ class ContentLogUseCase:
             data=audit_result.model_dump(),
         )
 
-    def auditar_texto(self, id: str):
+    def auditar_texto(
+        self,
+        id: str,
+    ):
         logging.info("update")
         logging.info(f"Audit content_log by id={id} ")
         content_log = self.content_log_query_usecase.get_by_id(id)
@@ -171,10 +179,13 @@ class ContentLogUseCase:
         logging.info(f"ContentLog updated successfully: {success}")
         return success
 
-    def update(self, id: str, content_log_data: UpdateContentLogSchema):
+    def update_audited_information(
+        self, id: str, content_log_data: UpdateContentLogSchema, user_id: str
+    ):
         logging.info("update")
         logging.info(f"Updating content_log {id} with data: {content_log_data}")
         content_log = self.content_log_query_usecase.get_by_id(id)
+        content_log_data.audit_by = user_id
         if not content_log:
             raise ContentLogNotFound()
 

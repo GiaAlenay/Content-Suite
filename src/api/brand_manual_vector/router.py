@@ -7,18 +7,19 @@ from dddpy.brand_manual_vector.usecase.brand_manual_vector_cmd_schema import (
 from dddpy.brand_manual_vector.usecase.brand_manual_vector_usecase import (
     BrandManualVectorUseCase,
 )
-
+from dddpy.auth.usecase.auth_checker_service import AuthChecker
 
 router = APIRouter()
 
 
 from dddpy.shared.logging.logging import Logger
 
-logging = Logger("routing_usecase")
+logging = Logger("brand_manual_vector router")
 
 
 @router.get(
     "/list",
+    dependencies=[Depends(AuthChecker())],
 )
 def get_all():
     logging.info("Listing all brand_manual_vector")
@@ -28,6 +29,7 @@ def get_all():
 
 @router.get(
     "/get_by_id/{id_brand_manual_vector}",
+    dependencies=[Depends(AuthChecker())],
 )
 def get_by_id(id_brand_manual_vector: str):
     result_brand_manual_vector = BrandManualVectorUseCase().get_by_id(

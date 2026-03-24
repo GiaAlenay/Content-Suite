@@ -71,7 +71,7 @@ class ManualGeneratorUseCase:
         self.vectorize = VectorizationService()
         logging.info("ManualGeneratorUseCase initialized")
 
-    def excecute(self, brand_id, raw_parameters: Dict[str, Any]):
+    def excecute(self, brand_id, raw_parameters: Dict[str, Any], user_id: str):
         logging.info("exceute")
         logging.info(f"Creating a new manual for brand_id: {brand_id}")
         brand = self.brand_query_usecase.get_by_id(brand_id)
@@ -109,7 +109,7 @@ class ManualGeneratorUseCase:
                 manual_id=new_manual_record.id,
                 brand_id=brand_id,
                 full_manual=full_manual,
-                creator_id="e125dc69-eb45-4af8-8343-57092522f3fe",
+                creator_id=user_id,
             )
         )
         self.brand_manual_vector_cmd_usecase.bulk_insert_vectors(

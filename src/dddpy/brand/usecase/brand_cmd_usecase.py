@@ -32,7 +32,7 @@ class BrandCmdUseCase:
         data = UpdateBrandData(
             name=brand_data.name,
             description=brand_data.description,
-            logo_url=brand_data.description,
+            logo_url=brand_data.logo_url,
             status=brand_data.status,
         )
         return self.repository.update(id, data)
