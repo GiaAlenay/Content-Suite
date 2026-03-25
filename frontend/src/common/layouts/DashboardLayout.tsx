@@ -59,7 +59,7 @@ export const DashboardLayout = () => {
           <Typography variant="body2" sx={{ mt: 2, mb: 1 }}>
             User: <strong>gianella@example.com</strong>
           </Typography>
-          <Button fullWidth variant="outlined" color="error">
+          <Button fullWidth variant="outlined">
             Cerrar Sesión
           </Button>
         </Box>

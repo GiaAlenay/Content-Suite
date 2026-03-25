@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LoginForm } from "../../brands/components/LoginForm";
+import { LoginForm } from "../components/LoginForm";
 import { Container } from "@mui/material";
 // import type { LoginFormInputs } from "../../../common/utils/schemas";
 
