@@ -5,13 +5,19 @@ import {
   Box,
   TablePagination,
 } from "@mui/material";
-import MyTableHead from "./TableHead";
-import MyTableBody from "./TableBody";
+import MyTableHead from "./table/TableHead";
+import MyTableBody from "./table/TableBody";
 import { useState } from "react";
 import type { BrandTableData } from "../interfaces/BrandData";
 import type { Order } from "../../../common/interfaces/common";
 
-export const BrandTable = ({ data }: { data: BrandTableData[] }) => {
+export const BrandTable = ({
+  data,
+  onGenerateManual,
+}: {
+  data: BrandTableData[];
+  onGenerateManual: (brand: BrandTableData) => void;
+}) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof BrandTableData | string>("code");
   const [page, setPage] = useState(0);
@@ -58,49 +64,8 @@ export const BrandTable = ({ data }: { data: BrandTableData[] }) => {
               orderBy={orderBy}
               page={page}
               rowsPerPage={rowsPerPage}
+              onGenerateManual={onGenerateManual}
             />
-            {/* <TableBody>
-          {filteredData.map((brand: any) => (
-            <TableRow key={brand.id} hover>
-              <TableCell>
-                <Avatar
-                  src={brand.logo_url}
-                  variant="rounded"
-                  sx={{ width: 40, height: 40 }}
-                />
-              </TableCell>
-              <TableCell>{brand.code}</TableCell>
-              <TableCell>{brand.name}</TableCell>
-              <TableCell>
-                <Chip
-                  label={brand.status}
-                  color={brand.status === "ACTIVE" ? "success" : "default"}
-                  size="small"
-                  variant="outlined"
-                />
-              </TableCell>
-              <TableCell align="right">
-                <Stack direction="row" spacing={1} justifyContent="flex-end">
-                  <Tooltip title="Generar Manual">
-                    <IconButton color="primary" size="small">
-                      <AutoFixHighIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Editar">
-                    <IconButton size="small">
-                      <EditIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Eliminar">
-                    <IconButton color="error" size="small">
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
-                </Stack>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody> */}
           </Table>
         </TableContainer>
         <TablePagination

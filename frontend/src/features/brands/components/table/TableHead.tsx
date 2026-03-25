@@ -7,8 +7,8 @@ import {
 } from "@mui/material";
 
 import { visuallyHidden } from "@mui/utils";
-import type { Order, TableColumn } from "../../../common/interfaces/common";
-import type { BrandTableData } from "../interfaces/BrandData";
+import type { Order, TableColumn } from "../../../../common/interfaces/common";
+import type { BrandTableData } from "../../interfaces/BrandData";
 import { headCells } from "./headCell";
 
 function MyTableHead({

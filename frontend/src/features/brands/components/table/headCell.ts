@@ -1,4 +1,4 @@
-import type { TableColumn } from "../../../common/interfaces/common";
+import type { TableColumn } from "../../../../common/interfaces/common";
 
 export const headCells: TableColumn[] = [
   {

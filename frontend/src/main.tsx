@@ -6,6 +6,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 
 import App from "./App.tsx";
 import "./index.css";
+import { AuthProvider } from "./common/contexts/context.tsx";
 
 const theme = createTheme({
   typography: {
@@ -26,6 +27,18 @@ const theme = createTheme({
             backgroundColor: "#D14D14", // Un tono un poco más oscuro para el hover
           },
           // Asegura que no cambie el color si está deshabilitado
+          "&.Mui-disabled": {
+            backgroundColor: "rgba(0, 0, 0, 0.12)",
+          },
+        },
+
+        outlined: {
+          border: "1px solid #E95A1A",
+          backgroundColor: "#fff",
+          color: "#E95A1A",
+          "&:hover": {
+            backgroundColor: "#fff",
+          },
           "&.Mui-disabled": {
             backgroundColor: "rgba(0, 0, 0, 0.12)",
           },
@@ -239,7 +252,9 @@ createRoot(document.getElementById("root")!).render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
   </StrictMode>,

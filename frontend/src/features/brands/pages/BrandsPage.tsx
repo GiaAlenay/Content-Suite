@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Box, Typography, Button, Stack } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { BrandTable } from "../components/TableBrand";
-import BrandFilters from "../components/BrandFilters";
+import BrandFilters from "../components/table/BrandFilters";
+import type { BrandTableData } from "../interfaces/BrandData";
+import { GenerateManualModal } from "../components/ModalGenerarManual";
 
 const MOCK_BRANDS: any = [
   {
@@ -36,7 +38,21 @@ export const BrandsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ACTIVE");
 
-  // Handlers
+  const [selectedBrand, setSelectedBrand] = useState<BrandTableData | null>(
+    null,
+  );
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+
+  const handleOpenManual = (brand: BrandTableData) => {
+    setSelectedBrand(brand);
+    setIsManualModalOpen(true);
+  };
+
+  const handleCloseManual = () => {
+    setIsManualModalOpen(false);
+    setSelectedBrand(null);
+  };
+
   const handleAddBrand = () => {
     console.log("Abrir modal de creación");
   };
@@ -46,6 +62,7 @@ export const BrandsPage = () => {
       sx={{
         padding: "24px 32px",
         borderRadius: "8px",
+        background: "#fff",
         border: "1px solid rgba(0, 0, 0, 0.12)",
         boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
       }}
@@ -78,7 +95,15 @@ export const BrandsPage = () => {
           listaStatusDisponibles={["Activo", "Inactivo"]}
         />
 
-        <BrandTable data={MOCK_BRANDS} />
+        <BrandTable data={MOCK_BRANDS} onGenerateManual={handleOpenManual} />
+
+        {selectedBrand && (
+          <GenerateManualModal
+            open={isManualModalOpen}
+            onClose={handleCloseManual}
+            brandName={selectedBrand.name}
+          />
+        )}
       </div>
     </Box>
   );

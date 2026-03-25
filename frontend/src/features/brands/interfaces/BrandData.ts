@@ -7,3 +7,14 @@ export interface BrandTableData {
   description: string;
 }
 
+
+export interface BrandInterface {
+  id: string | number;
+  name: string;
+  code: string;
+  description: string;
+  logo_url: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  created_at: string | null;
+  updated_at: string | null;
+}

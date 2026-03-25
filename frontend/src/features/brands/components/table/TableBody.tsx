@@ -1,7 +1,17 @@
-import { TableCell, TableBody, TableRow, Avatar, Chip } from "@mui/material";
+import {
+  TableCell,
+  TableBody,
+  TableRow,
+  Avatar,
+  Chip,
+  Tooltip,
+  IconButton,
+} from "@mui/material";
 import React from "react";
-import type { BrandTableData } from "../interfaces/BrandData";
-import type { Order } from "../../../common/interfaces/common";
+import type { BrandTableData } from "../../interfaces/BrandData";
+import type { Order } from "../../../../common/interfaces/common";
+import { IconBulbFilled } from "@tabler/icons-react";
+
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -24,6 +34,7 @@ interface Props {
   orderBy: keyof BrandTableData | string;
   page: number;
   rowsPerPage: number;
+  onGenerateManual: (brand: BrandTableData) => void;
 }
 
 const MyTableBody: React.FC<Props> = ({
@@ -32,6 +43,7 @@ const MyTableBody: React.FC<Props> = ({
   orderBy,
   page,
   rowsPerPage,
+  onGenerateManual,
 }) => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - brandList.length) : 0;
@@ -110,7 +122,11 @@ const MyTableBody: React.FC<Props> = ({
                   index === visibleRows.length - 1 ? "none" : undefined,
               }}
             >
-              actions
+              <Tooltip title="Generar Manual">
+                <IconButton onClick={() => onGenerateManual(row)}>
+                  <IconBulbFilled />
+                </IconButton>
+              </Tooltip>
             </TableCell>
           </TableRow>
         );
