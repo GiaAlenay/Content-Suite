@@ -77,7 +77,12 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
     def list_all(self) -> List[BrandEntity]:
         logging.info("Fetching all  ", method="list_all")
 
-        response = self._client.table(self._table).select("*").execute()
+        response = (
+            self._client.table(self._table)
+            .select("*")
+            .order("created_at", desc=True)
+            .execute()
+        )
 
         db_brands = response.data  # response.data es una lista de diccionarios
         return [BrandMapper.to_domain(db) for db in db_brands]

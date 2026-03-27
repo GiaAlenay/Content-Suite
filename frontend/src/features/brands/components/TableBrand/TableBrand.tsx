@@ -5,18 +5,20 @@ import {
   Box,
   TablePagination,
 } from "@mui/material";
-import MyTableHead from "./table/TableHead";
-import MyTableBody from "./table/TableBody";
+import MyTableHead from "./TableHead";
+import MyTableBody from "./TableBody";
 import { useState } from "react";
-import type { BrandTableData } from "../interfaces/BrandData";
-import type { Order } from "../../../common/interfaces/common";
+import type { BrandTableData } from "../../interfaces/BrandData";
+import type { Order } from "../../../../common/interfaces/common";
 
 export const BrandTable = ({
   data,
   onGenerateManual,
+  onDeleteBrand,
 }: {
   data: BrandTableData[];
   onGenerateManual: (brand: BrandTableData) => void;
+  onDeleteBrand: (brand: BrandTableData) => void;
 }) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof BrandTableData | string>("code");
@@ -65,6 +67,7 @@ export const BrandTable = ({
               page={page}
               rowsPerPage={rowsPerPage}
               onGenerateManual={onGenerateManual}
+              onDeleteBrand={onDeleteBrand}
             />
           </Table>
         </TableContainer>

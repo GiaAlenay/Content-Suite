@@ -6,6 +6,7 @@ export const headCells: TableColumn[] = [
     numeric: false,
     disablePadding: false,
     label: "Logo",
+    enableOrder:false,
     maxwidth: "126px",
   },
   
@@ -14,6 +15,7 @@ export const headCells: TableColumn[] = [
     numeric: false,
     disablePadding: false,
     label: "Codigo Marca",
+    enableOrder:true,
     maxwidth: "170px",
   },
   {
@@ -21,6 +23,7 @@ export const headCells: TableColumn[] = [
     numeric: false,
     disablePadding: false,
     label: "Nombre Marca",
+    enableOrder:true,
     maxwidth: "170px",
   },
  
@@ -29,7 +32,8 @@ export const headCells: TableColumn[] = [
     id: "status",
     numeric: false,
     disablePadding: false,
-    label: "Estatus",
+    label: "Estado",
+    enableOrder:true,
     maxwidth: "156px",
   },
 
@@ -38,6 +42,7 @@ export const headCells: TableColumn[] = [
     numeric: false,
     disablePadding: false,
     label: "Acciones",
+    enableOrder:false,
     maxwidth: "156px",
   },
 ];

@@ -18,12 +18,12 @@ import {
 } from "@mui/material";
 import { Grid } from "@mui/material";
 
-import { IconWand, IconCopy, IconCheck, IconX } from "@tabler/icons-react";
+import { IconCopy, IconCheck, IconX } from "@tabler/icons-react";
 import {
   GenerateManualSchema,
   type GenerateManualInputs,
-} from "../schemas/generarManual";
-import { ManualSectionField } from "./GenerarManual/ManualSectionField";
+} from "../../schemas/generarManual";
+import { ManualSectionField } from "./ManualSectionField";
 
 interface GenerateManualModalProps {
   open: boolean;
@@ -98,7 +98,7 @@ Este manual es una guía operativa para la generación de contenido.
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle
         sx={{
           display: "flex",
@@ -108,7 +108,7 @@ Este manual es una guía operativa para la generación de contenido.
         }}
       >
         <Typography variant="h6" fontWeight="bold">
-          Generar Manual de {brandName}
+          Generar Manual para {brandName}
         </Typography>
         <IconButton onClick={handleClose} sx={{ ml: "auto" }} size="small">
           <IconX size={20} />
@@ -122,12 +122,7 @@ Este manual es una guía operativa para la generación de contenido.
           onSubmit={handleSubmit(onSubmit)}
           sx={{ mb: generatedManualText ? 4 : 0 }}
         >
-          <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 3 }}>
-            Proporciona contexto a la IA para generar las directrices operativas
-            de la marca. Todos los campos son requeridos.
-          </Typography>
-
-          <Grid item xs={12} md={6}>
+          <Grid>
             <ManualSectionField
               name="mission"
               label="Misión de la Marca"
@@ -137,7 +132,7 @@ Este manual es una guía operativa para la generación de contenido.
               placeholder="Ej: Automatizar procesos legales complejos para startups..."
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid>
             <ManualSectionField
               name="tone"
               label="Tono de Voz"
@@ -147,7 +142,7 @@ Este manual es una guía operativa para la generación de contenido.
               placeholder="Ej: Profesional pero accesible, directo, usar 'nosotros'..."
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid>
             <ManualSectionField
               name="rules"
               label="Reglas de Comunicación"
@@ -157,7 +152,7 @@ Este manual es una guía operativa para la generación de contenido.
               placeholder="Ej: Nunca prometer resultados legales específicos. Siempre citar fuentes..."
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid>
             <ManualSectionField
               name="visual_identity"
               label="Identidad Visual "

@@ -47,7 +47,7 @@ const BrandFilters: React.FC<Props> = ({
 
       <div className="form-field-cont hijo">
         {" "}
-        <div className="field-name">Estatus</div>{" "}
+        <div className="field-name">Estado</div>{" "}
         <Select
           value={status}
           onChange={handleChangeStatus}

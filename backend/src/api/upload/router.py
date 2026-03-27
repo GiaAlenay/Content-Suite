@@ -11,18 +11,20 @@ from dddpy.shared.logging.logging import Logger
 from dddpy.auth.usecase.auth_cmd_schema import UserRole
 
 
-logging = Logger("brand_router")
+logging = Logger("upload_router")
 
 
 @router.post(
-    "/upload-imagen/{brand_id}",
+    "/upload-imagen/{brand_code}",
     dependencies=[Depends(AuthChecker([UserRole.APPROVER_B, UserRole.ADMIN]))],
 )
-async def upload_imagen(brand_id: str, file: UploadFile = File(...)):
+async def upload_imagen(brand_code: str, file: UploadFile = File(...)):
     if not file.content_type.startswith("image/"):
         raise ValueError("El archivo debe ser una imagen")
 
     service = UploadService()
-    result_url = await service.upload_image_to_supabase(brand_id=brand_id, file=file)
+    result_url = await service.upload_image_to_supabase(
+        brand_code=brand_code, file=file
+    )
 
     return {"image_url": result_url}

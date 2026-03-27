@@ -9,7 +9,7 @@ export interface BrandTableData {
 
 
 export interface BrandInterface {
-  id: string | number;
+  id: string ;
   name: string;
   code: string;
   description: string;

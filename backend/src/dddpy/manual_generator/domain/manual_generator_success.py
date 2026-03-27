@@ -1,2 +1,2 @@
 class ManualGeneratorSucessMessage(str):
-    MANUAL_GENERATED = "Manual generated successfully created."
+    MANUAL_GENERATED = "Manual generated successfully creado."

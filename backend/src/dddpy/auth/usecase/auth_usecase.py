@@ -1,5 +1,5 @@
 import jwt  # PyJWT
-from fastapi import HTTPException, Security
+from fastapi import status, HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import os
 from dotenv import load_dotenv

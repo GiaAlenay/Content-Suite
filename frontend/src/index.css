@@ -301,7 +301,7 @@ table {
   color: #808080;
 }
 
-.tag-ivc-estado {
+.tag-brand-estado {
   width: 90px;
   height: 20px;
   padding: 2px 8px 2px 8px;
@@ -328,11 +328,11 @@ table {
   border: 2px solid #34a1de;
   color: #34a1de;
 }
-.tag-cobrado {
+.tag-active {
   border: 2px solid #69bd79;
   color: #69bd79;
 }
-.tag-revision {
+.tag-inactive {
   border: 2px solid #808080;
   color: #808080;
 }
@@ -721,7 +721,7 @@ span .warn {
   text-align: center !important;
   color: #303030 !important;
   margin: 0 !important;
-  font-family: Barlow;
+  font-family:'Lato', sans-serif;;
 }
 
 .my-swal-popup .swal2-html-container {

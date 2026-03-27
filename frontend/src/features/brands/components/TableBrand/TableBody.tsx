@@ -3,14 +3,13 @@ import {
   TableBody,
   TableRow,
   Avatar,
-  Chip,
   Tooltip,
   IconButton,
 } from "@mui/material";
 import React from "react";
 import type { BrandTableData } from "../../interfaces/BrandData";
 import type { Order } from "../../../../common/interfaces/common";
-import { IconBulbFilled } from "@tabler/icons-react";
+import { IconBulbFilled, IconEye, IconTrashFilled } from "@tabler/icons-react";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -35,6 +34,7 @@ interface Props {
   page: number;
   rowsPerPage: number;
   onGenerateManual: (brand: BrandTableData) => void;
+  onDeleteBrand: (brand: BrandTableData) => void;
 }
 
 const MyTableBody: React.FC<Props> = ({
@@ -44,6 +44,7 @@ const MyTableBody: React.FC<Props> = ({
   page,
   rowsPerPage,
   onGenerateManual,
+  onDeleteBrand,
 }) => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - brandList.length) : 0;
@@ -108,12 +109,11 @@ const MyTableBody: React.FC<Props> = ({
                   index === visibleRows.length - 1 ? "none" : undefined,
               }}
             >
-              <Chip
-                label={row.status}
-                color={row.status === "ACTIVE" ? "success" : "default"}
-                size="small"
-                variant="outlined"
-              />
+              {row.status === "ACTIVE" ? (
+                <div className="tag-brand-estado tag-active">Activo</div>
+              ) : (
+                <div className="tag-brand-estado tag-inactive">Inactivo</div>
+              )}
             </TableCell>
             <TableCell
               className="table-td"
@@ -125,6 +125,18 @@ const MyTableBody: React.FC<Props> = ({
               <Tooltip title="Generar Manual">
                 <IconButton onClick={() => onGenerateManual(row)}>
                   <IconBulbFilled />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Ver más información">
+                <IconButton onClick={() => onGenerateManual(row)}>
+                  <IconEye />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title="Eliminar marca">
+                <IconButton onClick={() => onDeleteBrand(row)}>
+                  <IconTrashFilled />
                 </IconButton>
               </Tooltip>
             </TableCell>

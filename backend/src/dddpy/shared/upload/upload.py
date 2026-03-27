@@ -12,13 +12,13 @@ class UploadService:
         self._supabase = supabase
         logging.info("UploadService initialized with Supabase Client")
 
-    async def upload_image_to_supabase(self, brand_id: str, file: UploadFile):
+    async def upload_image_to_supabase(self, brand_code: str, file: UploadFile):
         try:
             file_bytes = await file.read()
 
             extension = file.filename.split(".")[-1] if "." in file.filename else "png"
             unique_name = f"audit_{int(time.time())}.{extension}"
-            path_on_bucket = f"{brand_id}/{unique_name}"
+            path_on_bucket = f"{brand_code}/{unique_name}"
 
             self._supabase.storage.from_(self.bucket_name).upload(
                 path=path_on_bucket,

@@ -38,18 +38,17 @@ export const ManualSectionField = ({
             {...field}
             fullWidth
             multiline
-            rows={3} // Altura inicial para TextAreas
+            rows={3}
             placeholder={placeholder}
             error={!!errors[name]}
             disabled={disabled}
-            // Mantenemos la estética global de 48px, pero dejamos crecer el TextArea
             sx={{
               "& .MuiOutlinedInput-root": {
-                minHeight: "48px", // Mínimo de tu diseño
-                height: "auto", // Permite que multiline crezca
-                p: "10px 14px", // Padding consistente
+                minHeight: "48px",
+                height: "auto",
+                p: "10px 14px",
               },
-              "& .MuiOutlinedInput-input": { p: 0 }, // Reset del padding interno del textarea
+              "& .MuiOutlinedInput-input": { p: 0 },
             }}
           />
         )}

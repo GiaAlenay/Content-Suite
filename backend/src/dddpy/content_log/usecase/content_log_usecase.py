@@ -1,9 +1,10 @@
 from dddpy.content_log.usecase.content_log_cmd_usecase import ContentLogCmdUseCase
 from dddpy.content_log.usecase.content_log_query_usecase import ContentLogQueryUseCase
-from dddpy.content_log.usecase.content_log_factory import (
-    content_log_cmd_usecase_factory,
-    content_log_query_usecase_factory,
-)
+
+# from dddpy.content_log.usecase.content_log_factory import (
+#     content_log_cmd_usecase_factory,
+#     content_log_query_usecase_factory,
+# )
 from dddpy.content_log.usecase.content_log_cmd_schema import (
     CreateContentLogSchema,
     GenerateContentRequest,
@@ -23,42 +24,45 @@ from dddpy.content_log.domain.content_log_exception import (
     ContentLogNotAllowedToChangeStatus,
 )
 from dddpy.content_log.domain.content_log_success import ContentLogSucessMessage
-from src.dddpy.shared.vectorize.vector_service import VectorizationService
+
+# from src.dddpy.shared.vectorize.vector_service import VectorizationService
 from dddpy.brand.usecase.brand_query_usecase import (
     BrandQueryUseCase,
 )
-from dddpy.brand.usecase.brand_factory import brand_query_usecase_factory
+
+# from dddpy.brand.usecase.brand_factory import brand_query_usecase_factory
 from dddpy.brand.domain.brand_exception import BrandNotFound
-from src.dddpy.content_log.usecase.content_generator_usecase import (
-    CreativeEngineService,
+from dddpy.content_log.usecase.creative_agent import (
+    CreativeEngineAgent,
 )
-from src.dddpy.content_log.usecase.content_log_auditor_usecase import GovernanceService
-from dddpy.brand_manual_vector.usecase.brand_manual_vector_query_usecase import (
-    BrandManualVectorQueryUseCase,
+from dddpy.content_log.usecase.governance_audit_agent import (
+    GovernanceAuditAgent,
 )
-from dddpy.brand_manual_vector.usecase.brand_manual_vector_factory import (
-    brand_manual_vector_query_usecase_factory,
-)
+
+# from dddpy.brand_manual_vector.usecase.brand_manual_vector_query_usecase import (
+#     BrandManualVectorQueryUseCase,
+# )
+# from dddpy.brand_manual_vector.usecase.brand_manual_vector_factory import (
+#     brand_manual_vector_query_usecase_factory,
+# )
 
 
 class ContentLogUseCase:
-    def __init__(self):
-        logging.info("__init__")
-        self.content_log_cmd_usecase: ContentLogCmdUseCase = (
-            content_log_cmd_usecase_factory()
-        )
-        self.content_log_query_usecase: ContentLogQueryUseCase = (
-            content_log_query_usecase_factory()
-        )
 
-        self.brand_manual_vector_query_usecase: BrandManualVectorQueryUseCase = (
-            brand_manual_vector_query_usecase_factory()
-        )
-        self.vectorize = VectorizationService()
-        self.brand_query_usecase: BrandQueryUseCase = brand_query_usecase_factory()
-        self.conten_generator = CreativeEngineService()
-        self.auditor = GovernanceService()
-        logging.info("ContentLogUseCase initialized")
+    def __init__(
+        self,
+        content_log_cmd: ContentLogCmdUseCase,
+        content_log_query: ContentLogQueryUseCase,
+        brand_query: BrandQueryUseCase,
+        content_generator: CreativeEngineAgent,
+        auditor: GovernanceAuditAgent,
+    ):
+        self.content_log_cmd_usecase = content_log_cmd
+        self.content_log_query_usecase = content_log_query
+        self.brand_query_usecase = brand_query
+        self.content_generator = content_generator
+        self.auditor = auditor
+        logging.info("ContentLogUseCase initialized with injected dependencies")
 
     def create(
         self,
@@ -66,44 +70,26 @@ class ContentLogUseCase:
         content_log_request: GenerateContentRequest,
         creator_id: str,
     ):
-        logging.info("create")
-        logging.info(f"Creating a new content_log with data: {content_log_request}")
-
         brand = self.brand_query_usecase.get_by_id(brand_id)
         if not brand or brand.status != "ACTIVE":
             raise BrandNotFound()
 
-        query_vector = self.vectorize.to_vectorize_one(content_log_request.user_prompt)
-
-        relevant_chunks = self.brand_manual_vector_query_usecase.search_brand_context(
-            brand_id=brand_id, vector=query_vector
-        )
-        context_text = "\n".join([chunk.content_chunk for chunk in relevant_chunks])
-
-        text = self.conten_generator.generate_content_with_rag(
+        text = self.content_generator.generate_content(
             user_prompt=content_log_request.user_prompt,
             brand_name=brand.name,
-            context_chunks=context_text,
+            brand_id=brand_id,
             content_type=content_log_request.content_type,
         )
 
         to_create_content_log = CreateContentLogSchema(
             brand_id=brand_id,
-            creator_id=creator_id,
             prompt_origin=content_log_request.user_prompt,
+            creator_id=creator_id,
             status="PENDING",
-            content_type=content_log_request.content_type,
             content_data={"text": text},
+            content_type=content_log_request.content_type,
         )
-
-        new_content_log = self.content_log_cmd_usecase.create(to_create_content_log)
-        success = ResponseSuccessSchema(
-            success=True,
-            message=ContentLogSucessMessage.CONTENTLOG_CREATED,
-            data=new_content_log.to_dict(),
-        )
-        logging.info(f"ContentLog created successfully: {success}")
-        return success
+        return self.content_log_cmd_usecase.create(to_create_content_log)
 
     def get_by_id(self, id: str):
         logging.info("get_by_id")
@@ -120,32 +106,27 @@ class ContentLogUseCase:
 
     def auditar_multimodal(self, brand_id: str, file_url: str, user_id: str):
 
-        to_search_prompt = "identidad visual, colores, logo, tipografía"
-        visual_query_vector = self.vectorize.to_vectorize_one(to_search_prompt)
-
-        relevant_rules = self.brand_manual_vector_query_usecase.search_brand_context(
-            brand_id=brand_id, vector=visual_query_vector, limit=5
+        logging.info(f"Iniciando auditoría multimodal para brand_id={brand_id}")
+        audit_result = self.auditor.audit_image_compliance(
+            file_url=file_url, brand_id=brand_id
         )
-        context_text = "\n".join([c.content_chunk for c in relevant_rules])
-
-        audit_result = self.auditor.audit_image_compliance(file_url, context_text)
 
         to_create_content_log = CreateContentLogSchema(
             brand_id=brand_id,
             creator_id=user_id,
-            status=audit_result.suggested_status,
+            status=audit_result["suggested_status"],
             content_type="IMAGE_AUDIT",
             content_data={"image_url": file_url},
-            agent_feedback=audit_result.feedback,
+            agent_feedback=audit_result["feedback"],
             audit_by=user_id,
         )
 
-        self.content_log_cmd_usecase.create(to_create_content_log)
+        new_log = self.content_log_cmd_usecase.create(to_create_content_log)
 
         return ResponseSuccessSchema(
             success=True,
-            message="Auditoría multimodal completada",
-            data=audit_result.model_dump(),
+            message=ContentLogSucessMessage.CONTENTLOG_CREATED_AUDITED,
+            data={"audit": audit_result, "new_content_log_id": new_log.id},
         )
 
     def auditar_texto(
@@ -161,17 +142,9 @@ class ContentLogUseCase:
         if content_log.status != "PENDING":
             raise ContentLogNotAllowedToChangeStatus()
 
-        content_vector = self.vectorize.to_vectorize_one(content_log.content_data)
-
-        relevant_rules = self.brand_manual_vector_query_usecase.search_brand_context(
-            brand_id=content_log.brand_id,
-            vector=content_vector,
-            limit=4,  # Traemos un poco más de contexto para auditar bien
-        )
-        context_text = "\n".join([c.content_chunk for c in relevant_rules])
-
         audit_result = self.auditor.audit_text_compliance(
-            content_to_audit=content_log.content_data, brand_manual_context=context_text
+            content_to_audit=content_log.content_data["text"],
+            brand_id=content_log.brand_id,
         )
         success = ResponseSuccessSchema(
             success=True,

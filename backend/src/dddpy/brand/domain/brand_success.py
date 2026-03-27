@@ -1,5 +1,5 @@
 class BrandSucessMessage(str):
-    BRAND_CREATED = "Brand successfully created."
+    BRAND_CREATED = "Brand successfully creado."
     BRAND_GET = "Brand retrieved successfully."
     BRANDS_GET = "Brands listed successfully"
     BRAND_DELETED = "Brand successfully deleted."
