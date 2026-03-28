@@ -15,6 +15,8 @@ class ManualRecordMapper:
             full_manual=db_dict.get("full_manual"),
             raw_parameters=db_dict.get("raw_parameters", {}),
             is_current_version=db_dict.get("is_current_version", False),
+            url_manual=db_dict.get("url_manual"),
+            agent_feedback=db_dict.get("agent_feedback", {}),
             created_at=db_dict.get("created_at"),
             updated_at=db_dict.get("updated_at"),
         )
@@ -27,11 +29,15 @@ class ManualRecordMapper:
             "full_manual": data.full_manual,
             "raw_parameters": data.raw_parameters,
             "is_current_version": data.is_current_version,
+            "url_manual": data.url_manual,
+            "agent_feedback": data.agent_feedback,
         }
 
     @staticmethod
     def to_infrastructure_from_update(data: UpdateManualRecordData) -> dict:
         raw_map = {
             "is_current_version": data.is_current_version,
+            "url_manual": data.url_manual,
+            "agent_feedback": data.agent_feedback,
         }
         return {k: v for k, v in raw_map.items() if v is not None}

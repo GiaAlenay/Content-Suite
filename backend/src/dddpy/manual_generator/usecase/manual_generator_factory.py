@@ -14,11 +14,18 @@ from dddpy.brand_manual_vector.usecase.brand_manual_vector_factory import (
     brand_manual_vector_cmd_usecase_factory,
 )
 
-from src.dddpy.shared.vectorize.vector_service import VectorizationService
+from dddpy.shared.vectorize.vector_service import VectorizationService
+from dddpy.manual_generator.usecase.manual_governance_audit_agent import (
+    ManualGovernanceAuditor,
+)
 
 
 def brand_architect_agent_factory():
     return BrandArchitectAgent()
+
+
+def manual_governance_audit_agent_agent_factory():
+    return ManualGovernanceAuditor()
 
 
 def manual_generator_usecase_factory():
@@ -29,4 +36,5 @@ def manual_generator_usecase_factory():
         vector_cmd=brand_manual_vector_cmd_usecase_factory(),
         vectorize_service=VectorizationService(),
         brand_architect=brand_architect_agent_factory(),
+        manual_prompt_auditor=manual_governance_audit_agent_agent_factory(),
     )

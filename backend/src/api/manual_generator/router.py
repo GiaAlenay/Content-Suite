@@ -28,3 +28,18 @@ def create(
         brand_id=id_brand, raw_parameters=raw_parameters, user_id=current_user["id"]
     )
     return response
+
+
+@router.post("/audit/{id_brand}")
+def audit(
+    id_brand: str,
+    raw_parameters: ManualRequestSchema,
+    current_user: dict = Depends(AuthChecker([UserRole.ADMIN])),
+):
+    logging.info(
+        f"Create Manual route for brand: {id_brand} and current_user={current_user}"
+    )
+    response = manual_generator_usecase_factory().audit_and_generate(
+        brand_id=id_brand, raw_parameters=raw_parameters
+    )
+    return response

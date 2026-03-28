@@ -34,6 +34,8 @@ class ManualRecordCmdUseCase:
             full_manual=manual_record_data.full_manual,
             raw_parameters=manual_record_data.raw_parameters,
             is_current_version=manual_record_data.is_current_version,
+            url_manual=manual_record_data.url_manual,
+            agent_feedback=manual_record_data.agent_feedback,
         )
 
         return self.repository.create(data)
@@ -44,5 +46,7 @@ class ManualRecordCmdUseCase:
         logging.info(f"Delegating manual_record update for id={id}")
         data = UpdateManualRecordData(
             is_current_version=manual_record_data.is_current_version,
+            url_manual=manual_record_data.url_manual,
+            agent_feedback=manual_record_data.agent_feedback,
         )
         return self.repository.update(id, data)

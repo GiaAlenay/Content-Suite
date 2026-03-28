@@ -25,7 +25,7 @@ from dddpy.content_log.domain.content_log_exception import (
 )
 from dddpy.content_log.domain.content_log_success import ContentLogSucessMessage
 
-# from src.dddpy.shared.vectorize.vector_service import VectorizationService
+# from dddpy.shared.vectorize.vector_service import VectorizationService
 from dddpy.brand.usecase.brand_query_usecase import (
     BrandQueryUseCase,
 )

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from dddpy.auth.usecase.auth_cmd_schema import RegisterSchema, LoginSchema
 
-from src.dddpy.auth.usecase.auth_usecase import AuthUsecase
+from dddpy.auth.usecase.auth_usecase import AuthUsecase
 
 
 router = APIRouter()

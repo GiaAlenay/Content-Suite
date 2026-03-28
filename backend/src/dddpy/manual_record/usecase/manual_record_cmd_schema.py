@@ -10,7 +10,11 @@ class CreateManualRecordSchema(BaseModel):
         ..., example={"tone": "profesional", "target": "corporativo"}
     )
     is_current_version: Optional[bool] = True
+    url_manual: Optional[str] = None
+    agent_feedback: Optional[Dict[str, Any]] = None
 
 
 class UpdateManualRecordSchema(BaseModel):
     is_current_version: Optional[bool] = None
+    url_manual: Optional[str] = None
+    agent_feedback: Optional[Dict[str, Any]] = None

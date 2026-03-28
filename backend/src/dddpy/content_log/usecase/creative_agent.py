@@ -1,7 +1,7 @@
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from dddpy.shared.langfuse_tracing.observability import audit_trace
-from src.dddpy.shared.vectorize.vector_service import VectorizationService
+from dddpy.shared.vectorize.vector_service import VectorizationService
 from dddpy.brand_manual_vector.usecase.brand_manual_vector_query_usecase import (
     BrandManualVectorQueryUseCase,
 )

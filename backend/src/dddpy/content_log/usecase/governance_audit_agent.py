@@ -7,7 +7,7 @@ from dddpy.shared.langfuse_tracing.observability import audit_trace
 from dddpy.brand_manual_vector.usecase.brand_manual_vector_query_usecase import (
     BrandManualVectorQueryUseCase,
 )
-from src.dddpy.shared.vectorize.vector_service import VectorizationService
+from dddpy.shared.vectorize.vector_service import VectorizationService
 
 
 class GovernanceAuditAgent:
@@ -58,73 +58,6 @@ class GovernanceAuditAgent:
         chain = prompt | self.llm_text | self.parser
         return chain.invoke({"context": context_text, "content": content_to_audit})
 
-    @audit_trace(name="Audit Text Compliance")
-    def audit_text_compliance0(
-        self, content_to_audit: str, brand_manual_context: str
-    ) -> dict:
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                (
-                    "system",
-                    (
-                        "Eres un Auditor de Cumplimiento de Marca (Brand Governance Agent). "
-                        "Tu trabajo es contrastar el CONTENIDO GENERADO contra las REGLAS DEL MANUAL. "
-                        "\n\nREGLAS DEL MANUAL:\n{context}"
-                    ),
-                ),
-                (
-                    "user",
-                    (
-                        "CONTENIDO A AUDITAR:\n{content}\n\n"
-                        "INSTRUCCIONES: Analiza si el contenido cumple con el tono, los valores y las restricciones. "
-                        "Devuelve tu respuesta en este formato JSON estricto:\n"
-                        "{{\n"
-                        "  'suggested_status': 'APPROVED' o 'REJECTED',\n"
-                        "  'score': (número del 1 al 10),\n"
-                        "  'feedback': 'Explicación breve de por qué cumple o qué reglas rompió.'\n"
-                        "}}"
-                    ),
-                ),
-            ]
-        ).partial(format_instructions=self.parser.get_format_instructions())
-
-        chain = prompt | self.llm_text | self.parser
-        audit_result = chain.invoke(
-            {"context": brand_manual_context, "content": content_to_audit}
-        )
-        return audit_result
-
-    @audit_trace(name="Audit Image Compliance")
-    def audit_image_compliance0(
-        self, file_url: str, brand_manual_context: str
-    ) -> AuditResponseSchema:
-        system_instruction = (
-            "Eres un Auditor Visual de Marca. Tu objetivo es contrastar la imagen contra el manual. "
-            "Responde siguiendo estas instrucciones de formato: {format_instructions}"
-        ).format(format_instructions=self.parser.get_format_instructions())
-
-        user_content = [
-            {
-                "type": "text",
-                "text": f"REGLAS DEL MANUAL:\n{brand_manual_context}\n\nAnaliza la imagen de la URL proporcionada.",
-            },
-            {
-                "type": "image_url",
-                "image_url": {"url": file_url},
-            },
-        ]
-
-        message = HumanMessage(content=user_content)
-
-        response = self.llm_vision.invoke(
-            [
-                ("system", system_instruction),
-                message,
-            ]
-        )
-
-        return self.parser.parse(response.content)
-
     @audit_trace(name="Governance Agent - Multimodal Audit")
     def audit_image_compliance(self, file_url: str, brand_id: str) -> dict:
 
@@ -153,3 +86,70 @@ class GovernanceAuditAgent:
         response = self.llm_vision.invoke([("system", system_instruction), message])
 
         return self.parser.parse(response.content)
+
+    # @audit_trace(name="Audit Text Compliance")
+    # def audit_text_compliance0(
+    #     self, content_to_audit: str, brand_manual_context: str
+    # ) -> dict:
+    #     prompt = ChatPromptTemplate.from_messages(
+    #         [
+    #             (
+    #                 "system",
+    #                 (
+    #                     "Eres un Auditor de Cumplimiento de Marca (Brand Governance Agent). "
+    #                     "Tu trabajo es contrastar el CONTENIDO GENERADO contra las REGLAS DEL MANUAL. "
+    #                     "\n\nREGLAS DEL MANUAL:\n{context}"
+    #                 ),
+    #             ),
+    #             (
+    #                 "user",
+    #                 (
+    #                     "CONTENIDO A AUDITAR:\n{content}\n\n"
+    #                     "INSTRUCCIONES: Analiza si el contenido cumple con el tono, los valores y las restricciones. "
+    #                     "Devuelve tu respuesta en este formato JSON estricto:\n"
+    #                     "{{\n"
+    #                     "  'suggested_status': 'APPROVED' o 'REJECTED',\n"
+    #                     "  'score': (número del 1 al 10),\n"
+    #                     "  'feedback': 'Explicación breve de por qué cumple o qué reglas rompió.'\n"
+    #                     "}}"
+    #                 ),
+    #             ),
+    #         ]
+    #     ).partial(format_instructions=self.parser.get_format_instructions())
+
+    #     chain = prompt | self.llm_text | self.parser
+    #     audit_result = chain.invoke(
+    #         {"context": brand_manual_context, "content": content_to_audit}
+    #     )
+    #     return audit_result
+
+    # @audit_trace(name="Audit Image Compliance")
+    # def audit_image_compliance0(
+    #     self, file_url: str, brand_manual_context: str
+    # ) -> AuditResponseSchema:
+    #     system_instruction = (
+    #         "Eres un Auditor Visual de Marca. Tu objetivo es contrastar la imagen contra el manual. "
+    #         "Responde siguiendo estas instrucciones de formato: {format_instructions}"
+    #     ).format(format_instructions=self.parser.get_format_instructions())
+
+    #     user_content = [
+    #         {
+    #             "type": "text",
+    #             "text": f"REGLAS DEL MANUAL:\n{brand_manual_context}\n\nAnaliza la imagen de la URL proporcionada.",
+    #         },
+    #         {
+    #             "type": "image_url",
+    #             "image_url": {"url": file_url},
+    #         },
+    #     ]
+
+    #     message = HumanMessage(content=user_content)
+
+    #     response = self.llm_vision.invoke(
+    #         [
+    #             ("system", system_instruction),
+    #             message,
+    #         ]
+    #     )
+
+    #     return self.parser.parse(response.content)

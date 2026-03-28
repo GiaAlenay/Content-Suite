@@ -6,7 +6,7 @@ from dddpy.content_log.infrastructure.content_log_query_repository import (
 )
 from dddpy.content_log.usecase.content_log_cmd_usecase import ContentLogCmdUseCase
 from dddpy.content_log.usecase.content_log_query_usecase import ContentLogQueryUseCase
-from src.dddpy.shared.vectorize.vector_service import VectorizationService
+from dddpy.shared.vectorize.vector_service import VectorizationService
 from dddpy.content_log.usecase.creative_agent import (
     CreativeEngineAgent,
 )

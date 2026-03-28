@@ -16,3 +16,12 @@ class ManualRequestSchema(BaseModel):
         description="Instrucciones libres del usuario",
         example="Incluye una sección específica para atención al cliente en Twitter",
     )
+
+
+class AuditManualSchema(BaseModel):
+    is_coherent: bool = Field(
+        description="Indica si los parámetros no se contradicen con la marca"
+    )
+    severity: str = Field(description="LOW (sugerencia) o HIGH (bloqueante)")
+    feedback: List[str] = Field(description="Lista de conflictos encontrados")
+    suggestions: str = Field(description="Cómo mejorar los inputs para un mejor manual")
