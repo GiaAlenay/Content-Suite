@@ -187,7 +187,7 @@ class ManualGeneratorUseCase:
 
         if not refinement_audit.is_coherent and refinement_audit.severity == "HIGH":
             return ResponseSuccessSchema(
-                success=False,
+                success=True,
                 message=f"{ManualGeneratorSucessMessage.MANUAL_PROMPT_AUDITED} conflictos de coherencia detectados",
                 data=refinement_audit.model_dump(),
             )

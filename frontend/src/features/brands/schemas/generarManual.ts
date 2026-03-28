@@ -2,10 +2,14 @@
 import { z } from 'zod';
 
 export const GenerateManualSchema = z.object({
-  mission: z.string().min(10, "La misión debe tener al menos 10 caracteres"),
-  tone: z.string().min(5, "Describe el tono de voz (ej: Formal, Amigable)"),
-  rules: z.string().min(10, "Define al menos una regla clara de comunicación"),
-  visual_identity: z.string().min(10, "Describe brevemente los elementos visuales clave"),
+  target_audience: z.string().min(5, "La audiencia debe ser más descriptiva"),
+  core_values: z.array(z.string()).min(1, "Selecciona al menos un valor nuclear"),
+  tone_preference: z.string().min(3, "El tono es obligatorio (ej: Cercano, motivador)"),
+  forbidden_topics: z.array(z.string()).default([]),
+  additional_notes: z.string().optional(),
+  brand_colors: z.array(z.string()).min(1, "Define al menos un color (ej: #0047AB)"),
+  visual_style: z.string().min(10, "Describe el estilo visual (ej: Minimalista)"),
+  logo_guidelines: z.string().optional(),
 });
 
 export type GenerateManualInputs = z.infer<typeof GenerateManualSchema>;

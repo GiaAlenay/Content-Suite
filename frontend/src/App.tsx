@@ -6,6 +6,7 @@ import { DashboardLayout } from "./common/layouts/DashboardLayout";
 import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "./common/components/ProtectRouter";
+import { ManualGeneratorPage } from "./features/brands/pages/ManualGeneratorPage";
 function App() {
   return (
     <Routes>
@@ -13,6 +14,10 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route path="/brands" element={<BrandsPage />} />
+          <Route
+            path="/brands/:idBrand/generate-manual"
+            element={<ManualGeneratorPage />}
+          />
           <Route path="/creative-engine" element={<CreativeEnginePage />} />
           <Route path="/governance" element={<GovernancePage />} />
 

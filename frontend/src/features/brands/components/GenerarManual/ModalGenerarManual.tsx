@@ -24,6 +24,7 @@ import {
   type GenerateManualInputs,
 } from "../../schemas/generarManual";
 import { ManualSectionField } from "./ManualSectionField";
+import { useManualGenerator } from "../../hooks/useBrands copy";
 
 interface GenerateManualModalProps {
   open: boolean;
@@ -36,11 +37,10 @@ export const GenerateManualModal = ({
   onClose,
   brandName,
 }: GenerateManualModalProps) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { auditManual, isAuditing } = useManualGenerator();
   const [generatedManualText, setGeneratedManualText] = useState<string | null>(
     null,
   );
-  const [copied, setCopied] = useState(false);
 
   const {
     control,
@@ -55,46 +55,11 @@ export const GenerateManualModal = ({
   const handleClose = () => {
     reset();
     setGeneratedManualText(null);
-    setCopied(false);
     onClose();
   };
 
   const onSubmit = async (data: GenerateManualInputs) => {
-    setIsLoading(true);
-    setGeneratedManualText(null);
-    console.log("Datos enviados a la IA:", data);
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    const mockApiResponse = `
-# MANUAL DE MARCA: ${brandName.toUpperCase()}
-
-## 1. MISIÓN DE LA IA
-${data.mission} (Refinado por la IA para máxima claridad operativa)
-
-## 2. TONO DE VOZ
-Nuestra comunicación debe ser ${data.tone}. Evitar tecnicismos innecesarios.
-
-## 3. REGLAS CRÍTICAS
-- ${data.rules}
-- Mantener consistencia en todas las plataformas.
-
-## 4. IDENTIDAD VISUAL
-Los elementos visuales clave son: ${data.visual_identity}.
-
-Este manual es una guía operativa para la generación de contenido.
-    `;
-
-    setGeneratedManualText(mockApiResponse.trim());
-    setIsLoading(false);
-  };
-
-  const handleCopy = () => {
-    if (generatedManualText) {
-      navigator.clipboard.writeText(generatedManualText);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // Reset icono copiado
-    }
+    console.log(data);
   };
 
   return (
@@ -128,7 +93,7 @@ Este manual es una guía operativa para la generación de contenido.
               label="Misión de la Marca"
               control={control}
               errors={errors}
-              disabled={isLoading}
+              disabled={isAuditing}
               placeholder="Ej: Automatizar procesos legales complejos para startups..."
             />
           </Grid>
@@ -138,7 +103,7 @@ Este manual es una guía operativa para la generación de contenido.
               label="Tono de Voz"
               control={control}
               errors={errors}
-              disabled={isLoading}
+              disabled={isAuditing}
               placeholder="Ej: Profesional pero accesible, directo, usar 'nosotros'..."
             />
           </Grid>
@@ -148,7 +113,7 @@ Este manual es una guía operativa para la generación de contenido.
               label="Reglas de Comunicación"
               control={control}
               errors={errors}
-              disabled={isLoading}
+              disabled={isAuditing}
               placeholder="Ej: Nunca prometer resultados legales específicos. Siempre citar fuentes..."
             />
           </Grid>
@@ -158,7 +123,7 @@ Este manual es una guía operativa para la generación de contenido.
               label="Identidad Visual "
               control={control}
               errors={errors}
-              disabled={isLoading}
+              disabled={isAuditing}
               placeholder="Ej: Paleta azul cobalto (#0047AB) y blanco absoluto. Tipografía Sans-Serif moderna..."
             />
           </Grid>
@@ -170,59 +135,6 @@ Este manual es una guía operativa para la generación de contenido.
             </Alert>
           )}
         </Box>
-
-        {/* Sección 2: Display del Resultado (Solo lectura con Copiar) */}
-        {generatedManualText && (
-          <Box sx={{ mt: 2, borderTop: "2px dashed #e0e0e0", pt: 3 }}>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{ mb: 1.5 }}
-            >
-              <Typography variant="h6" fontWeight="600" color="primary">
-                Manual Generado (Solo Lectura)
-              </Typography>
-              <Tooltip title={copied ? "¡Copiado!" : "Copiar al portapapeles"}>
-                <Button
-                  variant="outlined"
-                  startIcon={
-                    copied ? (
-                      <IconCheck size={20} color="green" />
-                    ) : (
-                      <IconCopy size={20} />
-                    )
-                  }
-                  onClick={handleCopy}
-                  color={copied ? "success" : "primary"}
-                  sx={{ textTransform: "none", borderRadius: "8px" }}
-                >
-                  {copied ? "Copiado" : "Copiar Texto"}
-                </Button>
-              </Tooltip>
-            </Stack>
-
-            <TextField
-              fullWidth
-              multiline
-              rows={12}
-              value={generatedManualText}
-              InputProps={{ readOnly: true }}
-              sx={{
-                bgcolor: "#f8f9fa", // Fondo gris muy claro para diferenciar
-                borderRadius: "8px",
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#e0e0e0",
-                },
-                "& .MuiInputBase-input": {
-                  fontFamily: "monospace", // Estilo código para manuales
-                  fontSize: "0.9rem",
-                  color: "text.primary",
-                },
-              }}
-            />
-          </Box>
-        )}
       </DialogContent>
 
       <DialogActions sx={{ p: 2.5, justifyContent: "flex-end", gap: 1.5 }}>
@@ -235,11 +147,11 @@ Este manual es una guía operativa para la generación de contenido.
           <Button
             onClick={handleSubmit(onSubmit)}
             variant="contained"
-            // startIcon={isLoading ? null : <IconWand size={20} />}
-            disabled={isLoading}
+            // startIcon={isAuditing ? null : <IconWand size={20} />}
+            disabled={isAuditing}
             sx={{}} // Hereda color global
           >
-            {isLoading ? "Procesando con IA..." : "Generar"}
+            {isAuditing ? "Procesando con IA..." : "Generar"}
           </Button>
         )}
       </DialogActions>

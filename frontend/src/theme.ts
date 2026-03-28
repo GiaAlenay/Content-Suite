@@ -1,7 +1,7 @@
 import {  createTheme } from "@mui/material/styles";
 export const theme = createTheme({
   typography: {
-    fontFamily: "Lato, sans-serif",
+    fontFamily: 'Lato, "Inter", "Roboto", "Helvetica", "Arial", sans-serif',
   },
   components: {
     MuiButton: {

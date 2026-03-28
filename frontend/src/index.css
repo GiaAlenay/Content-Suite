@@ -781,3 +781,13 @@ div:where(.swal2-icon).swal2-error [class^='swal2-x-mark-line'] {
 div:where(.swal2-container) div:where(.swal2-actions) {
   margin: 0 !important;
 }
+
+
+.stepLabelCont{
+  gap:8px;
+}
+.stepLabelCont .stepCount{
+  color: #646464;
+  font-weight: 600;
+  font-size: 11px;
+}

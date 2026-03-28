@@ -71,7 +71,7 @@ export const DashboardLayout = () => {
           flexGrow: 1,
           p: 3,
           minHeight: "100vh",
-          background: "#ddddddff",
+          background: "#e7e1e1",
         }}
       >
         <Outlet />

@@ -3,8 +3,7 @@ import { Box, Typography, Button, Stack } from "@mui/material";
 import { BrandTable } from "../components/TableBrand/TableBrand";
 import BrandFilters from "../components/TableBrand/BrandFilters";
 import type { BrandTableData } from "../interfaces/BrandData";
-import { GenerateManualModal } from "../components/GenerarManual/ModalGenerarManual";
-import { IconPlus, IconSearchOff } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import type { CreateBrandInputs } from "../schemas/agregarBrand";
 import { AddBrandModal } from "../components/AddBrand/AddBrand";
 import { ConfirmActionModal } from "../../../common/components/ConfirmActionModal/ConfirmActionModal";
@@ -19,6 +18,7 @@ import { Loader } from "../../../common/components/Loader/Loader";
 import { ErrorContent } from "../../../common/components/ErrorContent/ErrorContent";
 import { NoRawData } from "../../../common/components/NoData/NoRawData";
 import { NoFilteredData } from "../../../common/components/NoData/NoFilteredData";
+import { useNavigate } from "react-router-dom";
 
 export const BrandsPage = () => {
   const {
@@ -29,7 +29,7 @@ export const BrandsPage = () => {
     createBrand,
     isCreating,
   } = useBrands();
-
+  const navigate = useNavigate();
   const { uploadImage, isUploading } = useUpload();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -38,7 +38,6 @@ export const BrandsPage = () => {
   const [selectedBrand, setSelectedBrand] = useState<BrandTableData | null>(
     null,
   );
-  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
@@ -88,13 +87,7 @@ export const BrandsPage = () => {
   };
 
   const handleOpenManual = (brand: BrandTableData) => {
-    setSelectedBrand(brand);
-    setIsManualModalOpen(true);
-  };
-
-  const handleCloseManual = () => {
-    setIsManualModalOpen(false);
-    setSelectedBrand(null);
+    navigate(`/brands/${brand.id}/generate-manual`);
   };
 
   const handleOpenConfirmDelete = (brand: BrandTableData) => {
@@ -144,7 +137,7 @@ export const BrandsPage = () => {
         background: "#fff",
         border: "1px solid rgba(0, 0, 0, 0.12)",
         boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
-        minHeight: "800px",
+        minHeight: "96%",
       }}
     >
       <div
@@ -177,13 +170,6 @@ export const BrandsPage = () => {
 
         {mainContent}
 
-        {selectedBrand && isManualModalOpen && (
-          <GenerateManualModal
-            open={isManualModalOpen}
-            onClose={handleCloseManual}
-            brandName={selectedBrand.name}
-          />
-        )}
         {selectedBrand && isConfirmDeleteOpen && (
           <ConfirmActionModal
             open={isConfirmDeleteOpen}

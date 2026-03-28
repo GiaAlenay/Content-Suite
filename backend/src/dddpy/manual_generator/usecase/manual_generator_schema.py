@@ -39,3 +39,7 @@ class AuditManualSchema(BaseModel):
     severity: str = Field(description="LOW (sugerencia) o HIGH (bloqueante)")
     feedback: List[str] = Field(description="Lista de conflictos encontrados")
     suggestions: str = Field(description="Cómo mejorar los inputs para un mejor manual")
+
+
+class RefinementRequest(BaseModel):
+    refinement_prompt: str

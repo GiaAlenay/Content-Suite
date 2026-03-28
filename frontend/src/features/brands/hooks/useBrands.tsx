@@ -1,6 +1,6 @@
 // src/features/brands/hooks/useBrands.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { brandService } from "../services/listBrandsService";
+import { brandService } from "../services/BrandService";
 import type { CreateBrandInputs } from "../schemas/agregarBrand";
 
 export const useBrands = () => {

@@ -4,6 +4,9 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/700.css";
+import "@fontsource/inter/900.css";
 import App from "./App.tsx";
 import "./index.css";
 import { AuthProvider } from "./common/contexts/context.tsx";

@@ -4,11 +4,10 @@ import { Alert, Box } from "@mui/material";
 import type { LoginFormInputs } from "../../../common/utils/schemas";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../common/contexts/useAuth";
-// import type { LoginFormInputs } from "../../../common/utils/schemas";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
-  const { signIn } = useAuth(); // Extraemos la función del context
+  const { signIn } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
