@@ -6,11 +6,11 @@ import time
 logging = Logger("BrandCmdRepositoryImpl")
 
 
-class UploadService:
+class StorageService:
     def __init__(self):
         self.bucket_name = "brand"
         self._supabase = supabase
-        logging.info("UploadService initialized with Supabase Client")
+        logging.info("StorageService initialized with Supabase Client")
 
     async def upload_image_to_supabase(self, brand_code: str, file: UploadFile):
         try:
@@ -33,5 +33,23 @@ class UploadService:
             return file_url
 
         except Exception as e:
-            logging.error(f"Error en UploadService: {str(e)}")
+            logging.error(f"Error en StorageService: {str(e)}")
+            raise e
+
+    def upload_file(
+        self, file_bytes: bytes, destination_path: str, content_type: str
+    ) -> str:
+        """Sube cualquier stream de bytes a Supabase y retorna la URL pública"""
+        try:
+            self._supabase.storage.from_(self.bucket_name).upload(
+                path=destination_path,
+                file=file_bytes,
+                file_options={"content-type": content_type},
+            )
+
+            return self._supabase.storage.from_(self.bucket_name).get_public_url(
+                destination_path
+            )
+        except Exception as e:
+            logging.error(f"Error subiendo archivo a Supabase: {str(e)}")
             raise e

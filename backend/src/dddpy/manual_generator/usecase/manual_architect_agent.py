@@ -6,13 +6,6 @@ from dddpy.shared.langfuse_tracing.observability import audit_trace
 
 class BrandArchitectAgent:
     def __init__(self):
-
-        self.llm = ChatGroq(model_name="llama-3.3-70b-versatile", temperature=0.7)
-
-
-class BrandArchitectAgent:
-    def __init__(self):
-        # Mantenemos temperatura 0.7 para que el manual sea creativo y bien redactado
         self.llm = ChatGroq(model_name="llama-3.3-70b-versatile", temperature=0.7)
 
     @audit_trace(name="Brand Architect - Contextual Manual Generation")
@@ -24,12 +17,16 @@ class BrandArchitectAgent:
         audit_feedback: Optional[List[str]] = None,
     ) -> str:
 
-        # Limpieza de inputs
         target = raw_params.get("target_audience", "Público general")
         values = ", ".join(raw_params.get("core_values", []))
         tone = raw_params.get("tone_preference", "Profesional")
         forbidden = ", ".join(raw_params.get("forbidden_topics", []))
         additional = raw_params.get("additional_notes", "Sin notas adicionales.")
+        colors = ", ".join(raw_params.get("brand_colors", []))
+        visual_style = raw_params.get("visual_style", "No especificado")
+        logo_rules = raw_params.get(
+            "logo_guidelines", "Seguir estándares de legibilidad"
+        )
 
         feedback_str = (
             "\n".join([f"- {f}" for f in audit_feedback])
@@ -59,6 +56,7 @@ class BrandArchitectAgent:
                         "- Audiencia: {target}\n"
                         "- Valores: {values}\n"
                         "- Tono deseado: {tone}\n"
+                        "- Identidad visual: {visual_identity}\n"
                         "- Prohibiciones: {forbidden}\n"
                         "- Notas extra: {additional}\n\n"
                         "### 3. OBSERVACIONES DEL AUDITOR DE GOBERNANZA:\n"
@@ -70,7 +68,12 @@ class BrandArchitectAgent:
                         "2. **Sección de Tono**: Crea una tabla de 'Voz de la Marca' con ejemplos de 'Cómo hablar' vs 'Cómo NO hablar'.\n"
                         "3. **Reglas para IA**: Define explícitamente cómo debe comportarse un agente de IA al redactar para esta marca.\n"
                         "4. **Formato**: Usa Markdown profesional, con negritas, listas y encabezados ## y ###.\n"
-                        "5. **Personalidad**: Si el feedback del auditor sugirió mejoras de tono, aplícalas aquí."
+                        "5. **Personalidad**: Si el feedback del auditor sugirió mejoras de tono, aplícalas aquí.\n"
+                        "6. SECCIÓN VISUAL TÉCNICA: Crea una sección llamada '## Lineamientos Visuales'.\n"
+                        "   - Define los códigos Hexadecimales de los colores proporcionados.\n"
+                        "   - Escribe reglas explícitas de 'Uso de Logo' (ej: tamaño mínimo, fondos permitidos).\n"
+                        "   - Describe el estilo fotográfico permitido.\n"
+                        "   *IMPORTANTE*: Redacta esto de forma que una IA de visión pueda usar estas reglas para auditar una imagen."
                     ),
                 ),
             ]
@@ -87,6 +90,65 @@ class BrandArchitectAgent:
                 "tone": tone,
                 "forbidden": forbidden,
                 "additional": additional,
+                "visual_identity": f"REGLAS VISUALES:\n- Colores: {colors}\n- Estilo: {visual_style}\n- Logo: {logo_rules}",
+                "audit_feedback": feedback_str,
+            }
+        )
+
+        return response.content
+
+    @audit_trace(name="Brand Architect - Manual Refinement")
+    def refine_manual(
+        self,
+        current_content: str,
+        refinement_instructions: str,
+        brand_name: str,
+        audit_feedback: List[str] = [],
+    ) -> str:
+        feedback_str = (
+            "\n".join([f"- {f}" for f in audit_feedback])
+            if audit_feedback
+            else "Ninguna observación."
+        )
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                (
+                    "system",
+                    (
+                        "Eres un Editor Senior de Identidad de Marca. Tu tarea es MODIFICAR un manual existente "
+                        "siguiendo las instrucciones precisas del usuario, manteniendo la coherencia con el resto del documento."
+                        "REGLAS DE PRIORIDAD:\n"
+                        "1. La ESENCIA BASE de la marca es sagrada.\n"
+                        "2. Las instrucciones del usuario son tu guía de cambio.\n"
+                        "3. Si el auditor detectó conflictos, debes resolver la edición de forma que se mitiguen esos riesgos."
+                    ),
+                ),
+                (
+                    "user",
+                    (
+                        "MARCA: {brand_name}\n\n"
+                        "### OBSERVACIONES DEL AUDITOR:\n{audit_feedback}\n\n"
+                        "### CONTENIDO ACTUAL DEL MANUAL:\n"
+                        "{current_content}\n\n"
+                        "### INSTRUCCIONES DE AJUSTE:\n"
+                        "{instructions}\n\n"
+                        "--- \n"
+                        "REGLAS DE EDICIÓN:\n"
+                        "1. Mantén la estructura Markdown original.\n"
+                        "2. Solo cambia las secciones afectadas por las instrucciones.\n"
+                        "3. Asegúrate de que el tono general siga siendo profesional.\n"
+                        "4. Devuelve el manual COMPLETO con los cambios aplicados."
+                    ),
+                ),
+            ]
+        )
+
+        chain = prompt | self.llm
+        response = chain.invoke(
+            {
+                "brand_name": brand_name,
+                "current_content": current_content,
+                "instructions": refinement_instructions,
                 "audit_feedback": feedback_str,
             }
         )

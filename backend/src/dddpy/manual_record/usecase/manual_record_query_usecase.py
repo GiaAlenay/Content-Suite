@@ -17,13 +17,13 @@ class ManualRecordQueryUseCase:
         logging.info("ManualRecordQueryUseCase initialized")
         self.repository = repository
 
-    def get_latest_version_by_brand_id(
+    def get_current_version_by_brand_id(
         self, brand_id: str
     ) -> Optional[ManualRecordEntity]:
         logging.info(
             f"Delegating manual_record fetch by brand_id={brand_id} latest version"
         )
-        return self.repository.get_latest_version_by_brand_id(brand_id)
+        return self.repository.get_current_version_by_brand_id(brand_id)
 
     def get_by_id(self, id: str) -> Optional[ManualRecordEntity]:
         logging.info(f"Delegating manual_record fetch by id={id}")

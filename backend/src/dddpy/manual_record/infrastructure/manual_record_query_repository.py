@@ -57,12 +57,12 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
             ManualRecordMapper.to_domain(db_manual_record) if db_manual_record else None
         )
 
-    def get_latest_version_by_brand_id(
+    def get_current_version_by_brand_id(
         self, brand_id: str
     ) -> Optional[ManualRecordEntity]:
         logging.info(
             f"Fetching latest version of manual_record with brand_id={brand_id}",
-            method="get_latest_version_by_brand_id",
+            method="get_current_version_by_brand_id",
         )
 
         response = (

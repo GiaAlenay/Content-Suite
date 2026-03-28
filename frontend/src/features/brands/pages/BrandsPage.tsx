@@ -10,7 +10,7 @@ import { AddBrandModal } from "../components/AddBrand/AddBrand";
 import { ConfirmActionModal } from "../../../common/components/ConfirmActionModal/ConfirmActionModal";
 import { useBrands } from "../hooks/useBrands";
 import NotificationService from "../../../common/utils/Notification";
-import { useUpload } from "../../../common/components/UploadFile/uploadQuery";
+import { useUpload } from "../../../common/components/StorageService/uploadQuery";
 import {
   deactivateDescript,
   deactivateTitle,

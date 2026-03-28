@@ -18,6 +18,8 @@ from dddpy.shared.vectorize.vector_service import VectorizationService
 from dddpy.manual_generator.usecase.manual_governance_audit_agent import (
     ManualGovernanceAuditor,
 )
+from dddpy.manual_generator.usecase.manual_generator_pdf import PDFGeneratorService
+from dddpy.shared.upload.upload import StorageService
 
 
 def brand_architect_agent_factory():
@@ -26,6 +28,14 @@ def brand_architect_agent_factory():
 
 def manual_governance_audit_agent_agent_factory():
     return ManualGovernanceAuditor()
+
+
+def manual_pdf_generator_factory():
+    return PDFGeneratorService()
+
+
+def storage_service_factory():
+    return StorageService()
 
 
 def manual_generator_usecase_factory():
@@ -37,4 +47,6 @@ def manual_generator_usecase_factory():
         vectorize_service=VectorizationService(),
         brand_architect=brand_architect_agent_factory(),
         manual_prompt_auditor=manual_governance_audit_agent_agent_factory(),
+        pdf_generator=manual_pdf_generator_factory(),
+        storage=storage_service_factory(),
     )

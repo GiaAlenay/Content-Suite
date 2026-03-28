@@ -16,6 +16,20 @@ class ManualRequestSchema(BaseModel):
         description="Instrucciones libres del usuario",
         example="Incluye una sección específica para atención al cliente en Twitter",
     )
+    brand_colors: List[str] = Field(
+        ...,
+        example=["Azul Cobalto #0047AB", "Blanco Puro #FFFFFF"],
+        description="Colores principales de la marca",
+    )
+    visual_style: str = Field(
+        ...,
+        example="Minimalista, con mucho espacio en blanco y fotografía lifestyle",
+        description="Estilo visual general",
+    )
+    logo_guidelines: Optional[str] = Field(
+        "El logo debe tener un área de protección igual a su altura. No usar sobre fondos complejos.",
+        description="Reglas básicas de uso del logo",
+    )
 
 
 class AuditManualSchema(BaseModel):

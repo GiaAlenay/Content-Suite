@@ -14,7 +14,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { UploadFile } from "../../../../common/components/UploadFile/UploadFile";
+import { UploadFile } from "../../../../common/components/StorageService/UploadFile";
 import {
   CreateBrandSchema,
   type CreateBrandInputs,

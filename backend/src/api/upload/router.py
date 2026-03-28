@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, File, UploadFile
 
 
-from dddpy.shared.upload.upload import UploadService
+from dddpy.shared.upload.upload import StorageService
 
 
 router = APIRouter()
@@ -22,7 +22,7 @@ async def upload_imagen(brand_code: str, file: UploadFile = File(...)):
     if not file.content_type.startswith("image/"):
         raise ValueError("El archivo debe ser una imagen")
 
-    service = UploadService()
+    service = StorageService()
     result_url = await service.upload_image_to_supabase(
         brand_code=brand_code, file=file
     )

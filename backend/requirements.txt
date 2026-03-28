@@ -78,6 +78,7 @@ opentelemetry-semantic-conventions==0.61b0
 orjson==3.11.7
 ormsgpack==1.12.2
 packaging==25.0
+pillow==12.1.1
 postgrest==2.28.3
 propcache==0.4.1
 protobuf==6.33.6
@@ -99,6 +100,7 @@ python-multipart==0.0.22
 PyYAML==6.0.3
 realtime==2.28.3
 regex==2026.2.28
+reportlab==4.4.10
 requests==2.32.5
 requests-toolbelt==1.0.0
 rich==14.3.3

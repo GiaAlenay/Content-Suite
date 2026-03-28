@@ -1,6 +1,6 @@
 class ManualRecordSucessMessage(str):
-    MANUALRECORD_CREATED = "Manual Record successfully creado."
-    MANUALRECORD_GET = "Manual Record retrieved successfully."
-    MANUALRECORDS_GET = "Manual Records listed successfully"
-    MANUALRECORD_DELETED = "Manual Record successfully deleted."
-    MANUALRECORD_UPDATED = "Manual Record successfully updated."
+    MANUALRECORD_CREATED = "Manual correctamente creado."
+    MANUALRECORD_GET = "Manual correctamente recuperado."
+    MANUALRECORDS_GET = "Manuales correctamente listados."
+    MANUALRECORD_DELETED = "Manual correctamente eliminado."
+    MANUALRECORD_UPDATED = "Manual correctamente actualizado."

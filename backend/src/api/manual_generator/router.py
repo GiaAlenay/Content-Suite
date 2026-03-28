@@ -30,16 +30,42 @@ def create(
     return response
 
 
-@router.post("/audit/{id_brand}")
+@router.post(
+    "/audit/{id_brand}",
+    dependencies=[Depends(AuthChecker(UserRole.ADMIN))],
+)
 def audit(
     id_brand: str,
     raw_parameters: ManualRequestSchema,
-    current_user: dict = Depends(AuthChecker([UserRole.ADMIN])),
 ):
-    logging.info(
-        f"Create Manual route for brand: {id_brand} and current_user={current_user}"
-    )
     response = manual_generator_usecase_factory().audit_and_generate(
         brand_id=id_brand, raw_parameters=raw_parameters
+    )
+    return response
+
+
+@router.post(
+    "/refine/{manual_id}",
+    dependencies=[Depends(AuthChecker(UserRole.ADMIN))],
+)
+def refine(
+    manual_id: str,
+    refinement_prompt: str,
+):
+    logging.info(f"Refining manual {manual_id}")
+    response = manual_generator_usecase_factory().execute_refinement(
+        manual_id=manual_id, refinement_prompt=refinement_prompt
+    )
+    return response
+
+
+@router.post("/confirm/{manual_id}")
+def confirm(
+    manual_id: str,
+    current_user: dict = Depends(AuthChecker([UserRole.ADMIN])),
+):
+    logging.info(f"Refining manual {manual_id}")
+    response = manual_generator_usecase_factory().confirm_manual(
+        manual_id=manual_id, user_id=current_user["id"]
     )
     return response

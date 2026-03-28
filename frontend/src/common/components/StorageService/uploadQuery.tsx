@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { uploadService } from "./uploadService";
+import { StorageService } from "./uploadService";
 
 export const useUpload = () => {
   const queryClient = useQueryClient();
 
   const uploadImageMutation = useMutation({
     mutationFn: ({ brandCode, file }: { brandCode: string; file: File }) =>
-      uploadService.uploaImage(brandCode, file),
+      StorageService.uploadImage(brandCode, file),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["brands"] });
     },

@@ -11,7 +11,7 @@ class ManualRecordQueryRepository(ABC):
         pass
 
     @abstractmethod
-    def get_latest_version_by_brand_id(
+    def get_current_version_by_brand_id(
         self, brand_id: str
     ) -> Optional[ManualRecordEntity]:
         pass

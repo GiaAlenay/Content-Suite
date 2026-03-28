@@ -1,9 +1,9 @@
 import api from "../../../api/axios/axiosConfig";
 
-export const uploadService = {
+export const StorageService = {
  
 
-  uploaImage: async (brandCode: string, file: File): Promise<string> => {
+  uploadImage: async (brandCode: string, file: File): Promise<string> => {
     try {
       const formData = new FormData();
       formData.append("file", file); 
