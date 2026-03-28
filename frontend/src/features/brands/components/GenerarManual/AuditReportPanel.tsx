@@ -39,13 +39,19 @@ export const AuditReportPanel = ({
         </AlertTitle>
         {isHigh
           ? "Se han detectado conflictos críticos que impiden la generación de un manual profesional."
-          : "La IA ha detectado áreas que podrían confundir a la audiencia."}
+          : "Nuestro sistema ha detectado áreas que podrían confundir a la audiencia."}
       </Alert>
 
       <Typography variant="subtitle1" fontWeight="bold" sx={{ mt: 2 }}>
         Conflictos detectados:
       </Typography>
-      <List>
+      <List
+        sx={{
+          minHeight: "auto",
+          maxHeight: 500,
+          overflowY: "auto",
+        }}
+      >
         {report.feedback.map((msg, index) => (
           <ListItem key={index} sx={{ px: 0 }}>
             <ListItemIcon sx={{ minWidth: 35 }}>

@@ -6,11 +6,22 @@ import {
   TextField,
   Button,
   Stack,
-  CircularProgress,
 } from "@mui/material";
-import { IconSend, IconFileCheck } from "@tabler/icons-react";
+import { IconSend } from "@tabler/icons-react";
 import ReactMarkdown from "react-markdown";
 import type { ManualRecord } from "../../interfaces/ManualGeneratorData";
+import SettingsIcon from "@mui/icons-material/Settings";
+import { keyframes } from "@mui/system";
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
 interface ManualWorkspaceProps {
   manual: ManualRecord;
   onRefine: (prompt: string) => Promise<void>;
@@ -31,10 +42,9 @@ export const ManualWorkspace = ({
   const handleRefineSubmit = async () => {
     if (!refinePrompt.trim()) return;
     await onRefine(refinePrompt);
-    setRefinePrompt(""); // Limpiar tras éxito
+    setRefinePrompt("");
   };
 
-  // Memorizamos el visor para que no se re-procese el Markdown si solo cambia el texto del input
   const MarkdownViewer = useMemo(
     () => (
       <Box
@@ -51,29 +61,21 @@ export const ManualWorkspace = ({
     <Box
       sx={{ display: "flex", flexDirection: "column", height: "100%", gap: 2 }}
     >
-      {/* Cabecera del Workspace */}
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography variant="h6" fontWeight="bold">
-          Borrador del Manual (v{manual.version})
+          Borrador (v{manual.version})
         </Typography>
         <Button
-          variant="contained"
+          variant="outlined"
           color="success"
-          startIcon={
-            isConfirming ? (
-              <CircularProgress size={20} color="inherit" />
-            ) : (
-              <IconFileCheck size={20} />
-            )
-          }
           onClick={onConfirm}
           disabled={isConfirming || isRefining}
+          sx={{ textTransform: "none", minWidth: "100px" }}
         >
-          Confirmar y Generar PDF
+          Aprobar
         </Button>
       </Stack>
 
-      {/* Visor de Documento (Efecto Papel) */}
       <Paper
         elevation={3}
         sx={{
@@ -82,30 +84,43 @@ export const ManualWorkspace = ({
           borderRadius: 2,
           bgcolor: "white",
           border: "1px solid #e0e0e0",
+          padding: "24px",
         }}
       >
         {isRefining ? (
           <Stack
             alignItems="center"
             justifyContent="center"
-            sx={{ height: "100%", bgcolor: "rgba(255,255,255,0.7)" }}
+            sx={{
+              height: "100%",
+              bgcolor: "rgba(255,255,255,0.7)",
+              textAlign: "center",
+            }}
           >
-            <CircularProgress size={40} />
-            <Typography sx={{ mt: 2 }}>Refinando con IA...</Typography>
+            <SettingsIcon
+              sx={{
+                fontSize: 50,
+                color: "gray",
+                animation: `${rotate} 2s linear infinite`,
+              }}
+            />
+            <Typography
+              sx={{ mt: 2, fontWeight: 500, color: "text.secondary" }}
+            >
+              Refinando detalles...
+            </Typography>
           </Stack>
         ) : (
           MarkdownViewer
         )}
       </Paper>
 
-      {/* Panel de Refinamiento (Chat Bar) */}
       <Paper
         elevation={4}
         sx={{
           p: 2,
           borderRadius: 3,
-          border: "1px solid",
-          borderColor: "primary.light",
+          border: "1px solid b",
         }}
       >
         <Stack direction="row" spacing={2} alignItems="flex-end">
@@ -118,20 +133,25 @@ export const ManualWorkspace = ({
             onChange={(e) => setRefinePrompt(e.target.value)}
             disabled={isRefining}
             variant="standard"
-            InputProps={{ disableUnderline: true, sx: { px: 1 } }}
+            InputProps={{ disableUnderline: true }}
           />
           <Button
-            variant="contained"
             onClick={handleRefineSubmit}
-            disabled={!refinePrompt.trim() || isRefining}
-            sx={{ borderRadius: 2, minWidth: 48, height: 48, p: 0 }}
+            disabled={!refinePrompt.trim() || isRefining || isConfirming}
+            sx={{
+              borderRadius: 2,
+              minWidth: 48,
+              height: 48,
+              p: 0,
+              color: "rgba(121, 121, 121, 0.87)",
+            }}
           >
             <IconSend size={24} />
           </Button>
         </Stack>
       </Paper>
 
-      <Typography variant="caption" color="text.secondary" textAlign="center">
+      <Typography variant="caption" sx={{ color: "gray" }} textAlign="center">
         Versión actual: {new Date(manual.created_at || "").toLocaleString()}
       </Typography>
     </Box>

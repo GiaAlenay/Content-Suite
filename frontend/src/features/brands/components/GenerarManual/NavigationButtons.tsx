@@ -5,6 +5,8 @@ interface NavigationButtonsProps {
   setActiveStep: (step: (prev: number) => number) => void;
   isLastStep: boolean;
   isAuditing: boolean;
+  isRefining: boolean;
+  isConfirming: boolean;
 }
 
 export const NavigationButtons = ({
@@ -12,6 +14,8 @@ export const NavigationButtons = ({
   setActiveStep,
   isLastStep,
   isAuditing,
+  isRefining,
+  isConfirming,
 }: NavigationButtonsProps) => {
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
@@ -43,7 +47,7 @@ export const NavigationButtons = ({
           type="submit"
           variant="contained"
           color="primary"
-          disabled={isAuditing}
+          disabled={isAuditing || isRefining || isConfirming}
           sx={{ minWidth: "100px !important" }}
         >
           {isAuditing ? (
