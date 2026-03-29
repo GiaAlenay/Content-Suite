@@ -248,7 +248,7 @@ table {
 }
 
 .filtros-dialog-cont {
-  width: 100%;
+
   display: flex;
 }
 
@@ -301,7 +301,7 @@ table {
   color: #808080;
 }
 
-.tag-brand-estado {
+.tag-item-estado {
   width: 90px;
   height: 20px;
   padding: 2px 8px 2px 8px;
@@ -320,10 +320,7 @@ table {
   text-decoration-skip-ink: none;
 }
 
-.tag-creado {
-  border: 2px solid #fdc560;
-  color: #fdc560;
-}
+
 .tag-enproceso {
   border: 2px solid #34a1de;
   color: #34a1de;
@@ -336,6 +333,20 @@ table {
   border: 2px solid #808080;
   color: #808080;
 }
+
+.tag-pending {
+  border: 2px solid #fdc560;
+  color: #fdc560;
+}
+.tag-approved {
+  border: 2px solid #69bd79;
+  color: #69bd79;
+}
+.tag-rejected {
+  border: 2px solid #790404;
+  color: #790404;
+}
+
 
 .MuiList-root {
   max-height: 200px;

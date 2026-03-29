@@ -31,3 +31,8 @@ export interface AuthContextType {
   signIn: (data: LoginFormInputs) => Promise<void>;
   signOut: () => Promise<void>;
 }
+
+export interface ListaSelectInterface{
+  name:string;
+  value:string
+}

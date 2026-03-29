@@ -30,3 +30,7 @@ class ContentLogQueryUseCase:
     def list_all(self) -> List[ContentLogEntity]:
         logging.info("Delegating content_log list_all")
         return self.repository.list_all()
+
+    def list_by_creator_id(self, creator_id: str) -> List[ContentLogEntity]:
+        logging.info("Delegating content_log list_by_creator_id")
+        return self.repository.list_by_creator_id(creator_id)

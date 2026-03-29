@@ -19,3 +19,7 @@ class ContentLogQueryRepository(ABC):
     @abstractmethod
     def list_all(self) -> List[ContentLogEntity]:
         pass
+
+    @abstractmethod
+    def list_by_creator_id(self, creator_id: str) -> List[ContentLogEntity]:
+        pass

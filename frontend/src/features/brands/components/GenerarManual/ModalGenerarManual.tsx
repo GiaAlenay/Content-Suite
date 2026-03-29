@@ -24,7 +24,7 @@ import {
   type GenerateManualInputs,
 } from "../../schemas/generarManual";
 import { ManualSectionField } from "./ManualSectionField";
-import { useManualGenerator } from "../../hooks/useBrands copy";
+import { useManualGenerator } from "../../hooks/useManualGenerator";
 
 interface GenerateManualModalProps {
   open: boolean;

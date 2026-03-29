@@ -1,30 +1,16 @@
-import type { SelectChangeEvent } from "@mui/material";
-import { TextField, MenuItem, InputAdornment, Select } from "@mui/material";
+import { TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 interface Props {
-  status: string;
-  setStatus: React.Dispatch<React.SetStateAction<string>>;
   searchValue: string;
   setSearchValue: React.Dispatch<React.SetStateAction<string>>;
-  listaStatusDisponibles: string[];
 }
-const BrandFilters: React.FC<Props> = ({
-  status,
-  setStatus,
-  searchValue,
-  setSearchValue,
-  listaStatusDisponibles,
-}) => {
-  const handleChangeStatus = (event: SelectChangeEvent) => {
-    setStatus(event.target.value);
-  };
-
-  const handleChangeSearchValue = (e) => {
+const BrandFilters: React.FC<Props> = ({ searchValue, setSearchValue }) => {
+  const handleChangeSearchValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
 
   return (
-    <div className="filtros-dialog-cont">
+    <div className="filtros-dialog-cont" style={{ width: "50%" }}>
       <div className="form-field-cont hijo">
         <div className="field-name">Buscador</div>
         <TextField
@@ -43,32 +29,6 @@ const BrandFilters: React.FC<Props> = ({
             ),
           }}
         />
-      </div>
-
-      <div className="form-field-cont hijo">
-        {" "}
-        <div className="field-name">Estado</div>{" "}
-        <Select
-          value={status}
-          onChange={handleChangeStatus}
-          displayEmpty
-          inputProps={{ "aria-label": "Without label" }}
-          style={{
-            minWidth: "220px",
-            maxHeight: "48px",
-            height: "48px",
-            textAlign: "left",
-          }}
-        >
-          <MenuItem value="">
-            <em>Todos</em>
-          </MenuItem>
-          {listaStatusDisponibles.map((e: string, i: number) => (
-            <MenuItem key={i} value={e} style={{ color: "#2A3547" }}>
-              {e}
-            </MenuItem>
-          ))}
-        </Select>
       </div>
     </div>
   );

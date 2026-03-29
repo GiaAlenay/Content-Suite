@@ -10,7 +10,7 @@ import {
   type GenerateManualInputs,
 } from "../schemas/generarManual";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useManualGenerator } from "../hooks/useBrands copy";
+import { useManualGenerator } from "../hooks/useManualGenerator";
 import { Box } from "@mui/material";
 import { ManualStepper } from "../components/GenerarManual/ManualStepper";
 import { NavigationButtons } from "../components/GenerarManual/NavigationButtons";

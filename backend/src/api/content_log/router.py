@@ -17,15 +17,16 @@ logging = Logger("content_log router")
 from dddpy.content_log.usecase.content_log_factory import content_log_usecase_factory
 
 
-@router.get(
-    "/list",
-    dependencies=[Depends(AuthChecker())],
-)
-def get_all():
-    logging.info("list_content_log Route")
+@router.get("/list_me")
+def get_list_me(
+    current_user: dict = Depends(AuthChecker([UserRole.CREATOR])),
+):
     logging.info("Listing all content_log")
+
     usecase = content_log_usecase_factory()
-    result_content_log = usecase.list_all()
+    result_content_log = usecase.get_list_me(
+        user_role=current_user["role"], user_id=current_user["id"]
+    )
     return result_content_log
 
 

@@ -2,14 +2,20 @@ import {
   TableCell,
   TableBody,
   TableRow,
-  Avatar,
   Tooltip,
   IconButton,
 } from "@mui/material";
 import React from "react";
-import type { BrandTableData } from "../../interfaces/BrandData";
+import type { ContentLogTableData } from "../../interfaces/ContentLogData";
 import type { Order } from "../../../../common/interfaces/common";
-import { IconBulbFilled, IconEye, IconTrashFilled } from "@tabler/icons-react";
+import {
+  IconBulbFilled,
+  IconEye,
+  IconPencil,
+  IconPencilBolt,
+  IconPencilFilled,
+  IconTrashFilled,
+} from "@tabler/icons-react";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -28,34 +34,44 @@ function getComparator(order: Order, orderBy: string): (a, b) => number {
 }
 
 interface Props {
-  brandList: BrandTableData[];
+  contentLogList: ContentLogTableData[];
   order: Order;
-  orderBy: keyof BrandTableData | string;
+  orderBy: keyof ContentLogTableData | string;
   page: number;
   rowsPerPage: number;
-  onGenerateManual: (brand: BrandTableData) => void;
-  onDeleteBrand: (brand: BrandTableData) => void;
+  onGenerateContenLog: (contentLog: ContentLogTableData) => void;
+  onWatchContentLog: (contentLog: ContentLogTableData) => void;
 }
 
 const MyTableBody: React.FC<Props> = ({
-  brandList,
+  contentLogList,
   order,
   orderBy,
   page,
   rowsPerPage,
-  onGenerateManual,
-  onDeleteBrand,
+  onGenerateContenLog,
+  onWatchContentLog,
 }) => {
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - brandList.length) : 0;
+    page > 0
+      ? Math.max(0, (1 + page) * rowsPerPage - contentLogList.length)
+      : 0;
 
   const visibleRows = React.useMemo(
     () =>
-      brandList
+      contentLogList
         .sort(getComparator(order, orderBy))
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage, brandList],
+    [order, orderBy, page, rowsPerPage, contentLogList],
   );
+
+  const renderTag = (status: string) => {
+    if (status === "PENDING")
+      return <div className="tag-item-estado tag-pending">Pendiente</div>;
+    if (status === "APPROVED")
+      return <div className="tag-item-estado tag-approved">Aprovado</div>;
+    return <div className="tag-item-estado tag-rejected">Rechazado</div>;
+  };
 
   return (
     <TableBody>
@@ -75,14 +91,9 @@ const MyTableBody: React.FC<Props> = ({
               sx={{
                 borderBottom:
                   index === visibleRows.length - 1 ? "none" : undefined,
-                boxShadow: index === visibleRows.length - 1 && "none",
               }}
             >
-              <Avatar
-                src={row.logo_url}
-                variant="rounded"
-                sx={{ width: 40, height: 40 }}
-              />
+              {row.brand_code}
             </TableCell>
             <TableCell
               className="table-td"
@@ -91,7 +102,7 @@ const MyTableBody: React.FC<Props> = ({
                   index === visibleRows.length - 1 ? "none" : undefined,
               }}
             >
-              {row.code}
+              {row.brand_name}
             </TableCell>
             <TableCell
               className="table-td"
@@ -100,7 +111,7 @@ const MyTableBody: React.FC<Props> = ({
                   index === visibleRows.length - 1 ? "none" : undefined,
               }}
             >
-              {row.name}
+              {row.created_at}
             </TableCell>
             <TableCell
               className="table-td"
@@ -109,11 +120,16 @@ const MyTableBody: React.FC<Props> = ({
                   index === visibleRows.length - 1 ? "none" : undefined,
               }}
             >
-              {row.status === "ACTIVE" ? (
-                <div className="tag-item-estado tag-active">Activo</div>
-              ) : (
-                <div className="tag-item-estado tag-inactive">Inactivo</div>
-              )}
+              {row.content_type}
+            </TableCell>
+            <TableCell
+              className="table-td"
+              sx={{
+                borderBottom:
+                  index === visibleRows.length - 1 ? "none" : undefined,
+              }}
+            >
+              {renderTag(row.status)}
             </TableCell>
             <TableCell
               className="table-td"
@@ -123,20 +139,14 @@ const MyTableBody: React.FC<Props> = ({
               }}
             >
               <Tooltip title="Generar Manual">
-                <IconButton onClick={() => onGenerateManual(row)}>
-                  <IconBulbFilled />
+                <IconButton onClick={() => onGenerateContenLog(row)}>
+                  <IconPencilFilled />
                 </IconButton>
               </Tooltip>
 
               <Tooltip title="Ver más información">
-                <IconButton onClick={() => onGenerateManual(row)}>
+                <IconButton onClick={() => onWatchContentLog(row)}>
                   <IconEye />
-                </IconButton>
-              </Tooltip>
-
-              <Tooltip title="Eliminar marca">
-                <IconButton onClick={() => onDeleteBrand(row)}>
-                  <IconTrashFilled />
                 </IconButton>
               </Tooltip>
             </TableCell>

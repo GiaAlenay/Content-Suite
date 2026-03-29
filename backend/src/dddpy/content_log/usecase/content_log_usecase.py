@@ -1,10 +1,8 @@
 from dddpy.content_log.usecase.content_log_cmd_usecase import ContentLogCmdUseCase
 from dddpy.content_log.usecase.content_log_query_usecase import ContentLogQueryUseCase
 
-# from dddpy.content_log.usecase.content_log_factory import (
-#     content_log_cmd_usecase_factory,
-#     content_log_query_usecase_factory,
-# )
+from dddpy.auth.usecase.auth_cmd_schema import UserRole
+
 from dddpy.content_log.usecase.content_log_cmd_schema import (
     CreateContentLogSchema,
     GenerateContentRequest,
@@ -25,12 +23,10 @@ from dddpy.content_log.domain.content_log_exception import (
 )
 from dddpy.content_log.domain.content_log_success import ContentLogSucessMessage
 
-# from dddpy.shared.vectorize.vector_service import VectorizationService
 from dddpy.brand.usecase.brand_query_usecase import (
     BrandQueryUseCase,
 )
 
-# from dddpy.brand.usecase.brand_factory import brand_query_usecase_factory
 from dddpy.brand.domain.brand_exception import BrandNotFound
 from dddpy.content_log.usecase.creative_agent import (
     CreativeEngineAgent,
@@ -38,13 +34,6 @@ from dddpy.content_log.usecase.creative_agent import (
 from dddpy.content_log.usecase.governance_audit_agent import (
     GovernanceAuditAgent,
 )
-
-# from dddpy.brand_manual_vector.usecase.brand_manual_vector_query_usecase import (
-#     BrandManualVectorQueryUseCase,
-# )
-# from dddpy.brand_manual_vector.usecase.brand_manual_vector_factory import (
-#     brand_manual_vector_query_usecase_factory,
-# )
 
 
 class ContentLogUseCase:
@@ -177,9 +166,13 @@ class ContentLogUseCase:
         logging.info(f"ContentLog updated successfully: {success}")
         return success
 
-    def list_all(self):
-        logging.info("list_all")
-        content_log = self.content_log_query_usecase.list_all()
+    def get_list_me(self, user_role: str, user_id: str):
+        logging.info("get_list_me")
+        content_log = []
+        if user_role == UserRole.ADMIN.value:
+            content_log = self.content_log_query_usecase.list_all()
+        else:
+            content_log = self.content_log_query_usecase.list_by_creator_id(user_id)
         success = ResponseSuccessSchema(
             success=True,
             message=ContentLogSucessMessage.CONTENTLOGS_GET,

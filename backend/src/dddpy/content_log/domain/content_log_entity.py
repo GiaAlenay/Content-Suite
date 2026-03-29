@@ -16,6 +16,8 @@ class ContentLogEntity:
         prompt_origin: Optional[str] = None,
         created_at: Optional[datetime] = None,
         updated_at: Optional[datetime] = None,
+        brand_name: Optional[str] = None,
+        brand_code: Optional[str] = None,
     ) -> None:
         self.id = id
         self.brand_id = brand_id
@@ -28,6 +30,8 @@ class ContentLogEntity:
         self.prompt_origin = prompt_origin
         self.created_at = created_at
         self.updated_at = updated_at
+        self.brand_name = brand_name
+        self.brand_code = brand_code
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -40,6 +44,8 @@ class ContentLogEntity:
             "agent_feedback": self.agent_feedback,
             "audit_by": self.audit_by,
             "prompt_origin": self.prompt_origin,
+            "brand_name": self.brand_name,
+            "brand_code": self.brand_code,
             "created_at": (
                 self.created_at
                 if isinstance(self.created_at, str)

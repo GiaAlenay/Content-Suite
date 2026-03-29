@@ -5,10 +5,11 @@ export const NoFilteredData = ({ itemsName }: { itemsName: string }) => {
   return (
     <Box
       sx={{
+        mt: 5,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        py: 10,
+        py: 20,
         borderRadius: 2,
         border: "1px dashed #ccc",
       }}

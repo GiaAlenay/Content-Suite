@@ -8,8 +8,8 @@ import {
 
 import { visuallyHidden } from "@mui/utils";
 import type { Order, TableColumn } from "../../../../common/interfaces/common";
-import type { BrandTableData } from "../../interfaces/BrandData";
 import { headCells } from "../../constants/headCell";
+import type { ContentLogTableData } from "../../interfaces/ContentLogData";
 
 function MyTableHead({
   order,
@@ -17,7 +17,7 @@ function MyTableHead({
   onRequestSort,
 }: {
   order: Order;
-  orderBy: keyof BrandTableData | string;
+  orderBy: keyof ContentLogTableData | string;
   onRequestSort: (property: string) => void;
 }) {
   const createSortHandler = (property: string) => () => {

@@ -8,6 +8,7 @@ from dddpy.content_log.domain.content_log_data import (
 class ContentLogMapper:
     @staticmethod
     def to_domain(db_dict: dict) -> ContentLogEntity:
+        brand_info = db_dict.get("brands", {})
         return ContentLogEntity(
             id=db_dict.get("id"),
             brand_id=db_dict.get("brand_id"),
@@ -20,6 +21,8 @@ class ContentLogMapper:
             prompt_origin=db_dict.get("prompt_origin"),
             created_at=db_dict.get("created_at"),
             updated_at=db_dict.get("updated_at"),
+            brand_name=brand_info.get("name"),
+            brand_code=brand_info.get("code"),
         )
 
     @staticmethod

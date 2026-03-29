@@ -56,7 +56,26 @@ class ContentLogQueryRepositoryImpl(ContentLogQueryRepository):
     def list_all(self) -> List[ContentLogEntity]:
         logging.info("Fetching all  ", method="list_all")
 
-        response = self._client.table(self._table).select("*").execute()
+        response = (
+            self._client.table(self._table).select("*, brands(name, code)").execute()
+        )
 
-        db_content_logs = response.data  # response.data es una lista de diccionarios
+        db_content_logs = response.data
+        return [ContentLogMapper.to_domain(db) for db in db_content_logs]
+
+    def list_by_creator_id(self, creator_id: str) -> List[ContentLogEntity]:
+        logging.info(
+            f"Fetching logs for creator: {creator_id}", method="list_by_creator"
+        )
+
+        response = (
+            self._client.table(self._table)
+            .select("*, brands(name, code)")
+            .eq("creator_id", creator_id)
+            .execute()
+        )
+
+        logging.info(response)
+
+        db_content_logs = response.data
         return [ContentLogMapper.to_domain(db) for db in db_content_logs]
