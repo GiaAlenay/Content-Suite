@@ -6,9 +6,25 @@ import type { CreateBrandInputs } from "../schemas/agregarBrand";
 export const useBrands = () => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["brands"],
+  const {
+    data: brandsData,
+    isLoading: isLoadingBrands,
+    isError: isErrorBrands,
+    error: errorBrand,
+  } = useQuery({
+    queryKey: ["brands", "all"],
     queryFn: brandService.getAllBrands,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const {
+    data: activeBrandsData,
+    isLoading: isLoadingBrandsActiveManual,
+    isError: isErrorBrandsActiveManual,
+    error: errorBrandActiveManual,
+  } = useQuery({
+    queryKey: ["brands", "active-manual"],
+    queryFn: brandService.getAllActiveBrandsWithManual,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -20,13 +36,28 @@ export const useBrands = () => {
     },
   });
 
+  const deleteBrandMutation = useMutation({
+    mutationFn: (brandId: string) => brandService.deleteBrand(brandId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["brands"] });
+    },
+  });
+
   return {
-    brands: data || [],
-    isLoadingBrands: isLoading,
-    isErrorBrands: isError,
-    errorBrand: error,
+    brands: brandsData || [],
+    isLoadingBrands,
+    isErrorBrands,
+    errorBrand,
+
+    brandsActiveManual: activeBrandsData || [],
+    isLoadingBrandsActiveManual,
+    isErrorBrandActiveManual: isErrorBrandsActiveManual,
+    errorBrandActiveManual: errorBrandActiveManual,
 
     createBrand: createBrandMutation.mutateAsync,
     isCreating: createBrandMutation.isPending,
+
+    deleteBrand: deleteBrandMutation.mutateAsync,
+    isDeleting: deleteBrandMutation.isPending,
   };
 };

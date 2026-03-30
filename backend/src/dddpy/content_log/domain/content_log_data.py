@@ -8,15 +8,15 @@ class CreateContentLogData:
     creator_id: str
     content_data: Dict[str, Any]
     content_type: str
-    status: str = "PENDING"
+    status: str = "CREATED"
     agent_feedback: Optional[str] = None
     audit_by: Optional[str] = None
     prompt_origin: Optional[str] = None
+    parent_id: Optional[str] = None
 
 
 @dataclass(frozen=True)
 class UpdateContentLogData:
-    # Solo los campos editables según tu requerimiento
     status: Optional[str] = None
     agent_feedback: Optional[str] = None
     audit_by: Optional[str] = None

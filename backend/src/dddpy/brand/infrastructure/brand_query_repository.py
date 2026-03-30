@@ -19,10 +19,6 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
 
     def get_by_id(self, id: str) -> Optional[BrandEntity]:
         logging.info(f"Fetching brand with id={id}", method="get_by_id")
-
-        # .select("*") es como SELECT *
-        # .eq("id", id) es como WHERE id = id
-        # .maybe_single() es ideal para traer 1 o nada (evita excepciones si no existe)
         response = (
             self._client.table(self._table)
             .select("*")
@@ -75,14 +71,33 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
         return BrandMapper.to_domain(db_brand) if db_brand else None
 
     def list_all(self) -> List[BrandEntity]:
-        logging.info("Fetching all  ", method="list_all")
+        logging.info("Fetching all brands with current manual URL", method="list_all")
 
         response = (
             self._client.table(self._table)
-            .select("*")
+            .select("*, manual_record(url_manual)")
+            .eq("manual_record.is_current_version", True)
             .order("created_at", desc=True)
             .execute()
         )
 
-        db_brands = response.data  # response.data es una lista de diccionarios
+        db_brands = response.data
+        return [BrandMapper.to_domain(db) for db in db_brands]
+
+    def list_active_with_current_manual(self) -> List[BrandEntity]:
+        logging.info(
+            "Fetching active brands with current manual",
+            method="list_active_with_current_manual",
+        )
+
+        response = (
+            self._client.table(self._table)
+            .select("*, manual_record!inner(*)")
+            .eq("status", "ACTIVE")
+            .eq("manual_record.is_current_version", True)
+            .order("created_at", desc=True)
+            .execute()
+        )
+
+        db_brands = response.data
         return [BrandMapper.to_domain(db) for db in db_brands]

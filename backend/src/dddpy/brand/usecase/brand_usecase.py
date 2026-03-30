@@ -105,9 +105,11 @@ class BrandUseCase:
         logging.info("delete")
         logging.info(f"Deleting brand {id}")
 
-        deleted = self.brand_cmd_usecase.delete(id)
-        if not deleted:
+        brand = self.brand_query_usecase.get_by_id(id)
+        if not brand:
             raise BrandNotFound()
+
+        self.brand_cmd_usecase.update(id, UpdateBrandSchema(status="INACTIVE"))
         success = ResponseSuccessSchema(
             success=True, message=BrandSucessMessage.BRAND_DELETED, data={}
         )
@@ -117,6 +119,17 @@ class BrandUseCase:
     def list_all(self):
         logging.info("list_all")
         brand = self.brand_query_usecase.list_all()
+        success = ResponseSuccessSchema(
+            success=True,
+            message=BrandSucessMessage.BRANDS_GET,
+            data=[c.to_dict() for c in brand],
+        )
+        logging.info(f"Brands listed successfully: {len(brand)} brand")
+        return success
+
+    def list_active_with_current_manual(self):
+        logging.info("list_active_with_current_manual")
+        brand = self.brand_query_usecase.list_active_with_current_manual()
         success = ResponseSuccessSchema(
             success=True,
             message=BrandSucessMessage.BRANDS_GET,

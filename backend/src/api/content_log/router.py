@@ -75,7 +75,7 @@ async def auditar_imagen(
     return result
 
 
-@router.put("/update_audited_information/{content_log_id}")
+@router.put("/update/{content_log_id}")
 def update_audited_information(
     content_log_id: str,
     content_log: UpdateContentLogSchema,

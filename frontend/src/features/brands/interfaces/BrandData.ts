@@ -5,6 +5,7 @@ export interface BrandTableData {
   logo_url: string;
   status: string;
   description: string;
+  url_manual?:string| null;
 }
 
 

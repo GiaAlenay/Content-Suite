@@ -15,10 +15,12 @@ export const BrandTable = ({
   data,
   onGenerateManual,
   onDeleteBrand,
+  handleViewPDF,
 }: {
   data: BrandTableData[];
   onGenerateManual: (brand: BrandTableData) => void;
   onDeleteBrand: (brand: BrandTableData) => void;
+  handleViewPDF: (brand: BrandTableData) => void;
 }) => {
   const [order, setOrder] = useState<Order>("asc");
   const [orderBy, setOrderBy] = useState<keyof BrandTableData | string>("code");
@@ -68,6 +70,7 @@ export const BrandTable = ({
               rowsPerPage={rowsPerPage}
               onGenerateManual={onGenerateManual}
               onDeleteBrand={onDeleteBrand}
+              handleViewPDF={handleViewPDF}
             />
           </Table>
         </TableContainer>

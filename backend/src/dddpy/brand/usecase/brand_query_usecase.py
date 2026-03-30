@@ -30,3 +30,7 @@ class BrandQueryUseCase:
     def list_all(self) -> List[BrandEntity]:
         logging.info("Delegating brand list_all")
         return self.repository.list_all()
+
+    def list_active_with_current_manual(self) -> List[BrandEntity]:
+        logging.info("Delegating brand list_active_with_current_manual")
+        return self.repository.list_active_with_current_manual()

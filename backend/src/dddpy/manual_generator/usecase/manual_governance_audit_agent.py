@@ -10,7 +10,7 @@ class ManualGovernanceAuditor(GovernanceAuditAgent):
         super().__init__(vector_repo, vectorize_service)
         self.manual_parser = JsonOutputParser(pydantic_object=AuditManualSchema)
 
-    @audit_trace(name="Manual Governance - Parameter Consistency")
+    # # @audit_trace(name="Manual Governance - Parameter Consistency")
     def verify_manual_params(self, brand_description: str, raw_params: dict) -> dict:
         prompt = ChatPromptTemplate.from_messages(
             [

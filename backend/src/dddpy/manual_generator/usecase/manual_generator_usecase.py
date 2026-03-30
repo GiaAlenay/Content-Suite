@@ -142,14 +142,14 @@ class ManualGeneratorUseCase:
             return ResponseSuccessSchema(
                 success=True,
                 message=f"{ManualGeneratorSucessMessage.MANUAL_PROMPT_AUDITED} conflictos de coherencia detectados",
-                data=audit_report.model_dump(),
+                data=audit_report,
             )
 
         full_manual = self.generator.generate_human_manual(
             brand_name=brand.name,
             raw_params=raw_parameters.model_dump(),
             brand_description=brand.description,
-            audit_feedback=audit_report.feedback,
+            audit_feedback=audit_report["feedback"],
         )
 
         new_manual_record = self.manual_record_cmd_usecase.create(
@@ -159,7 +159,7 @@ class ManualGeneratorUseCase:
                 version=self._get_next_version(brand_id),
                 raw_parameters=raw_parameters.model_dump(),
                 is_current_version=False,
-                agent_feedback=audit_report.model_dump(),
+                agent_feedback=audit_report,
             )
         )
 
@@ -189,14 +189,14 @@ class ManualGeneratorUseCase:
             return ResponseSuccessSchema(
                 success=True,
                 message=f"{ManualGeneratorSucessMessage.MANUAL_PROMPT_AUDITED} conflictos de coherencia detectados",
-                data=refinement_audit.model_dump(),
+                data=refinement_audit,
             )
 
         refined_content = self.generator.refine_manual(
             current_content=previous_manual.full_manual,
             refinement_instructions=refinement_prompt,
             brand_name=brand.name,
-            audit_feedback=refinement_audit.feedback,
+            audit_feedback=refinement_audit["feedback"],
         )
 
         new_params = previous_manual.raw_parameters
@@ -209,7 +209,7 @@ class ManualGeneratorUseCase:
                 version=self._get_next_version(brand.id),
                 raw_parameters=new_params,
                 is_current_version=False,
-                agent_feedback=refinement_audit.model_dump(),
+                agent_feedback=refinement_audit,
             )
         )
 
@@ -257,6 +257,7 @@ class ManualGeneratorUseCase:
         )
 
         unique_name = f"manual_{int(time.time())}.pdf"
+
         path_on_bucket = f"{brand.code}/manuals/{unique_name}"
 
         pdf_url = self.storage.upload_file(
@@ -264,6 +265,9 @@ class ManualGeneratorUseCase:
             destination_path=path_on_bucket,
             content_type="application/pdf",
         )
+
+        print("pdf_url")
+        print(pdf_url)
 
         self.manual_record_cmd_usecase.update(
             manual.id,

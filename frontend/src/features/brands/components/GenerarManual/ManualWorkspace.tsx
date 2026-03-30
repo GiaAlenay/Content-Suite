@@ -25,7 +25,7 @@ const rotate = keyframes`
 interface ManualWorkspaceProps {
   manual: ManualRecord;
   onRefine: (prompt: string) => Promise<void>;
-  onConfirm: () => Promise<void>;
+  handleConfirm: () => Promise<void>;
   isRefining: boolean;
   isConfirming: boolean;
 }
@@ -33,7 +33,7 @@ interface ManualWorkspaceProps {
 export const ManualWorkspace = ({
   manual,
   onRefine,
-  onConfirm,
+  handleConfirm,
   isRefining,
   isConfirming,
 }: ManualWorkspaceProps) => {
@@ -68,7 +68,7 @@ export const ManualWorkspace = ({
         <Button
           variant="outlined"
           color="success"
-          onClick={onConfirm}
+          onClick={handleConfirm}
           disabled={isConfirming || isRefining}
           sx={{ textTransform: "none", minWidth: "100px" }}
         >

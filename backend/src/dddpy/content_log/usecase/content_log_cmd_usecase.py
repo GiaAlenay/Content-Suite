@@ -35,6 +35,7 @@ class ContentLogCmdUseCase:
             audit_by=content_log_data.audit_by,
             status=content_log_data.status,
             prompt_origin=content_log_data.prompt_origin,
+            parent_id=content_log_data.parent_id,
         )
 
         return self.repository.create(data)

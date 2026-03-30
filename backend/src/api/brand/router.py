@@ -22,6 +22,13 @@ def get_all():
     return result_brand
 
 
+@router.get("/list_active_with_current_manual", dependencies=[Depends(AuthChecker())])
+def list_active_with_current_manual():
+    logging.info("list_active_with_current_manual Route")
+    result_brand = BrandUseCase().list_active_with_current_manual()
+    return result_brand
+
+
 @router.post("/create", dependencies=[Depends(AuthChecker([UserRole.ADMIN]))])
 def create(new_brand: CreateBrandSchema):
     logging.info("create_brand Route")

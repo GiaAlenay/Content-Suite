@@ -1,5 +1,4 @@
 import io
-import logging
 from typing import Dict, Any
 from reportlab.lib.pagesizes import LETTER
 from reportlab.platypus import (
@@ -10,9 +9,13 @@ from reportlab.platypus import (
     Table,
     TableStyle,
 )
+from dddpy.shared.logging.logging import Logger
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.lib.colors import HexColor, whitesmoke, slategray
+import html
+
+logging = Logger("pdf_generator_service")
 
 
 class PDFGeneratorService:
@@ -73,35 +76,63 @@ class PDFGeneratorService:
         )
 
     def _format_markdown_to_platypus(self, text: str):
-        """Convierte Markdown simple a etiquetas compatibles con ReportLab"""
-        # Limpieza básica para evitar errores de renderizado
-        clean_text = text.replace("**", "<b>").replace("__", "<b>")
-        clean_text = clean_text.replace("</b></b>", "</b>")  # Fix por si acaso
+        try:
+            logging.info(f"Generando _format_markdown_to_platypus")
 
-        paragraphs = []
-        for line in clean_text.split("\n"):
-            line = line.strip()
-            if not line:
-                continue
+            # 1. Escapar caracteres XML (esto evita errores con el símbolo '&' por ejemplo)
+            import html
 
-            # Detectar encabezados en el contenido generado
-            if line.startswith("###"):
-                paragraphs.append(
-                    Paragraph(
-                        line.replace("###", "").strip(), self.styles["SectionHeader"]
+            escaped_text = html.escape(text)
+
+            # 2. FIX CRÍTICO: Reemplazo balanceado de negritas
+            # Usamos un truco: convertimos los pares de ** en <b> y </b> alternadamente
+            parts = escaped_text.split("**")
+            clean_text = ""
+            for i, part in enumerate(parts):
+                if i % 2 == 0:
+                    clean_text += part  # Texto normal
+                else:
+                    clean_text += f"<b>{part}</b>"  # Texto encerrado en negritas
+
+            # Repetimos para underscores si los usas
+            parts = clean_text.split("__")
+            clean_text = ""
+            for i, part in enumerate(parts):
+                if i % 2 == 0:
+                    clean_text += part
+                else:
+                    clean_text += f"<b>{part}</b>"
+
+            logging.info(f"Texto formateado y balanceado para ReportLab")
+
+            paragraphs = []
+            for line in clean_text.split("\n"):
+                line = line.strip()
+                if not line:
+                    continue
+
+                if line.startswith("###"):
+                    paragraphs.append(
+                        Paragraph(
+                            line.replace("###", "").strip(),
+                            self.styles["SectionHeader"],
+                        )
                     )
-                )
-            elif line.startswith("##"):
-                paragraphs.append(Spacer(1, 10))
-                paragraphs.append(
-                    Paragraph(
-                        line.replace("##", "").strip(), self.styles["SectionHeader"]
+                elif line.startswith("##"):
+                    paragraphs.append(Spacer(1, 10))
+                    paragraphs.append(
+                        Paragraph(
+                            line.replace("##", "").strip(), self.styles["SectionHeader"]
+                        )
                     )
-                )
-            else:
-                paragraphs.append(Paragraph(line, self.styles["NormalBody"]))
+                else:
+                    # ReportLab Paragraph ahora recibirá algo como: <b>texto</b>
+                    paragraphs.append(Paragraph(line, self.styles["NormalBody"]))
 
-        return paragraphs
+            return paragraphs
+        except Exception as e:
+            logging.error(f"Error en PDF formatting: {str(e)}")
+            raise e
 
     def create_brand_manual_pdf(
         self, brand_name: str, brand_code: str, parameters: Dict[str, Any], content: str
@@ -110,7 +141,6 @@ class PDFGeneratorService:
         logging.info(f"Generando PDF para la marca: {brand_name}")
 
         buffer = io.BytesIO()
-        # Configuración del documento con márgenes profesionales
         doc = SimpleDocTemplate(
             buffer,
             pagesize=LETTER,
@@ -119,10 +149,8 @@ class PDFGeneratorService:
             topMargin=60,
             bottomMargin=50,
         )
-
         story = []
 
-        # --- PORTADA / TÍTULO ---
         story.append(Spacer(1, 40))
         story.append(
             Paragraph(f"Manual de Identidad de Marca", self.styles["ManualTitle"])
@@ -139,7 +167,6 @@ class PDFGeneratorService:
             Paragraph("Resumen de Configuración", self.styles["SectionHeader"])
         )
 
-        # Preparar datos para una tabla de resumen limpia
         table_data = [
             [
                 Paragraph("Audiencia Objetivo:", self.styles["LabelStyle"]),
@@ -184,8 +211,8 @@ class PDFGeneratorService:
                 ]
             )
         )
-        story.append(summary_table)
 
+        story.append(summary_table)
         # --- SALTO DE PÁGINA ---
         story.append(PageBreak())
 
@@ -212,8 +239,12 @@ class PDFGeneratorService:
             )
         )
 
-        # Construir
-        doc.build(story)
+        try:
+            doc.build(story)
+        except Exception as e:
+            logging.error(f"Error fatal construyendo el PDF: {str(e)}")
+            # Esto te dirá exactamente qué etiqueta o línea rompió el renderizado
+            raise e
         pdf_bytes = buffer.getvalue()
         buffer.close()
 

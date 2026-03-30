@@ -15,6 +15,7 @@ import {
 import { NoFilteredData } from "../../../common/components/NoData/NoFilteredData";
 import { useNavigate } from "react-router-dom";
 import { MainContentLayout } from "../../../common/layouts/MainContentLayout";
+import { PDFViewerModal } from "../../../common/components/FileWatcher/FileWatcher";
 
 export const BrandsPage = () => {
   const {
@@ -24,6 +25,8 @@ export const BrandsPage = () => {
     errorBrand,
     createBrand,
     isCreating,
+    deleteBrand,
+    isDeleting,
   } = useBrands();
   const navigate = useNavigate();
   const { uploadImage, isUploading } = useUpload();
@@ -37,6 +40,13 @@ export const BrandsPage = () => {
   const [file, setFile] = useState<File | null>(null);
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [pdfToShow, setPdfToShow] = useState<string | null>(null);
+
+  const handleViewPDF = (brand: BrandTableData) => {
+    if (!brand.url_manual) return;
+    setPdfToShow(brand.url_manual);
+    setSelectedBrand(brand);
+  };
 
   const filteredBrands: BrandTableData[] = brands?.filter((brand) => {
     const matchesSearch =
@@ -93,7 +103,25 @@ export const BrandsPage = () => {
     setSelectedBrand(null);
   };
 
-  const handleConfirm = async () => {};
+  const handleConfirm = async () => {
+    try {
+      if (!selectedBrand) return;
+      await deleteBrand(selectedBrand.id);
+
+      NotificationService.showSuccessAlertPersonalizado(
+        "Marca desactivada con exito",
+        "Se desactivo la  Marca correctamente",
+        () => {
+          setIsConfirmDeleteOpen(false);
+        },
+      );
+    } catch (err: any) {
+      NotificationService.showErrorssAlertPersonalizado(
+        "Error al desactivar Marca",
+        err.error,
+      );
+    }
+  };
 
   return (
     <MainContentLayout
@@ -115,6 +143,7 @@ export const BrandsPage = () => {
             data={filteredBrands}
             onGenerateManual={handleOpenManual}
             onDeleteBrand={handleOpenConfirmDelete}
+            handleViewPDF={handleViewPDF}
           />
         )}
       </>
@@ -123,10 +152,10 @@ export const BrandsPage = () => {
         <ConfirmActionModal
           open={isConfirmDeleteOpen}
           onClose={handleCloseConfirmDelete}
-          onConfirm={handleConfirm}
+          handleConfirm={handleConfirm}
           title={deactivateTitle}
           description={deactivateDescript(selectedBrand.name)}
-          loading={isLoadingBrands}
+          loading={isDeleting}
         />
       )}
 
@@ -136,6 +165,15 @@ export const BrandsPage = () => {
         onSave={handleSaveNewBrand}
         isLoading={isCreating || isUploading}
         setFile={(file: File) => setFile(file)}
+      />
+      <PDFViewerModal
+        open={Boolean(pdfToShow)}
+        onClose={() => {
+          setPdfToShow(null);
+          setSelectedBrand(null);
+        }}
+        pdfUrl={pdfToShow}
+        title={`Manual para la marca ${selectedBrand?.name} (${selectedBrand?.code})`}
       />
     </MainContentLayout>
   );

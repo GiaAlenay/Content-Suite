@@ -8,7 +8,7 @@ class BrandArchitectAgent:
     def __init__(self):
         self.llm = ChatGroq(model_name="llama-3.3-70b-versatile", temperature=0.7)
 
-    @audit_trace(name="Brand Architect - Contextual Manual Generation")
+    # @audit_trace(name="Brand Architect - Contextual Manual Generation")
     def generate_human_manual(
         self,
         brand_name: str,
@@ -42,7 +42,7 @@ class BrandArchitectAgent:
                         "Eres un Senior Brand DNA Architect. Tu especialidad es transformar visiones abstractas "
                         "en manuales de identidad técnica y emocionalmente precisos.\n\n"
                         "TU OBJETIVO: Crear un manual en Markdown que sirva como 'Constitución' para la marca. "
-                        "Debe ser lo suficientemente detallado para que otros agentes de IA operen bajo estos lineamientos "
+                        "Debe ser lo suficientemente detallado para que otros agentesdel sistema operen bajo estos lineamientos "
                         "sin desviarse de la esencia de la marca."
                     ),
                 ),
@@ -66,7 +66,7 @@ class BrandArchitectAgent:
                         "1. **Síntesis**: Integra la descripción base con los nuevos requerimientos. Si el auditor señaló conflictos, "
                         "resuelve la tensión priorizando la coherencia de marca.\n"
                         "2. **Sección de Tono**: Crea una tabla de 'Voz de la Marca' con ejemplos de 'Cómo hablar' vs 'Cómo NO hablar'.\n"
-                        "3. **Reglas para IA**: Define explícitamente cómo debe comportarse un agente de IA al redactar para esta marca.\n"
+                        "3. **Reglas para IA**: Define explícitamente cómo debe comportarse un agentedel sistema al redactar para esta marca.\n"
                         "4. **Formato**: Usa Markdown profesional, con negritas, listas y encabezados ## y ###.\n"
                         "5. **Personalidad**: Si el feedback del auditor sugirió mejoras de tono, aplícalas aquí.\n"
                         "6. SECCIÓN VISUAL TÉCNICA: Crea una sección llamada '## Lineamientos Visuales'.\n"
@@ -97,7 +97,7 @@ class BrandArchitectAgent:
 
         return response.content
 
-    @audit_trace(name="Brand Architect - Manual Refinement")
+    # @audit_trace(name="Brand Architect - Manual Refinement")
     def refine_manual(
         self,
         current_content: str,
@@ -155,7 +155,7 @@ class BrandArchitectAgent:
 
         return response.content
 
-    # @audit_trace(name="Generate Human Brand Manual")
+    # # @audit_trace(name="Generate Human Brand Manual")
     # def generate_human_manual(self, brand_name: str, raw_params: Dict[str, Any]) -> str:
     #     prompt = ChatPromptTemplate.from_messages(
     #         [

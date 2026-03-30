@@ -10,6 +10,7 @@ class BrandEntity:
         code: str,
         description: Optional[str] = None,
         logo_url: Optional[str] = None,
+        url_manual: Optional[str] = None,
         status: str = "ACTIVE",
         created_at: Optional[datetime] = None,
         updated_at: Optional[datetime] = None,
@@ -19,6 +20,7 @@ class BrandEntity:
         self.code = code
         self.description = description
         self.logo_url = logo_url
+        self.url_manual = url_manual
         self.status = status
         self.created_at = created_at
         self.updated_at = updated_at
@@ -30,6 +32,7 @@ class BrandEntity:
             "code": self.code,
             "description": self.description,
             "logo_url": self.logo_url,
+            "url_manual": self.url_manual,
             "status": self.status,
             "created_at": (
                 self.created_at

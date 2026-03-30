@@ -8,14 +8,8 @@ import {
 import React from "react";
 import type { ContentLogTableData } from "../../interfaces/ContentLogData";
 import type { Order } from "../../../../common/interfaces/common";
-import {
-  IconBulbFilled,
-  IconEye,
-  IconPencil,
-  IconPencilBolt,
-  IconPencilFilled,
-  IconTrashFilled,
-} from "@tabler/icons-react";
+import { IconEye, IconPencilFilled } from "@tabler/icons-react";
+import { formatDateToSpanish } from "../../../../common/utils/timeTransformer";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -39,7 +33,7 @@ interface Props {
   orderBy: keyof ContentLogTableData | string;
   page: number;
   rowsPerPage: number;
-  onGenerateContenLog: (contentLog: ContentLogTableData) => void;
+  onUpdateStatusContenLog: (contentLog: ContentLogTableData) => void;
   onWatchContentLog: (contentLog: ContentLogTableData) => void;
 }
 
@@ -49,7 +43,7 @@ const MyTableBody: React.FC<Props> = ({
   orderBy,
   page,
   rowsPerPage,
-  onGenerateContenLog,
+  onUpdateStatusContenLog,
   onWatchContentLog,
 }) => {
   const emptyRows =
@@ -111,7 +105,7 @@ const MyTableBody: React.FC<Props> = ({
                   index === visibleRows.length - 1 ? "none" : undefined,
               }}
             >
-              {row.created_at}
+              {formatDateToSpanish(row.created_at)}
             </TableCell>
             <TableCell
               className="table-td"
@@ -139,7 +133,7 @@ const MyTableBody: React.FC<Props> = ({
               }}
             >
               <Tooltip title="Generar Manual">
-                <IconButton onClick={() => onGenerateContenLog(row)}>
+                <IconButton onClick={() => onUpdateStatusContenLog(row)}>
                   <IconPencilFilled />
                 </IconButton>
               </Tooltip>

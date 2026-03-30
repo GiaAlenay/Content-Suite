@@ -21,3 +21,7 @@ class BrandQueryRepository(ABC):
     @abstractmethod
     def list_all(self) -> List[BrandEntity]:
         pass
+
+    @abstractmethod
+    def list_active_with_current_manual(self) -> List[BrandEntity]:
+        pass

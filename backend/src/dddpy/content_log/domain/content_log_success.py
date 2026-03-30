@@ -1,5 +1,7 @@
 class ContentLogSucessMessage(str):
     CONTENTLOG_CREATED = "Contenido correctamente creado."
+    CONTENTLOG_GENERATED = "Contenido correctamente generado."
+    CONTENTLOG_PROMPT_AUDITED = "Prompt auditado"
     CONTENTLOG_GET = "Contenido entregado correctamente."
     CONTENTLOGS_GET = "Contenidos listado correctamente"
     CONTENTLOG_DELETED = "Contenido correctamente eliminado."

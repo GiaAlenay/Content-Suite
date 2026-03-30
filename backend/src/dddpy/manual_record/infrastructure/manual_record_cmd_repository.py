@@ -25,9 +25,7 @@ class ManualRecordCmdRepositoryImpl(ManualRecordCmdRepository):
     def create(
         self, manual_record: CreateManualRecordData
     ) -> Optional[ManualRecordEntity]:
-        logging.info(
-            f"Creating manual_record: {manual_record.brand_id}", method="create"
-        )
+        logging.info(f"Creating manual_record: {manual_record.brand_id}")
 
         try:
 
@@ -41,29 +39,24 @@ class ManualRecordCmdRepositoryImpl(ManualRecordCmdRepository):
             db_manual_record = response.data[0]
             logging.info(
                 f"ManualRecord created successfully with ID: {db_manual_record['id']}",
-                method="create",
             )
 
             return ManualRecordMapper.to_domain(db_manual_record)
 
         except Exception as e:
-            logging.error(
-                f"Error creating manual_record in Supabase: {str(e)}", method="create"
-            )
+            logging.error(f"Error creating manual_record in Supabase: {str(e)}")
             raise e
 
     def update(
         self, manual_record_id: str, data: UpdateManualRecordData
     ) -> Optional[ManualRecordEntity]:
-        logging.info(
-            f"Updating manual_record with id={manual_record_id}", method="update"
-        )
+        logging.info(f"Updating manual_record with id={manual_record_id}")
 
         try:
             update_values = ManualRecordMapper.to_infrastructure_from_update(data)
 
             if not update_values:
-                logging.warning("No hay valores para actualizar", method="update")
+                logging.warning("No hay valores para actualizar")
                 return {}
 
             response = (

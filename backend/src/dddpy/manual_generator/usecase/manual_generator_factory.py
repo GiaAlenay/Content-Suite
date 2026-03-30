@@ -13,7 +13,9 @@ from dddpy.manual_record.usecase.manual_record_factory import (
 from dddpy.brand_manual_vector.usecase.brand_manual_vector_factory import (
     brand_manual_vector_cmd_usecase_factory,
 )
-
+from dddpy.brand_manual_vector.usecase.brand_manual_vector_factory import (
+    brand_manual_vector_query_usecase_factory,
+)
 from dddpy.shared.vectorize.vector_service import VectorizationService
 from dddpy.manual_generator.usecase.manual_governance_audit_agent import (
     ManualGovernanceAuditor,
@@ -27,7 +29,10 @@ def brand_architect_agent_factory():
 
 
 def manual_governance_audit_agent_agent_factory():
-    return ManualGovernanceAuditor()
+    return ManualGovernanceAuditor(
+        vector_repo=brand_manual_vector_query_usecase_factory(),
+        vectorize_service=VectorizationService(),
+    )
 
 
 def manual_pdf_generator_factory():

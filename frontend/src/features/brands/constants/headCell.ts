@@ -26,7 +26,15 @@ export const headCells: TableColumn[] = [
     enableOrder:true,
     maxwidth: "170px",
   },
- 
+
+  {
+    id: "description",
+    numeric: false,
+    disablePadding: false,
+    label: "Descripción",
+    enableOrder:true,
+    maxwidth: "270px",
+  }, 
 
   {
     id: "status",

@@ -63,22 +63,56 @@ class ContentLogUseCase:
         if not brand or brand.status != "ACTIVE":
             raise BrandNotFound()
 
-        text = self.content_generator.generate_content(
+        last_content = None
+        if content_log_request.parent_log_id:
+            previous_log = self.content_log_query_usecase.get_by_id(
+                content_log_request.parent_log_id
+            )
+            if previous_log:
+                last_content = previous_log.content_data.get("text")
+
+        audit_result = self.auditor.audit_user_request(
+            brand_id=brand_id,
             user_prompt=content_log_request.user_prompt,
+            target_content=content_log_request.content_type,
+        )
+
+        if not audit_result.get("is_allowed") or not audit_result.get("is_type_match"):
+            return ResponseSuccessSchema(
+                success=True,
+                message=f"{ContentLogSucessMessage.CONTENTLOG_PROMPT_AUDITED}, conflictos detectados",
+                data=audit_result,
+            )
+
+        final_prompt = (
+            audit_result.get("improved_prompt") or content_log_request.user_prompt
+        )
+
+        generated_text = self.content_generator.generate_content(
+            user_prompt=final_prompt,
             brand_name=brand.name,
             brand_id=brand_id,
             content_type=content_log_request.content_type,
+            history_content=last_content,
         )
 
         to_create_content_log = CreateContentLogSchema(
             brand_id=brand_id,
             prompt_origin=content_log_request.user_prompt,
             creator_id=creator_id,
-            status="PENDING",
-            content_data={"text": text},
+            status="CREATED",
+            content_data={"text": generated_text},
             content_type=content_log_request.content_type,
+            parent_id=content_log_request.parent_log_id,
         )
-        return self.content_log_cmd_usecase.create(to_create_content_log)
+
+        new_content_log = self.content_log_cmd_usecase.create(to_create_content_log)
+
+        return ResponseSuccessSchema(
+            success=True,
+            message="Contenido generado exitosamente",
+            data=new_content_log.to_dict(),
+        )
 
     def get_by_id(self, id: str):
         logging.info("get_by_id")
@@ -152,10 +186,6 @@ class ContentLogUseCase:
         content_log_data.audit_by = user_id
         if not content_log:
             raise ContentLogNotFound()
-
-        if content_log.status != "PENDING":
-            raise ContentLogNotAllowedToChangeStatus()
-
         updated_content_log = self.content_log_cmd_usecase.update(id, content_log_data)
 
         success = ResponseSuccessSchema(

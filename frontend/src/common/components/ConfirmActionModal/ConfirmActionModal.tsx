@@ -6,13 +6,14 @@ import {
   DialogActions,
   Button,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { IconAlertTriangle } from "@tabler/icons-react";
 
 interface ConfirmActionModalProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  handleConfirm: () => void;
   title: string;
   description: string;
   loading?: boolean;
@@ -21,7 +22,7 @@ interface ConfirmActionModalProps {
 export const ConfirmActionModal = ({
   open,
   onClose,
-  onConfirm,
+  handleConfirm,
   title,
   description,
   loading,
@@ -68,7 +69,7 @@ export const ConfirmActionModal = ({
           Cancelar
         </Button>
         <Button
-          onClick={onConfirm}
+          onClick={handleConfirm}
           variant="contained"
           color="error"
           disabled={loading}
@@ -77,7 +78,13 @@ export const ConfirmActionModal = ({
             minWidth: "100px",
           }}
         >
-          {loading ? "..." : "Confirmar"}
+          {loading ? (
+            <div className="loadingBtn">
+              <CircularProgress size={20} style={{ color: "#FFFFFF" }} />
+            </div>
+          ) : (
+            "Confirmar"
+          )}
         </Button>
       </DialogActions>
     </Dialog>

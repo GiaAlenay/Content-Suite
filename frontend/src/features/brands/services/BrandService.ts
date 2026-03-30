@@ -24,6 +24,24 @@ export const brandService = {
     }
   },
 
+  getAllActiveBrandsWithManual: async (): Promise<BrandInterface[]> => {
+    try {    
+      const response = await api.get<ApiResponseSuccess<BrandInterface[]>>('/brand/list_active_with_current_manual');
+      
+      if (response.data.success) {
+        console.log({data:response.data.data})
+        return response.data.data; 
+      } else {
+       
+        throw new Error(response.data.message || "Error al obtener las marcas");
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "Error de conexión con el servidor";
+      console.error("BrandService Error:", errorMessage);
+      throw new Error(errorMessage);
+    }
+  },
+
   createBrand: async (newBrand: CreateBrandInputs): Promise<BrandInterface> => {
     try {
       console.log(newBrand)
@@ -41,5 +59,24 @@ export const brandService = {
       console.error("BrandService Error:", errorMessage);
       throw new Error(errorMessage);
     }
+
+    
   },
+
+  deleteBrand: async (brandId: string ): Promise< string| null> => {
+  try {
+    const response = await api.delete<ApiResponseSuccess<null>>(
+      `/brand/delete/${brandId}`, 
+      
+    );    
+    if (response.data.success) {
+      return response.data.message; 
+    } else {
+      throw new Error(response.data.message || "Error al desactivar marca");
+    }
+  } catch (error: any) {
+    const errorMessage = error.response?.data?.message || "Error de conexión con el servidor";
+    throw new Error(errorMessage);
+  }  }
+
 };

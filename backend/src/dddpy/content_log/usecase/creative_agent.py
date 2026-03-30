@@ -17,7 +17,7 @@ class CreativeEngineAgent:
         self.vector_repo = vector_repo
         self.vectorize = vectorize_service
 
-    # @audit_trace(name="Generate Content with RAG")
+    # # @audit_trace(name="Generate Content with RAG")
     # def generate_content_with_rag(
     #     self, user_prompt: str, brand_name: str, context_chunks: str, content_type: str
     # ) -> str:
@@ -46,35 +46,56 @@ class CreativeEngineAgent:
     #     )
     #     return response.content
 
-    @audit_trace(name="Creative Agent - Autonomous RAG")
+    # @audit_trace(name="Creative Agent - Autonomous RAG with Memory")
     def generate_content(
-        self, user_prompt: str, brand_name: str, brand_id: str, content_type: str
+        self,
+        user_prompt: str,
+        brand_name: str,
+        brand_id: str,
+        content_type: str,
+        history_content: str = None,
     ) -> str:
-        # EL AGENTE DECIDE BUSCAR SU CONTEXTO (Esto es RAG real)
+
         query_vector = self.vectorize.to_vectorize_one(user_prompt)
         relevant_chunks = self.vector_repo.search_brand_context(
             brand_id=brand_id, vector=query_vector
         )
-
         context_text = "\n".join([chunk.content_chunk for chunk in relevant_chunks])
+
+        refinement_instruction = ""
+        if history_content:
+            refinement_instruction = (
+                "\n### CONTEXTO DE REFINAMIENTO:\n"
+                "El usuario está pidiendo un ajuste sobre este contenido previo:\n"
+                f"'{history_content}'\n"
+                "Tu tarea es aplicar los cambios solicitados manteniendo la base anterior y las reglas de marca."
+            )
 
         prompt_template = ChatPromptTemplate.from_messages(
             [
                 (
                     "system",
-                    "Eres un Redactor Creativo experto para {brand_name}. Reglas: {context}",
+                    "Eres un Redactor Creativo experto para {brand_name}. "
+                    "Reglas del Manual: {context}"
+                    "{refinement_logic}",
                 ),
-                ("user", "Tipo: {content_type}\nPedido: {user_prompt}"),
+                (
+                    "user",
+                    "Tipo: {content_type}\nPedido de ajuste/creación: {user_prompt}",
+                ),
             ]
         )
 
         chain = prompt_template | self.llm
+
         response = chain.invoke(
             {
                 "brand_name": brand_name,
                 "context": context_text,
                 "content_type": content_type,
                 "user_prompt": user_prompt,
+                "refinement_logic": refinement_instruction,
             }
         )
+
         return response.content

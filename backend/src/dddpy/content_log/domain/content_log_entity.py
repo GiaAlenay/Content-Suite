@@ -10,7 +10,7 @@ class ContentLogEntity:
         creator_id: str,
         content_data: Dict[str, Any],
         content_type: str,
-        status: str = "PENDING",
+        status: str = "CREATED",
         agent_feedback: Optional[str] = None,
         audit_by: Optional[str] = None,
         prompt_origin: Optional[str] = None,
@@ -18,6 +18,7 @@ class ContentLogEntity:
         updated_at: Optional[datetime] = None,
         brand_name: Optional[str] = None,
         brand_code: Optional[str] = None,
+        parent_id: Optional[str] = None,
     ) -> None:
         self.id = id
         self.brand_id = brand_id
@@ -32,6 +33,7 @@ class ContentLogEntity:
         self.updated_at = updated_at
         self.brand_name = brand_name
         self.brand_code = brand_code
+        self.parent_id = parent_id
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -46,6 +48,7 @@ class ContentLogEntity:
             "prompt_origin": self.prompt_origin,
             "brand_name": self.brand_name,
             "brand_code": self.brand_code,
+            "parent_id": self.parent_id,
             "created_at": (
                 self.created_at
                 if isinstance(self.created_at, str)

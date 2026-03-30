@@ -26,7 +26,7 @@ export const AuditReportPanel = ({
         gutterBottom
         color={isHigh ? "error.main" : "warning.main"}
       >
-        Reporte de Coherencia de IA
+        Reporte de Coherenciadel sistema
       </Typography>
 
       <Alert

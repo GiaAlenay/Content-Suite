@@ -13,11 +13,11 @@ import type { Order } from "../../../../common/interfaces/common";
 
 export const ContentLogTable = ({
   data,
-  onGenerateContenLog,
+  onUpdateStatusContenLog,
   onWatchContentLog,
 }: {
   data: ContentLogTableData[];
-  onGenerateContenLog: (contentLog: ContentLogTableData) => void;
+  onUpdateStatusContenLog: (contentLog: ContentLogTableData) => void;
   onWatchContentLog: (contentLog: ContentLogTableData) => void;
 }) => {
   const [order, setOrder] = useState<Order>("asc");
@@ -68,7 +68,7 @@ export const ContentLogTable = ({
               orderBy={orderBy}
               page={page}
               rowsPerPage={rowsPerPage}
-              onGenerateContenLog={onGenerateContenLog}
+              onUpdateStatusContenLog={onUpdateStatusContenLog}
               onWatchContentLog={onWatchContentLog}
             />
           </Table>

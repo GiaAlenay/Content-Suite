@@ -9,7 +9,12 @@ import {
 import React from "react";
 import type { BrandTableData } from "../../interfaces/BrandData";
 import type { Order } from "../../../../common/interfaces/common";
-import { IconBulbFilled, IconEye, IconTrashFilled } from "@tabler/icons-react";
+import {
+  IconBulbFilled,
+  IconEye,
+  IconFile,
+  IconTrashFilled,
+} from "@tabler/icons-react";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -35,6 +40,7 @@ interface Props {
   rowsPerPage: number;
   onGenerateManual: (brand: BrandTableData) => void;
   onDeleteBrand: (brand: BrandTableData) => void;
+  handleViewPDF: (brand: BrandTableData) => void;
 }
 
 const MyTableBody: React.FC<Props> = ({
@@ -45,6 +51,7 @@ const MyTableBody: React.FC<Props> = ({
   rowsPerPage,
   onGenerateManual,
   onDeleteBrand,
+  handleViewPDF,
 }) => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - brandList.length) : 0;
@@ -56,6 +63,11 @@ const MyTableBody: React.FC<Props> = ({
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
     [order, orderBy, page, rowsPerPage, brandList],
   );
+
+  const handleMinifyLogo = (logo_url: string | null) => {
+    if (!logo_url) return;
+    return `${logo_url}?width=80&height=80&resize=contain&quality=70`;
+  };
 
   return (
     <TableBody>
@@ -79,7 +91,7 @@ const MyTableBody: React.FC<Props> = ({
               }}
             >
               <Avatar
-                src={row.logo_url}
+                src={handleMinifyLogo(row.logo_url)}
                 variant="rounded"
                 sx={{ width: 40, height: 40 }}
               />
@@ -102,6 +114,17 @@ const MyTableBody: React.FC<Props> = ({
             >
               {row.name}
             </TableCell>
+
+            <TableCell
+              className="table-td"
+              sx={{
+                borderBottom:
+                  index === visibleRows.length - 1 ? "none" : undefined,
+              }}
+            >
+              {row.description ?? "-"}
+            </TableCell>
+
             <TableCell
               className="table-td"
               sx={{
@@ -128,9 +151,15 @@ const MyTableBody: React.FC<Props> = ({
                 </IconButton>
               </Tooltip>
 
-              <Tooltip title="Ver más información">
-                <IconButton onClick={() => onGenerateManual(row)}>
-                  <IconEye />
+              <Tooltip title="Ver manual">
+                <IconButton
+                  disabled={!row.url_manual}
+                  onClick={() => {
+                    if (!row.url_manual) return;
+                    handleViewPDF(row);
+                  }}
+                >
+                  <IconFile />
                 </IconButton>
               </Tooltip>
 

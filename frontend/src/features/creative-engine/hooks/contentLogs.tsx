@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { contentLogService } from "../services/ContentLogService";
 import type { GenerateContentInputs } from "../schemas/agregarContentLog";
+import type { ContentLogUpdateInputsInterface } from "../interfaces/ContentLogData";
 
 export const useContentLogs = () => {
   const queryClient = useQueryClient();
@@ -12,8 +13,26 @@ export const useContentLogs = () => {
   });
 
   const createContentLogMutation = useMutation({
-    mutationFn: (newContentLog: GenerateContentInputs) =>
-      contentLogService.createContentLog(newContentLog),
+    mutationFn: ({
+      brandId,
+      newContentLog,
+    }: {
+      brandId: string;
+      newContentLog: GenerateContentInputs;
+    }) => contentLogService.createContentLog(brandId, newContentLog),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contentLogs"] });
+    },
+  });
+
+  const updateContentLogMutation = useMutation({
+    mutationFn: ({
+      contentLogId,
+      newContentLog,
+    }: {
+      contentLogId: string;
+      newContentLog: ContentLogUpdateInputsInterface;
+    }) => contentLogService.updateContentLog(contentLogId, newContentLog),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contentLogs"] });
     },
@@ -27,5 +46,8 @@ export const useContentLogs = () => {
 
     createContentLog: createContentLogMutation.mutateAsync,
     isCreating: createContentLogMutation.isPending,
+
+    updateContentLog: updateContentLogMutation.mutateAsync,
+    isUpdating: updateContentLogMutation.isPending,
   };
 };

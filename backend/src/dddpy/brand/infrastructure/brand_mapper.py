@@ -9,6 +9,8 @@ from typing import Optional
 class BrandMapper:
     @staticmethod
     def to_domain(db_dict: dict) -> Optional[BrandEntity]:
+        manual_data = db_dict.get("manual_record", [])
+        current_url = manual_data[0].get("url_manual") if manual_data else None
         return BrandEntity(
             id=db_dict.get("id"),
             name=db_dict.get("name", "Sin nombre"),
@@ -18,6 +20,7 @@ class BrandMapper:
             status=db_dict.get("status", "ACTIVE"),
             created_at=db_dict.get("created_at"),
             updated_at=db_dict.get("updated_at"),
+            url_manual=current_url,
         )
 
     @staticmethod

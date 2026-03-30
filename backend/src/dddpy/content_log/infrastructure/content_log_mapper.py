@@ -21,6 +21,7 @@ class ContentLogMapper:
             prompt_origin=db_dict.get("prompt_origin"),
             created_at=db_dict.get("created_at"),
             updated_at=db_dict.get("updated_at"),
+            parent_id=db_dict.get("parent_id"),
             brand_name=brand_info.get("name"),
             brand_code=brand_info.get("code"),
         )
@@ -36,6 +37,7 @@ class ContentLogMapper:
             "agent_feedback": data.agent_feedback,
             "audit_by": data.audit_by,
             "prompt_origin": data.prompt_origin,
+            "parent_id": data.parent_id,
         }
 
     @staticmethod

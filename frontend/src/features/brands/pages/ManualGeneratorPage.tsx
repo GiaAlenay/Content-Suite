@@ -113,24 +113,55 @@ export const ManualGeneratorPage = () => {
     isConfirming,
   } = useManualGenerator();
 
-  useEffect(() => {
-    console.log({ idBrand });
-  }, [idBrand]);
-
+  // --- FLUJO 1: AUDITAR / GENERAR INICIAL ---
   const handleProcessIA = async (data: GenerateManualInputs) => {
     if (!idBrand) return;
+
+    // Limpiamos estados previos antes de nueva auditoría
+    setAuditResult(null);
+    setDraftManual(null);
+
     const result = await auditManual({ idBrand, raw_parameters: data });
 
-    if ("is_coherent" in result) {
+    // El backend devuelve AuditManualResponse si hay errores de coherencia
+    // O ManualRecord si todo está bien y ya generó el borrador
+    if ("is_coherent" in result && !result.is_coherent) {
       setAuditResult(result);
     } else {
-      setDraftManual(result);
+      // Si es coherente, el resultado es el ManualRecord (draft)
+      setDraftManual(result as ManualRecord);
     }
   };
 
-  const handleRefine = async () => {};
-  const handleConfirm = async () => {};
+  // --- FLUJO 2: REFINAR (Iterar sobre el borrador) ---
+  const handleRefine = async (prompt: string) => {
+    if (!draftManual?.id) return;
 
+    const result = await refineManual({
+      manualId: draftManual.id,
+      refinement_prompt: prompt,
+    });
+
+    // Actualizamos el borrador con la nueva versión generada por la IA
+    if (!("is_coherent" in result)) {
+      setDraftManual(result as ManualRecord);
+      setAuditResult(null); // Limpiamos reportes de auditoría si existían
+    }
+  };
+
+  // --- FLUJO 3: CONFIRMAR (Guardado final) ---
+  const handleConfirm = async () => {
+    if (!draftManual?.id) return;
+
+    try {
+      await confirmManual(draftManual.id);
+      // Aquí podrías redirigir al usuario o mostrar un mensaje de éxito
+      console.log("Manual confirmado con éxito");
+      // Ejemplo: navigate(`/brands/${idBrand}`);
+    } catch (error) {
+      console.error("Error al confirmar:", error);
+    }
+  };
   return (
     <Box
       sx={{
@@ -198,7 +229,7 @@ export const ManualGeneratorPage = () => {
             <ManualWorkspace
               manual={draftManual}
               onRefine={handleRefine}
-              onConfirm={handleConfirm}
+              handleConfirm={handleConfirm}
               isRefining={isRefining}
               isConfirming={isConfirming}
             />
