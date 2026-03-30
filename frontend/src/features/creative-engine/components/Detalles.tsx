@@ -9,7 +9,6 @@ import {
   Stack,
   Divider,
   Box,
-  Chip,
 } from "@mui/material";
 import type { ContentLogTableData } from "../interfaces/ContentLogData";
 import { formatDateToSpanish } from "../../../common/utils/timeTransformer";
@@ -28,6 +27,8 @@ export const ContentLogDetailModal: React.FC<Props> = ({
   if (!contentLog) return null;
 
   const renderTag = (status: string) => {
+    if (status === "CREATED")
+      return <div className="tag-item-estado tag-inactive">Creado</div>;
     if (status === "PENDING")
       return <div className="tag-item-estado tag-pending">Pendiente</div>;
     if (status === "APPROVED")
@@ -123,6 +124,28 @@ export const ContentLogDetailModal: React.FC<Props> = ({
               color="text.secondary"
               sx={{ display: "block", mb: 0.5 }}
             >
+              Prompt
+            </Typography>
+            <Box
+              sx={{
+                p: 2,
+                borderRadius: 1,
+                overflowY: "auto",
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              <Typography variant="body2">
+                {contentLog.prompt_origin}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ display: "block", mb: 0.5 }}
+            >
               Contenido Generado
             </Typography>
             <Box
@@ -136,7 +159,11 @@ export const ContentLogDetailModal: React.FC<Props> = ({
               }}
             >
               <Typography variant="body2">
-                {contentLog.content_data?.text ?? "No hay texto disponible."}
+                {contentLog.content_data?.text
+                  ? contentLog.content_data?.text
+                  : contentLog.content_data?.generated_content
+                    ? contentLog.content_data?.generated_content
+                    : "No hay texto disponible."}
               </Typography>
             </Box>
           </Box>

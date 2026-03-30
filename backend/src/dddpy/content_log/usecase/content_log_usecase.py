@@ -88,10 +88,11 @@ class ContentLogUseCase:
             audit_result.get("improved_prompt") or content_log_request.user_prompt
         )
 
-        generated_text = self.content_generator.generate_content(
+        generated = self.content_generator.generate_content(
             user_prompt=final_prompt,
             brand_name=brand.name,
             brand_id=brand_id,
+            brand_description=brand.description,
             content_type=content_log_request.content_type,
             history_content=last_content,
         )
@@ -101,7 +102,7 @@ class ContentLogUseCase:
             prompt_origin=content_log_request.user_prompt,
             creator_id=creator_id,
             status="CREATED",
-            content_data={"text": generated_text},
+            content_data=generated,
             content_type=content_log_request.content_type,
             parent_id=content_log_request.parent_log_id,
         )
@@ -183,15 +184,15 @@ class ContentLogUseCase:
         logging.info("update")
         logging.info(f"Updating content_log {id} with data: {content_log_data}")
         content_log = self.content_log_query_usecase.get_by_id(id)
-        content_log_data.audit_by = user_id
+        if content_log_data.status and content_log_data.status != "PENDING":
+            content_log_data.audit_by = user_id
         if not content_log:
             raise ContentLogNotFound()
-        updated_content_log = self.content_log_cmd_usecase.update(id, content_log_data)
+        self.content_log_cmd_usecase.update(id, content_log_data)
 
         success = ResponseSuccessSchema(
             success=True,
             message=ContentLogSucessMessage.CONTENTLOG_UPDATED,
-            data=updated_content_log.to_dict(),
         )
         logging.info(f"ContentLog updated successfully: {success}")
         return success

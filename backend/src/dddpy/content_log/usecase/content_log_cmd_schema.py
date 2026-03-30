@@ -2,12 +2,24 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any, List
 
 
+class GeneratedContentSchema(BaseModel):
+    generated_content: str = Field(
+        None, description="El contenido final generado para el usuario."
+    )
+    llm_opinion: str = Field(
+        None, description="Justificación técnica o feedback de la IA."
+    )
+    is_aligned: bool = Field(
+        None, description="Indica si el pedido original era coherente con la marca."
+    )
+    image_url: Optional[str] = Field(None)
+
+
 class CreateContentLogSchema(BaseModel):
     brand_id: str
     creator_id: str
-    content_data: Dict[str, Any] = Field(
-        ..., example={"text": "Hola mundo", "image_url": "..."}
-    )
+    content_data: GeneratedContentSchema
+
     content_type: str = Field(..., example="INSTAGRAM_POST")
     status: Optional[str] = Field(None, pattern="^(PENDING|APPROVED|REJECTED|CREATED)$")
     prompt_origin: Optional[str] = Field(None, example="Quiero un post")

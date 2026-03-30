@@ -1,6 +1,9 @@
 import type { ListaSelectInterface } from "../../../common/interfaces/common";
 
 export const listaStatusDisponibles:ListaSelectInterface[]=[
+  {
+        name:"Creado",value:"CREATED"
+    },
     {
         name:"Pendiente",value:"PENDING"
     },

@@ -50,7 +50,7 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
         ]
 
     def get_by_id(self, id: str) -> Optional[BrandManualVectorEntity]:
-        logging.info(f"Fetching brand_manual_vector with id={id}", method="get_by_id")
+        logging.info(f"Fetching brand_manual_vector with id={id}")
         response = (
             self._client.table(self._table)
             .select("*")
@@ -69,10 +69,7 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
         )
 
     def get_by_brand_id(self, brand_id: str) -> List[BrandManualVectorEntity]:
-        logging.info(
-            f"Fetching brand manual vectors with brand_id={brand_id}",
-            method="get_by_brand_id",
-        )
+        logging.info(f"Fetching brand manual vectors with brand_id={brand_id}")
 
         response = (
             self._client.table(self._table)
@@ -87,7 +84,7 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
         return [BrandManualVectorMapper.to_domain(db) for db in db_brand_manual_vectors]
 
     def list_all(self) -> List[BrandManualVectorEntity]:
-        logging.info("Fetching all  ", method="list_all")
+        logging.info("Fetching all  ")
 
         response = self._client.table(self._table).select("*").execute()
 

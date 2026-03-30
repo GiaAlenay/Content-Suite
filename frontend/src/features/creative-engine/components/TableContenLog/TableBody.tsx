@@ -8,7 +8,11 @@ import {
 import React from "react";
 import type { ContentLogTableData } from "../../interfaces/ContentLogData";
 import type { Order } from "../../../../common/interfaces/common";
-import { IconEye, IconPencilFilled } from "@tabler/icons-react";
+import {
+  IconBellRinging,
+  IconEye,
+  IconPencilFilled,
+} from "@tabler/icons-react";
 import { formatDateToSpanish } from "../../../../common/utils/timeTransformer";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -60,6 +64,8 @@ const MyTableBody: React.FC<Props> = ({
   );
 
   const renderTag = (status: string) => {
+    if (status === "CREATED")
+      return <div className="tag-item-estado tag-inactive">Creado</div>;
     if (status === "PENDING")
       return <div className="tag-item-estado tag-pending">Pendiente</div>;
     if (status === "APPROVED")
@@ -132,9 +138,9 @@ const MyTableBody: React.FC<Props> = ({
                   index === visibleRows.length - 1 ? "none" : undefined,
               }}
             >
-              <Tooltip title="Generar Manual">
+              <Tooltip title="Solicitar auditoria">
                 <IconButton onClick={() => onUpdateStatusContenLog(row)}>
-                  <IconPencilFilled />
+                  <IconBellRinging />
                 </IconButton>
               </Tooltip>
 

@@ -28,10 +28,17 @@ class ContentLogMapper:
 
     @staticmethod
     def to_infrastructure_from_create(data: CreateContentLogData) -> dict:
+
+        content_json = data.content_data
+        if hasattr(content_json, "model_dump"):
+            content_json = content_json.model_dump()
+        elif hasattr(content_json, "dict"):
+            content_json = content_json.dict()
+
         return {
             "brand_id": data.brand_id,
             "creator_id": data.creator_id,
-            "content_data": data.content_data,
+            "content_data": content_json,
             "content_type": data.content_type,
             "status": data.status,
             "agent_feedback": data.agent_feedback,

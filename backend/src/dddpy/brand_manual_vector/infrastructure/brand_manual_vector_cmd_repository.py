@@ -32,10 +32,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
     def create(
         self, brand_manual_vector: CreateBrandManualVectorData
     ) -> Optional[BrandManualVectorEntity]:
-        logging.info(
-            f"Creating brand_manual_vector: {brand_manual_vector.brand_id}",
-            method="create",
-        )
+        logging.info(f"Creating brand_manual_vector: {brand_manual_vector.brand_id}")
 
         try:
             data = BrandManualVectorMapper.to_infrastructure_from_create(
@@ -46,15 +43,13 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
                 return None
             db_brand_manual_vector = response.data[0]
             logging.info(
-                f"BrandManualVector created successfully with ID: {db_brand_manual_vector['id']}",
-                method="create",
+                f"BrandManualVector created successfully with ID: {db_brand_manual_vector['id']}"
             )
             return BrandManualVectorMapper.to_domain(db_brand_manual_vector)
 
         except Exception as e:
             logging.error(
                 f"Error creating brand_manual_vector in Supabase: {str(e)}",
-                method="create",
             )
             raise e
 
@@ -66,7 +61,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
         try:
             update_values = BrandManualVectorMapper.to_infrastructure_from_update(data)
             if not update_values:
-                logging.warning("No hay valores para actualizar", method="update")
+                logging.warning("No hay valores para actualizar")
                 return None
             response = (
                 self._client.table(self._table)
@@ -112,10 +107,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             raise e
 
     def delete(self, brand_manual_vector_id: str) -> bool:
-        logging.info(
-            f"Deleting brand_manual_vector with id={brand_manual_vector_id}",
-            method="delete",
-        )
+        logging.info(f"Deleting brand_manual_vector with id={brand_manual_vector_id}")
         try:
             response = (
                 self._client.table(self._table)
@@ -125,17 +117,11 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             )
 
             success = len(response.data) > 0
-            logging.info(
-                f"Delete status for id={brand_manual_vector_id}: {success}",
-                method="delete",
-            )
+            logging.info(f"Delete status for id={brand_manual_vector_id}: {success}")
             return success
 
         except Exception as e:
-            logging.error(
-                f"Error deleting brand_manual_vector in Supabase: {str(e)}",
-                method="delete",
-            )
+            logging.error(f"Error deleting brand_manual_vector in Supabase: {str(e)}")
             raise e
 
     def bulk_insert_vectors(self, vector_list: list[CreateBrandManualVectorData]):

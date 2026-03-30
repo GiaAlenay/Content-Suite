@@ -37,31 +37,6 @@ import {
 } from "../../constants";
 import { ConfirmActionModal } from "../../../../common/components/ConfirmActionModal/ConfirmActionModal";
 
-export const mockAuditConflict: AuditPromptResponse = {
-  is_allowed: false,
-  is_type_match: true,
-  detected_content_type: "PRODUCT_DESC",
-  severity: "HIGH",
-  feedback: [
-    "El manual de Andina Foods prohíbe el uso de tecnicismos médicos exagerados.",
-    "Se detectó un tono demasiado informal ('Oye tú, compra esto') que no alinea con la marca.",
-  ],
-  improved_prompt:
-    "Escribe una descripción de la Quinua Real resaltando sus beneficios naturales y origen ancestral, con un tono profesional y cálido.",
-};
-
-export const mockGeneratedLog: ContentLogInterface = {
-  id: "uuid-1234-5678",
-  brand_id: "brand-af-01",
-  content_type: "PRODUCT_DESC",
-  prompt_origin: "Descripción para Quinua Real",
-  status: "CREATED",
-  content_data: {
-    text: "La Quinua Real de Andina Foods es un tesoro de los Andes. \n\nCosechada a más de 3,600 metros de altura, ofrece una textura superior y un perfil nutricional completo. Ideal para quienes buscan una alimentación consciente y llena de tradición.",
-  },
-  created_at: "2026-03-29T14:40:00Z",
-};
-
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -122,8 +97,11 @@ export const AddContentLogModal: React.FC<Props> = ({
   };
 
   const handleCopy = () => {
-    if (generatedLog?.content_data.text) {
-      navigator.clipboard.writeText(generatedLog.content_data.text);
+    const content =
+      generatedLog?.content_data?.text ||
+      generatedLog?.content_data?.generated_content;
+    if (content) {
+      navigator.clipboard.writeText(content);
       setSnackbarOpen(true);
     }
   };
@@ -274,54 +252,78 @@ export const AddContentLogModal: React.FC<Props> = ({
               </Grid>
             )}
 
-            {/* Visor de Contenido Generado (Read Only) */}
             {generatedLog && (
-              <Box
-                sx={{
-                  p: 2,
-                  bgcolor: "grey.50",
-                  borderRadius: 2,
-                  border: "1px solid #e0e0e0",
-                  position: "relative",
-                  mt: 2.5,
-                }}
-              >
+              <>
+                {generatedLog.content_data?.is_aligned === false && (
+                  <Alert severity="info" sx={{ mt: 2, mb: 1 }}>
+                    <Typography
+                      variant="caption"
+                      fontWeight="bold"
+                      display="block"
+                    >
+                      Nota del Motor Creativo:
+                    </Typography>
+                    <Typography variant="caption">
+                      {generatedLog.content_data?.llm_opinion}
+                    </Typography>
+                  </Alert>
+                )}
+
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 1,
+                    p: 2,
+                    bgcolor: "grey.50",
+                    borderRadius: 2,
+                    border: "1px solid #e0e0e0",
+                    position: "relative",
+                    mt: 1,
                   }}
                 >
-                  <Typography sx={{ color: "gray", fontSize: "10px" }}>
-                    CONTENIDO GENERADO
-                  </Typography>
-                  <div className="row-base">
-                    <IconButton
-                      size="small"
-                      onClick={handleCopy}
-                      title="Copiar contenido"
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mb: 1,
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        color: "gray",
+                        fontSize: "10px",
+                        fontWeight: "bold",
+                      }}
                     >
-                      <IconCopy fontSize="small" />
-                    </IconButton>
-                    {generatedLog?.status === "CREATED" && (
+                      CONTENIDO GENERADO
+                    </Typography>
+                    <Stack direction="row" spacing={0.5}>
                       <IconButton
                         size="small"
-                        onClick={handleOpenConfirmCambiarStatus}
-                        title="solicitar auditoria"
+                        onClick={handleCopy}
+                        title="Copiar"
                       >
-                        <IconBellRinging fontSize="small" />
+                        <IconCopy size={16} />
                       </IconButton>
-                    )}
-                  </div>
+                      {generatedLog?.status === "CREATED" && (
+                        <IconButton
+                          size="small"
+                          onClick={handleOpenConfirmCambiarStatus}
+                          title="Solicitar auditoría humana"
+                          color="primary"
+                        >
+                          <IconBellRinging size={16} />
+                        </IconButton>
+                      )}
+                    </Stack>
+                  </Box>
+                  <Typography
+                    variant="body2"
+                    sx={{ whiteSpace: "pre-line", color: "text.primary" }}
+                  >
+                    {generatedLog.content_data?.text ||
+                      generatedLog.content_data?.generated_content}
+                  </Typography>
                 </Box>
-                <Typography
-                  variant="body2"
-                  sx={{ whiteSpace: "pre-line", color: "text.primary" }}
-                >
-                  {generatedLog.content_data.text}
-                </Typography>
-              </Box>
+              </>
             )}
           </Box>
         </DialogContent>
@@ -348,7 +350,6 @@ export const AddContentLogModal: React.FC<Props> = ({
             sx={{ textTransform: "none", minWidth: "100px" }}
             variant="contained"
             disabled={isLoading}
-            startIcon={isLoading && <CircularProgress size={20} />}
           >
             {isLoading ? (
               <div className="loadingBtn">

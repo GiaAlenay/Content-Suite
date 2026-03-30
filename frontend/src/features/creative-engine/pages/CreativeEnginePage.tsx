@@ -180,16 +180,18 @@ export const CreativeEnginePage = () => {
           }
         />
 
-        {selectedContentLog && isConfirmCambiarStatusOpen && (
-          <ConfirmActionModal
-            open={isConfirmCambiarStatusOpen}
-            onClose={handleCloseConfirmCambiarStatus}
-            handleConfirm={() => handleConfirm(selectedContentLog.id)}
-            title={auditarRequestTitle}
-            description={auditarRequestQuestion}
-            loading={isLoadingBrandsActiveManual || isCreating || isUpdating}
-          />
-        )}
+        {selectedContentLog &&
+          isConfirmCambiarStatusOpen &&
+          !isAddModalOpen && (
+            <ConfirmActionModal
+              open={isConfirmCambiarStatusOpen}
+              onClose={handleCloseConfirmCambiarStatus}
+              handleConfirm={() => handleConfirm(selectedContentLog.id)}
+              title={auditarRequestTitle}
+              description={auditarRequestQuestion}
+              loading={isLoadingBrandsActiveManual || isCreating || isUpdating}
+            />
+          )}
       </>
     </MainContentLayout>
   );

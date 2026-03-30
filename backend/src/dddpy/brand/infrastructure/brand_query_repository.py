@@ -18,7 +18,7 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
         logging.info("BrandQueryRepositoryImpl initialized with Supabase")
 
     def get_by_id(self, id: str) -> Optional[BrandEntity]:
-        logging.info(f"Fetching brand with id={id}", method="get_by_id")
+        logging.info(f"Fetching brand with id={id}")
         response = (
             self._client.table(self._table)
             .select("*")
@@ -52,9 +52,7 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
         return BrandMapper.to_domain(db_brand) if db_brand else None
 
     def get_by_brand_name(self, brand_name: str) -> Optional[BrandEntity]:
-        logging.info(
-            f"Fetching brand with brand_name={brand_name}", method="get_by_brand_name"
-        )
+        logging.info(f"Fetching brand with brand_name={brand_name}")
 
         response = (
             self._client.table(self._table)
@@ -71,7 +69,7 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
         return BrandMapper.to_domain(db_brand) if db_brand else None
 
     def list_all(self) -> List[BrandEntity]:
-        logging.info("Fetching all brands with current manual URL", method="list_all")
+        logging.info("Fetching all brands with current manual URL")
 
         response = (
             self._client.table(self._table)
@@ -85,10 +83,7 @@ class BrandQueryRepositoryImpl(BrandQueryRepository):
         return [BrandMapper.to_domain(db) for db in db_brands]
 
     def list_active_with_current_manual(self) -> List[BrandEntity]:
-        logging.info(
-            "Fetching active brands with current manual",
-            method="list_active_with_current_manual",
-        )
+        logging.info("Fetching active brands with current manual")
 
         response = (
             self._client.table(self._table)

@@ -20,7 +20,7 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
         logging.info("ManualRecordQueryRepositoryImpl initialized with Supabase")
 
     def get_by_id(self, id: str) -> Optional[ManualRecordEntity]:
-        logging.info(f"Fetching manual_record with id={id}", method="get_by_id")
+        logging.info(f"Fetching manual_record with id={id}")
 
         response = (
             self._client.table(self._table)
@@ -41,8 +41,7 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
         self, manual_record_brand_id: str
     ) -> List[ManualRecordEntity]:
         logging.info(
-            f"Fetching manual_record with manual_record_brand_id={manual_record_brand_id}",
-            method="get_by_manual_record_brand_id",
+            f"Fetching manual_record with manual_record_brand_id={manual_record_brand_id}"
         )
 
         response = (
@@ -61,8 +60,7 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
         self, brand_id: str
     ) -> Optional[ManualRecordEntity]:
         logging.info(
-            f"Fetching latest version of manual_record with brand_id={brand_id}",
-            method="get_current_version_by_brand_id",
+            f"Fetching latest version of manual_record with brand_id={brand_id}"
         )
 
         response = (
@@ -82,7 +80,7 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
         return None
 
     def list_all(self) -> List[ManualRecordEntity]:
-        logging.info("Fetching all  ", method="list_all")
+        logging.info("Fetching all  ")
 
         response = self._client.table(self._table).select("*").execute()
 

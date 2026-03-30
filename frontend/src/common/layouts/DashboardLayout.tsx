@@ -12,7 +12,7 @@ import {
 import { IconRobot } from "@tabler/icons-react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/useAuth";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NotificationService from "../utils/Notification";
 
 const drawerWidth = 240;
@@ -21,10 +21,6 @@ export const DashboardLayout = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    console.log({ user });
-  }, [user]);
 
   const handleLogOut = async () => {
     console.log("esta en logout");

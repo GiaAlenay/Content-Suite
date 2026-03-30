@@ -3,10 +3,18 @@ from typing import Optional, Dict, Any
 
 
 @dataclass(frozen=True)
+class GeneratedContentgData:
+    generated_content: Optional[str] = None
+    llm_opinion: Optional[str] = None
+    is_aligned: Optional[bool] = None
+    image_url: Optional[str] = None
+
+
+@dataclass(frozen=True)
 class CreateContentLogData:
     brand_id: str
     creator_id: str
-    content_data: Dict[str, Any]
+    content_data: GeneratedContentgData
     content_type: str
     status: str = "CREATED"
     agent_feedback: Optional[str] = None

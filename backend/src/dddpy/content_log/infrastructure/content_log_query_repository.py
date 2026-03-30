@@ -20,7 +20,7 @@ class ContentLogQueryRepositoryImpl(ContentLogQueryRepository):
         logging.info("ContentLogQueryRepositoryImpl initialized with Supabase")
 
     def get_by_id(self, id: str) -> Optional[ContentLogEntity]:
-        logging.info(f"Fetching content_log with id={id}", method="get_by_id")
+        logging.info(f"Fetching content_log with id={id}")
 
         response = (
             self._client.table(self._table)
@@ -39,8 +39,7 @@ class ContentLogQueryRepositoryImpl(ContentLogQueryRepository):
         self, content_log_brand_id: str
     ) -> List[ContentLogEntity]:
         logging.info(
-            f"Fetching content_log with content_log_brand_id={content_log_brand_id}",
-            method="get_by_content_log_brand_id",
+            f"Fetching content_log with content_log_brand_id={content_log_brand_id}"
         )
 
         response = (
@@ -54,7 +53,7 @@ class ContentLogQueryRepositoryImpl(ContentLogQueryRepository):
         return ContentLogMapper.to_domain(db_content_log) if db_content_log else None
 
     def list_all(self) -> List[ContentLogEntity]:
-        logging.info("Fetching all  ", method="list_all")
+        logging.info("Fetching all  ")
 
         response = (
             self._client.table(self._table).select("*, brands(name, code)").execute()
@@ -64,9 +63,7 @@ class ContentLogQueryRepositoryImpl(ContentLogQueryRepository):
         return [ContentLogMapper.to_domain(db) for db in db_content_logs]
 
     def list_by_creator_id(self, creator_id: str) -> List[ContentLogEntity]:
-        logging.info(
-            f"Fetching logs for creator: {creator_id}", method="list_by_creator"
-        )
+        logging.info(f"Fetching logs for creator: {creator_id}")
 
         response = (
             self._client.table(self._table)

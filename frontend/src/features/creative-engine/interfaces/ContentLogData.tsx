@@ -7,7 +7,7 @@ export interface ContentLogInterface {
   brand_code: string;
   brand_name: string;
   creator_id: string;
-  content_data: Record<string, string>;
+  content_data: ContentData | null;
   content_type: string;
   status: ContentStatus;
   agent_feedback?: string | null;
@@ -16,6 +16,13 @@ export interface ContentLogInterface {
   parent_id?: string | null;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface ContentData {
+  generated_content: string | null;
+  text: string | null;
+  llm_opinion: string | null;
+  is_aligned: boolean | null;
 }
 
 export interface ContentLogUpdateInputsInterface {
@@ -30,7 +37,7 @@ export interface ContentLogTableData {
   brand_code: string;
   brand_name: string;
   creator_id: string;
-  content_data: Record<string, string>;
+  content_data: ContentData;
   content_type: string;
   status: ContentStatus;
   agent_feedback?: string | null;

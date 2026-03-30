@@ -9,12 +9,7 @@ import {
 import React from "react";
 import type { BrandTableData } from "../../interfaces/BrandData";
 import type { Order } from "../../../../common/interfaces/common";
-import {
-  IconBulbFilled,
-  IconEye,
-  IconFile,
-  IconTrashFilled,
-} from "@tabler/icons-react";
+import { IconBulbFilled, IconFile, IconTrashFilled } from "@tabler/icons-react";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {

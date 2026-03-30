@@ -21,41 +21,34 @@ class ContentLogCmdRepositoryImpl(ContentLogCmdRepository):
         logging.info("ContentLogCmdRepositoryImpl initialized with Supabase Client")
 
     def create(self, content_log: CreateContentLogData) -> Optional[ContentLogEntity]:
-        logging.info(f"Creating content_log: {content_log.brand_id}", method="create")
+        logging.info(f"Creating content_log: {content_log.brand_id}")
 
         try:
-
             data = ContentLogMapper.to_infrastructure_from_create(content_log)
-
             response = self._client.table(self._table).insert(data).execute()
-
             if not response.data:
                 return None
-
             db_content_log = response.data[0]
             logging.info(
-                f"ContentLog created successfully with ID: {db_content_log['id']}",
-                method="create",
+                f"ContentLog created successfully with ID: {db_content_log['id']}"
             )
 
             return ContentLogMapper.to_domain(db_content_log)
 
         except Exception as e:
-            logging.error(
-                f"Error creating content_log in Supabase: {str(e)}", method="create"
-            )
+            logging.error(f"Error creating content_log in Supabase: {str(e)}")
             raise e
 
     def update(
         self, content_log_id: str, data: UpdateContentLogData
     ) -> Optional[ContentLogEntity]:
-        logging.info(f"Updating content_log with id={content_log_id}", method="update")
+        logging.info(f"Updating content_log with id={content_log_id}")
 
         try:
             update_values = ContentLogMapper.to_infrastructure_from_update(data)
 
             if not update_values:
-                logging.warning("No hay valores para actualizar", method="update")
+                logging.warning("No hay valores para actualizar")
                 return {}
 
             response = (
@@ -73,7 +66,9 @@ class ContentLogCmdRepositoryImpl(ContentLogCmdRepository):
             raise e
 
     def delete(self, content_log_id: str) -> bool:
-        logging.info(f"Deleting content_log with id={content_log_id}", method="delete")
+        logging.info(
+            f"Deleting content_log with id={content_log_id}",
+        )
         try:
             response = (
                 self._client.table(self._table)
@@ -84,12 +79,12 @@ class ContentLogCmdRepositoryImpl(ContentLogCmdRepository):
 
             success = len(response.data) > 0
             logging.info(
-                f"Delete status for id={content_log_id}: {success}", method="delete"
+                f"Delete status for id={content_log_id}: {success}",
             )
             return success
 
         except Exception as e:
             logging.error(
-                f"Error deleting content_log in Supabase: {str(e)}", method="delete"
+                f"Error deleting content_log in Supabase: {str(e)}",
             )
             raise e
