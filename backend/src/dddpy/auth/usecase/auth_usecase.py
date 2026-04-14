@@ -22,10 +22,10 @@ class AuthUsecase:
         logging.info("__init__")
         self.supabase = supabase
 
-    def register_user(self, email: str, password: str, role: str, full_name: str):
+    async def register_user(self, email: str, password: str, role: str, full_name: str):
         try:
 
-            response = self.supabase.auth.admin.create_user(
+            response = await self.supabase.auth.admin.create_user(
                 {
                     "email": email,
                     "password": password,
@@ -58,7 +58,7 @@ class AuthUsecase:
         token = credentials.credentials
 
         try:
-            user_response = self.supabase.auth.get_user(token)
+            user_response = await self.supabase.auth.get_user(token)
 
             if not user_response or not user_response.user:
                 raise HTTPException(
@@ -86,12 +86,12 @@ class AuthUsecase:
                 detail="Token no válido o expirado",
             )
 
-    def login(self, email: str, password: str):
+    async def login(self, email: str, password: str):
         """
         Autentica al usuario y devuelve el Access Token (JWT).
         """
         try:
-            response = self.supabase.auth.sign_in_with_password(
+            response = await self.supabase.auth.sign_in_with_password(
                 {"email": email, "password": password}
             )
             # El access_token es el que usarás en el Header Authorization: Bearer ...
@@ -104,7 +104,7 @@ class AuthUsecase:
             logging.error(f"Error en login: {str(e)}")
             raise HTTPException(status_code=401, detail="Credenciales inválidas")
 
-    def logout(self, token: str):
+    async def logout(self, token: str):
         """
         Invalida la sesión en Supabase.
         """

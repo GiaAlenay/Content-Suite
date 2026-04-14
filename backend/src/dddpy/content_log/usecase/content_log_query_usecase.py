@@ -17,20 +17,20 @@ class ContentLogQueryUseCase:
         logging.info("ContentLogQueryUseCase initialized")
         self.repository = repository
 
-    def get_by_id(self, id: str) -> Optional[ContentLogEntity]:
+    async def get_by_id(self, id: str) -> Optional[ContentLogEntity]:
         logging.info(f"Delegating content_log fetch by id={id}")
-        return self.repository.get_by_id(id)
+        return await self.repository.get_by_id(id)
 
-    def get_by_content_log_brand_id(
+    async def get_by_content_log_brand_id(
         self, content_log_brand_id: str
     ) -> List[ContentLogEntity]:
         logging.info(f"Delegating content_log fetch by brand_id={content_log_brand_id}")
-        return self.repository.get_by_content_log_brand_id(content_log_brand_id)
+        return await self.repository.get_by_content_log_brand_id(content_log_brand_id)
 
-    def list_all(self) -> List[ContentLogEntity]:
+    async def list_all(self) -> List[ContentLogEntity]:
         logging.info("Delegating content_log list_all")
-        return self.repository.list_all()
+        return await self.repository.list_all()
 
-    def list_by_creator_id(self, creator_id: str) -> List[ContentLogEntity]:
+    async def list_by_creator_id(self, creator_id: str) -> List[ContentLogEntity]:
         logging.info("Delegating content_log list_by_creator_id")
-        return self.repository.list_by_creator_id(creator_id)
+        return await self.repository.list_by_creator_id(creator_id)

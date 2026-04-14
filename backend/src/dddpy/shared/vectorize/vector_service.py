@@ -23,13 +23,13 @@ class VectorizationService:
         )
         self.splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=60)
 
-    def prepare_chunks_for_brand_manual_vector(
+    async def prepare_chunks_for_brand_manual_vector(
         self, manual_id: str, brand_id: str, full_manual: str, creator_id: str
     ):
-        chunks = self.splitter.split_text(full_manual)
+        chunks = await self.splitter.split_text(full_manual)
         vector_items = []
 
-        vectors = self.embeddings.embed_documents(chunks)
+        vectors = await self.embeddings.embed_documents(chunks)
 
         for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
             vector_items.append(
@@ -45,5 +45,5 @@ class VectorizationService:
 
         return vector_items
 
-    def to_vectorize_one(self, prompt_origin: str):
+    async def to_vectorize_one(self, prompt_origin: str):
         return self.embeddings.embed_query(prompt_origin)

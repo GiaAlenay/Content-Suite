@@ -32,11 +32,11 @@ class GovernanceAuditAgent:
         self.vectorize = vectorize_service
 
     # @audit_trace(name="Creative Engine - Prompt Pre-Audit")
-    def audit_user_request(
+    async def audit_user_request(
         self, brand_id: str, user_prompt: str, target_content: str
     ) -> dict:
-        query_vector = self.vectorize.to_vectorize_one(user_prompt)
-        relevant_rules = self.vector_repo.search_brand_context(
+        query_vector = await self.vectorize.to_vectorize_one(user_prompt)
+        relevant_rules = await self.vector_repo.search_brand_context(
             brand_id=brand_id, vector=query_vector, limit=6
         )
         brand_context = "\n".join([c.content_chunk for c in relevant_rules])
@@ -83,9 +83,9 @@ class GovernanceAuditAgent:
         )
 
     # @audit_trace(name="Governance Agent - Audit Text Compliance")
-    def audit_text_compliance(self, content_to_audit: str, brand_id: str) -> dict:
-        content_vector = self.vectorize.to_vectorize_one(content_to_audit)
-        relevant_rules = self.vector_repo.search_brand_context(
+    async def audit_text_compliance(self, content_to_audit: str, brand_id: str) -> dict:
+        content_vector = await self.vectorize.to_vectorize_one(content_to_audit)
+        relevant_rules = await self.vector_repo.search_brand_context(
             brand_id=brand_id,
             vector=content_vector,
             limit=6,
@@ -125,14 +125,14 @@ class GovernanceAuditAgent:
         return chain.invoke({"context": context_text, "content": content_to_audit})
 
     # @audit_trace(name="Governance Agent - Multimodal Visual Audit")
-    def audit_image_compliance(self, file_url: str, brand_id: str) -> dict:
+    async def audit_image_compliance(self, file_url: str, brand_id: str) -> dict:
         # Buscamos específicamente reglas visuales en el vector store
         visual_intent = (
             "colores marca HEX, estilo visual, logo, tipografía, composición, estética"
         )
-        query_vector = self.vectorize.to_vectorize_one(visual_intent)
+        query_vector = await self.vectorize.to_vectorize_one(visual_intent)
 
-        relevant_rules = self.vector_repo.search_brand_context(
+        relevant_rules = await self.vector_repo.search_brand_context(
             brand_id=brand_id, vector=query_vector, limit=6
         )
         brand_manual_context = "\n".join([c.content_chunk for c in relevant_rules])
@@ -163,7 +163,9 @@ class GovernanceAuditAgent:
 
         # Invocación directa para visión
         message = HumanMessage(content=user_content)
-        response = self.llm_vision.invoke([("system", system_instruction), message])
+        response = await self.llm_vision.invoke(
+            [("system", system_instruction), message]
+        )
 
         # Aseguramos que el parseo sea limpio
         return self.audit_content_parser.parse(response.content)

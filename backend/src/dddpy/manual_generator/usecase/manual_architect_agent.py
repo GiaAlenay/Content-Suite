@@ -9,7 +9,7 @@ class BrandArchitectAgent:
         self.llm = ChatGroq(model_name="llama-3.3-70b-versatile", temperature=0.7)
 
     # @audit_trace(name="Brand Architect - Contextual Manual Generation")
-    def generate_human_manual(
+    async def generate_human_manual(
         self,
         brand_name: str,
         raw_params: Dict[str, Any],
@@ -98,7 +98,7 @@ class BrandArchitectAgent:
         return response.content
 
     # @audit_trace(name="Brand Architect - Manual Refinement")
-    def refine_manual(
+    async def refine_manual(
         self,
         current_content: str,
         refinement_instructions: str,

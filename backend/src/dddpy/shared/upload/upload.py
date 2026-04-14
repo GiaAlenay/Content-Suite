@@ -26,9 +26,9 @@ class StorageService:
                 file_options={"content-type": file.content_type},
             )
 
-            file_url = self._supabase.storage.from_(self.bucket_name).get_public_url(
-                path_on_bucket
-            )
+            file_url = await self._supabase.storage.from_(
+                self.bucket_name
+            ).get_public_url(path_on_bucket)
 
             return file_url
 
@@ -36,7 +36,7 @@ class StorageService:
             logging.error(f"Error en StorageService: {str(e)}")
             raise e
 
-    def upload_file(
+    async def upload_file(
         self, file_bytes: bytes, destination_path: str, content_type: str
     ) -> str:
         """Sube cualquier stream de bytes a Supabase y retorna la URL pública"""

@@ -1,6 +1,5 @@
 import os
 import shutil
-import re
 from pathlib import Path
 
 
@@ -14,20 +13,22 @@ def procesar_ruta(base_path, new_mod, new_gen, old_mod, old_gen):
         return
 
     if target_path.exists():
-        # Borrado preventivo
         shutil.rmtree(target_path, ignore_errors=True)
 
     shutil.copytree(template_path, target_path)
 
-    # Variantes para reemplazo inteligente
-    old_gen_cap, old_gen_low = old_gen.capitalize(), old_gen.lower()
-    new_gen_cap, new_gen_low = new_gen.capitalize(), new_gen.lower()
-    old_mod_low, new_mod_low = old_mod.lower(), new_mod.lower()
+    # Definimos los pares de reemplazo (de lo más específico a lo más general)
+    reemplazos = [
+        (old_gen, new_gen),  # ManualRecord -> ManualVersion
+        (old_gen.lower(), new_gen.lower()),  # manualrecord -> manualversion
+        (old_mod, new_mod),  # manual_record -> manual_version
+    ]
 
     garbage = {".pyc", ".pyo", ".identifier", ".DS_Store"}
     ignore_dirs = {"__pycache__", ".git"}
 
     for root, dirs, files in os.walk(target_path, topdown=False):
+        # Filtrar directorios a ignorar
         dirs[:] = [d for d in dirs if d not in ignore_dirs]
 
         for name in files:
@@ -41,21 +42,24 @@ def procesar_ruta(base_path, new_mod, new_gen, old_mod, old_gen):
                     pass
                 continue
 
-            # 2. Reemplazo de contenido
+            # 2. Reemplazo de contenido (Optimizado)
             try:
                 content = file_path.read_text(encoding="utf-8")
-                new_content = content.replace(old_gen_cap, new_gen_cap).replace(
-                    old_gen_low, new_gen_low
-                )
-                new_content = new_content.replace(old_mod_low, new_mod_low)
-                file_path.write_text(new_content, encoding="utf-8")
-            except:
-                pass
+                new_content = content
+                for old_val, new_val in reemplazos:
+                    new_content = new_content.replace(old_val, new_val)
 
-            # 3. Renombrar y liberar permisos de archivo
+                file_path.write_text(new_content, encoding="utf-8")
+            except Exception as e:
+                print(f"❌ Error leyendo archivo {name}: {e}")
+
+            # 3. Renombrar archivo
+            new_name = name
+            for old_val, new_val in reemplazos:
+                new_name = new_name.replace(old_val, new_val)
+
             final_file_path = file_path
-            if old_mod_low in name:
-                new_name = name.replace(old_mod_low, new_mod_low)
+            if new_name != name:
                 final_file_path = Path(root) / new_name
                 file_path.rename(final_file_path)
 
@@ -64,11 +68,15 @@ def procesar_ruta(base_path, new_mod, new_gen, old_mod, old_gen):
             except:
                 pass
 
+        # 4. Renombrar directorios
         for name in dirs:
             dir_path = Path(root) / name
-            if old_mod_low in name:
-                new_name = name.replace(old_mod_low, new_mod_low)
-                new_dir_path = Path(root) / new_name
+            new_dir_name = name
+            for old_val, new_val in reemplazos:
+                new_dir_name = new_dir_name.replace(old_val, new_val)
+
+            if new_dir_name != name:
+                new_dir_path = Path(root) / new_dir_name
                 dir_path.rename(new_dir_path)
                 dir_path = new_dir_path
 
@@ -81,7 +89,7 @@ def procesar_ruta(base_path, new_mod, new_gen, old_mod, old_gen):
         os.chmod(target_path, 0o777)
     except:
         pass
-    print(f"✅ Generado y permisos liberados en: {base_path}")
+    print(f"✅ Procesado: {target_path}")
 
 
 def generar_modulo_completo(
@@ -106,10 +114,10 @@ def generar_modulo_completo(
 
 if __name__ == "__main__":
     params = {
-        "old_nombre_modulo": "manual_record",
-        "old_nombre_general": "ManualRecord",
-        "new_nombre_modulo": "manual_version",
-        "new_nombre_general": "ManualVersion",
+        "old_nombre_modulo": "manual_section",
+        "old_nombre_general": "ManualSection",
+        "new_nombre_modulo": "chat_history",
+        "new_nombre_general": "ChatHistory",
     }
 
     generar_modulo_completo(**params)

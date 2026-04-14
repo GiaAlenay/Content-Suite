@@ -10,11 +10,13 @@ from dddpy.manual_version.domain.manual_version_data import (
 class ManualVersionCmdRepository(ABC):
 
     @abstractmethod
-    def create(self, manual_version: CreateManualVersionData) -> ManualVersionEntity:
+    async def create(
+        self, manual_version: CreateManualVersionData
+    ) -> ManualVersionEntity:
         pass
 
     @abstractmethod
-    def update(
+    async def update(
         self, id: str, manual_version: UpdateManualVersionData
     ) -> Optional[ManualVersionEntity]:
         pass

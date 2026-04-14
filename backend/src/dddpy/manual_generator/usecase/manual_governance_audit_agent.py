@@ -11,7 +11,9 @@ class ManualGovernanceAuditor(GovernanceAuditAgent):
         self.manual_parser = JsonOutputParser(pydantic_object=AuditManualSchema)
 
     # # @audit_trace(name="Manual Governance - Parameter Consistency")
-    def verify_manual_params(self, brand_description: str, raw_params: dict) -> dict:
+    async def verify_manual_params(
+        self, brand_description: str, raw_params: dict
+    ) -> dict:
         prompt = ChatPromptTemplate.from_messages(
             [
                 (

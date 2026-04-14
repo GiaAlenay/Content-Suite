@@ -24,7 +24,7 @@ class ManualVersionCmdRepositoryImpl(ManualVersionCmdRepository):
         self._table = "manual_version"
         logging.info("ManualVersionCmdRepositoryImpl initialized with Supabase Client")
 
-    def create(
+    async def create(
         self, manual_version: CreateManualVersionData
     ) -> Optional[ManualVersionEntity]:
         logging.info(f"Creating manual_version: {manual_version.brand_id}")
@@ -33,7 +33,7 @@ class ManualVersionCmdRepositoryImpl(ManualVersionCmdRepository):
 
             data = ManualVersionMapper.to_infrastructure_from_create(manual_version)
 
-            response = self._client.table(self._table).insert(data).execute()
+            response = await self._client.table(self._table).insert(data).execute()
 
             if not response.data:
                 return None
@@ -49,7 +49,7 @@ class ManualVersionCmdRepositoryImpl(ManualVersionCmdRepository):
             logging.error(f"Error creating manual_version in Supabase: {str(e)}")
             raise e
 
-    def update(
+    async def update(
         self, manual_version_id: str, data: UpdateManualVersionData
     ) -> Optional[ManualVersionEntity]:
         logging.info(f"Updating manual_version with id={manual_version_id}")

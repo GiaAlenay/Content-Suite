@@ -3,14 +3,14 @@ from typing import List, Optional, Dict, Any
 
 
 class CreateBrandManualVectorSchema(BaseModel):
-    brand_id: str
-    manual_record_id: str
-    content_chunk: str
+    manual_version_id: str = Field(..., description="UUID de la versión del manual")
+    content_chunk: str = Field(..., description="Fragmento de texto para el embedding")
     embedding: List[float] = Field(..., min_items=768, max_items=768)
-    creator_id: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
+    manual_section_id: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict)
+    status: Optional[str] = "draft"
 
 
 class UpdateBrandManualVectorSchema(BaseModel):
-    status: Optional[str] = Field(None, pattern="^(ACTIVE|INACTIVE)$")
     metadata: Optional[Dict[str, Any]] = None
+    status: Optional[str] = Field(None, pattern="^(draft|pending)$")

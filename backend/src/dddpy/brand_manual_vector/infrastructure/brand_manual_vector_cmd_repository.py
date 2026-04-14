@@ -29,7 +29,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             "BrandManualVectorCmdRepositoryImpl initialized with Supabase Client"
         )
 
-    def create(
+    async def create(
         self, brand_manual_vector: CreateBrandManualVectorData
     ) -> Optional[BrandManualVectorEntity]:
         logging.info(f"Creating brand_manual_vector: {brand_manual_vector.brand_id}")
@@ -38,7 +38,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             data = BrandManualVectorMapper.to_infrastructure_from_create(
                 brand_manual_vector
             )
-            response = self._client.table(self._table).insert(data).execute()
+            response = await self._client.table(self._table).insert(data).execute()
             if not response.data:
                 return None
             db_brand_manual_vector = response.data[0]
@@ -53,7 +53,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             )
             raise e
 
-    def update(
+    async def update(
         self, brand_manual_vector_id: str, data: UpdateBrandManualVectorData
     ) -> Optional[BrandManualVectorEntity]:
         logging.info(f"Updating brand_manual_vector with id={brand_manual_vector_id}")
@@ -78,7 +78,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             logging.error(f"Error al actualizar en Supabase: {str(e)}")
             raise e
 
-    def deactivate_by_manual_record_id(
+    async def deactivate_by_manual_record_id(
         self, manual_record_id: str
     ) -> List[Dict[str, Any]]:
         logging.info(
@@ -106,7 +106,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             )
             raise e
 
-    def delete(self, brand_manual_vector_id: str) -> bool:
+    async def delete(self, brand_manual_vector_id: str) -> bool:
         logging.info(f"Deleting brand_manual_vector with id={brand_manual_vector_id}")
         try:
             response = (
@@ -124,7 +124,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             logging.error(f"Error deleting brand_manual_vector in Supabase: {str(e)}")
             raise e
 
-    def bulk_insert_vectors(self, vector_list: list[CreateBrandManualVectorData]):
+    async def bulk_insert_vectors(self, vector_list: list[CreateBrandManualVectorData]):
 
         try:
             data_list = [
@@ -133,7 +133,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
                 )
                 for brand_manual_vector in vector_list
             ]
-            result = self._client.table(self._table).insert(data_list).execute()
+            result = await self._client.table(self._table).insert(data_list).execute()
             logging.info(f"Se insertaron {len(vector_list)} fragmentos vectorizados.")
             return result.data
         except Exception as e:

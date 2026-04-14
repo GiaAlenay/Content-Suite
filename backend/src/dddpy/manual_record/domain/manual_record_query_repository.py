@@ -7,21 +7,21 @@ from dddpy.manual_record.domain.manual_record_entity import ManualRecordEntity
 class ManualRecordQueryRepository(ABC):
 
     @abstractmethod
-    def get_by_id(self, id: str) -> Optional[ManualRecordEntity]:
+    async def get_by_id(self, id: str) -> Optional[ManualRecordEntity]:
         pass
 
     @abstractmethod
-    def get_current_version_by_brand_id(
+    async def get_current_version_by_brand_id(
         self, brand_id: str
     ) -> Optional[ManualRecordEntity]:
         pass
 
     @abstractmethod
-    def get_by_manual_record_brand_id(
+    async def get_by_manual_record_brand_id(
         self, manual_record_brand_id: str
     ) -> List[ManualRecordEntity]:
         pass
 
     @abstractmethod
-    def list_all(self) -> List[ManualRecordEntity]:
+    async def list_all(self) -> List[ManualRecordEntity]:
         pass

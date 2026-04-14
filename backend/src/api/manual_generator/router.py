@@ -19,7 +19,7 @@ logging = Logger("ManualGenerator_router")
 
 
 # @router.post("/create/{id_brand}")
-# def create(
+# async def create(
 #     id_brand: str,
 #     raw_parameters: ManualRequestSchema,
 #     current_user: dict = Depends(AuthChecker([UserRole.ADMIN])),
@@ -37,11 +37,11 @@ logging = Logger("ManualGenerator_router")
     "/audit/{id_brand}",
     dependencies=[Depends(AuthChecker(UserRole.ADMIN))],
 )
-def audit(
+async def audit(
     id_brand: str,
     raw_parameters: ManualRequestSchema,
 ):
-    response = manual_generator_usecase_factory().audit_and_generate(
+    response = await manual_generator_usecase_factory().audit_and_generate(
         brand_id=id_brand, raw_parameters=raw_parameters
     )
     return response
@@ -51,24 +51,24 @@ def audit(
     "/refine/{manual_id}",
     dependencies=[Depends(AuthChecker(UserRole.ADMIN))],
 )
-def refine(
+async def refine(
     manual_id: str,
     request: RefinementRequest,
 ):
     logging.info(f"Refining manual {manual_id}")
-    response = manual_generator_usecase_factory().execute_refinement(
+    response = await manual_generator_usecase_factory().execute_refinement(
         manual_id=manual_id, refinement_prompt=request.refinement_prompt
     )
     return response
 
 
 @router.post("/confirm/{manual_id}")
-def confirm(
+async def confirm(
     manual_id: str,
     current_user: dict = Depends(AuthChecker([UserRole.ADMIN])),
 ):
     logging.info(f"Refining manual {manual_id}")
-    response = manual_generator_usecase_factory().confirm_manual(
+    response = await manual_generator_usecase_factory().confirm_manual(
         manual_id=manual_id, user_id=current_user["id"]
     )
     return response

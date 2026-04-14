@@ -9,7 +9,7 @@ class AuthChecker:
     def __init__(self, allowed_roles: list[UserRole] = None):
         self.allowed_roles = allowed_roles
 
-    def __call__(self, user_data: dict = Depends(get_current_user)):
+    async def __call__(self, user_data: dict = Depends(get_current_user)):
 
         current_user_ctx.set(user_data)
 

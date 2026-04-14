@@ -10,15 +10,17 @@ from dddpy.content_log.domain.content_log_data import (
 class ContentLogCmdRepository(ABC):
 
     @abstractmethod
-    def create(self, content_log: CreateContentLogData) -> Optional[ContentLogEntity]:
+    async def create(
+        self, content_log: CreateContentLogData
+    ) -> Optional[ContentLogEntity]:
         pass
 
     @abstractmethod
-    def update(
+    async def update(
         self, id: str, content_log: UpdateContentLogData
     ) -> Optional[ContentLogEntity]:
         pass
 
     @abstractmethod
-    def delete(self, id: str) -> bool:
+    async def delete(self, id: str) -> bool:
         pass

@@ -34,11 +34,13 @@ class ManualRecordUseCase:
         )
         logging.info("ManualRecordUseCase initialized")
 
-    def create(self, manual_record_data: CreateManualRecordSchema):
+    async def create(self, manual_record_data: CreateManualRecordSchema):
         logging.info("create")
         logging.info(f"Creating a new manual_record with data: {manual_record_data}")
 
-        new_manual_record = self.manual_record_cmd_usecase.create(manual_record_data)
+        new_manual_record = await self.manual_record_cmd_usecase.create(
+            manual_record_data
+        )
         success = ResponseSuccessSchema(
             success=True,
             message=ManualRecordSucessMessage.MANUALRECORD_CREATED,
@@ -47,9 +49,9 @@ class ManualRecordUseCase:
         logging.info(f"ManualRecord created successfully: {success}")
         return success
 
-    def get_by_id(self, id: str):
+    async def get_by_id(self, id: str):
         logging.info("get_by_id")
-        manual_record = self.manual_record_query_usecase.get_by_id(id)
+        manual_record = await self.manual_record_query_usecase.get_by_id(id)
         if not manual_record:
             raise ManualRecordNotFound()
         success = ResponseSuccessSchema(
@@ -60,10 +62,12 @@ class ManualRecordUseCase:
         logging.info(f"ManualRecord retrieved successfully by id={id}")
         return success
 
-    def get_by_manual_record_brand_id(self, manual_record_brand_id: str):
+    async def get_by_manual_record_brand_id(self, manual_record_brand_id: str):
         logging.info("get_by_manual_record_brand_id")
-        manual_record = self.manual_record_query_usecase.get_by_manual_record_brand_id(
-            manual_record_brand_id
+        manual_record = (
+            await self.manual_record_query_usecase.get_by_manual_record_brand_id(
+                manual_record_brand_id
+            )
         )
 
         success = ResponseSuccessSchema(
@@ -76,11 +80,11 @@ class ManualRecordUseCase:
         )
         return success
 
-    def update(self, id: str, manual_record_data: UpdateManualRecordSchema):
+    async def update(self, id: str, manual_record_data: UpdateManualRecordSchema):
         logging.info("update")
         logging.info(f"Updating manual_record {id} with data: {manual_record_data}")
 
-        updated_manual_record = self.manual_record_cmd_usecase.update(
+        updated_manual_record = await self.manual_record_cmd_usecase.update(
             id, manual_record_data
         )
         if not updated_manual_record:
@@ -94,9 +98,9 @@ class ManualRecordUseCase:
         logging.info(f"ManualRecord updated successfully: {success}")
         return success
 
-    def list_all(self):
+    async def list_all(self):
         logging.info("list_all")
-        manual_record = self.manual_record_query_usecase.list_all()
+        manual_record = await self.manual_record_query_usecase.list_all()
         success = ResponseSuccessSchema(
             success=True,
             message=ManualRecordSucessMessage.MANUALRECORDS_GET,

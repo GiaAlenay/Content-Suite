@@ -20,12 +20,14 @@ class ContentLogCmdRepositoryImpl(ContentLogCmdRepository):
         self._table = "content_log"
         logging.info("ContentLogCmdRepositoryImpl initialized with Supabase Client")
 
-    def create(self, content_log: CreateContentLogData) -> Optional[ContentLogEntity]:
+    async def create(
+        self, content_log: CreateContentLogData
+    ) -> Optional[ContentLogEntity]:
         logging.info(f"Creating content_log: {content_log.brand_id}")
 
         try:
             data = ContentLogMapper.to_infrastructure_from_create(content_log)
-            response = self._client.table(self._table).insert(data).execute()
+            response = await self._client.table(self._table).insert(data).execute()
             if not response.data:
                 return None
             db_content_log = response.data[0]
@@ -39,7 +41,7 @@ class ContentLogCmdRepositoryImpl(ContentLogCmdRepository):
             logging.error(f"Error creating content_log in Supabase: {str(e)}")
             raise e
 
-    def update(
+    async def update(
         self, content_log_id: str, data: UpdateContentLogData
     ) -> Optional[ContentLogEntity]:
         logging.info(f"Updating content_log with id={content_log_id}")
@@ -65,7 +67,7 @@ class ContentLogCmdRepositoryImpl(ContentLogCmdRepository):
             logging.error(f"Error al actualizar en Supabase: {str(e)}")
             raise e
 
-    def delete(self, content_log_id: str) -> bool:
+    async def delete(self, content_log_id: str) -> bool:
         logging.info(
             f"Deleting content_log with id={content_log_id}",
         )

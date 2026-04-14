@@ -16,5 +16,3 @@ class CreateManualVersionSchema(BaseModel):
 class UpdateManualVersionSchema(BaseModel):
     status: Optional[str] = None
     url_pdf_manual: Optional[str] = None
-    full_content: Optional[str] = None
-    raw_parameters: Optional[Dict[str, Any]] = None

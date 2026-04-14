@@ -23,7 +23,7 @@ class PDFGeneratorService:
         self.styles = getSampleStyleSheet()
         self._setup_custom_styles()
 
-    def _setup_custom_styles(self):
+    async def _setup_custom_styles(self):
         """Configuración de la identidad visual del documento PDF"""
         # Título Principal
         self.styles.add(
@@ -49,7 +49,7 @@ class PDFGeneratorService:
                 spaceAfter=12,
                 fontName="Helvetica-Bold",
                 textColor=HexColor("#2980B9"),
-                borderPadding=5,
+                border_numberPadding=5,
             )
         )
 
@@ -75,7 +75,7 @@ class PDFGeneratorService:
             )
         )
 
-    def _format_markdown_to_platypus(self, text: str):
+    async def _format_markdown_to_platypus(self, text: str):
         try:
             logging.info(f"Generando _format_markdown_to_platypus")
 
@@ -134,7 +134,7 @@ class PDFGeneratorService:
             logging.error(f"Error en PDF formatting: {str(e)}")
             raise e
 
-    def create_brand_manual_pdf(
+    async def create_brand_manual_pdf(
         self, brand_name: str, brand_code: str, parameters: Dict[str, Any], content: str
     ) -> bytes:
         """Genera el PDF en memoria y devuelve los bytes"""
@@ -223,7 +223,7 @@ class PDFGeneratorService:
         story.append(Spacer(1, 10))
 
         # Procesar el contenido de la IA (Markdown a Platypus)
-        body_elements = self._format_markdown_to_platypus(content)
+        body_elements = await self._format_markdown_to_platypus(content)
         story.extend(body_elements)
 
         # --- PIE DE PÁGINA (Nota de auditoría) ---

@@ -24,29 +24,27 @@ class ManualVersionCmdUseCase:
         self.repository = repository
         logging.info("ManualVersionCmdUseCase initialized")
 
-    def create(self, manual_version_data: CreateManualVersionSchema):
+    async def create(self, manual_version_data: CreateManualVersionSchema):
         logging.info(
             f"Delegating manual_version creation for brand_id={manual_version_data.brand_id}"
         )
         data = CreateManualVersionData(
             brand_id=manual_version_data.brand_id,
-            version=manual_version_data.version,
-            full_manual=manual_version_data.full_manual,
+            version_number=manual_version_data.version_number,
+            full_content=manual_version_data.full_content,
             raw_parameters=manual_version_data.raw_parameters,
-            is_current_version=manual_version_data.is_current_version,
-            url_manual=manual_version_data.url_manual,
-            agent_feedback=manual_version_data.agent_feedback,
+            status=manual_version_data.status,
+            url_pdf_manual=manual_version_data.url_pdf_manual,
         )
 
-        return self.repository.create(data)
+        return await self.repository.create(data)
 
-    def update(
+    async def update(
         self, id: str, manual_version_data: UpdateManualVersionSchema
     ) -> Optional[ManualVersionEntity]:
         logging.info(f"Delegating manual_version update for id={id}")
         data = UpdateManualVersionData(
-            is_current_version=manual_version_data.is_current_version,
-            url_manual=manual_version_data.url_manual,
-            agent_feedback=manual_version_data.agent_feedback,
+            status=manual_version_data.status,
+            url_pdf_manual=manual_version_data.url_pdf_manual,
         )
-        return self.repository.update(id, data)
+        return await self.repository.update(id, data)

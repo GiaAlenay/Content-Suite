@@ -21,7 +21,7 @@ class ManualVersionQueryRepositoryImpl(ManualVersionQueryRepository):
         self._table = "manual_version"
         logging.info("ManualVersionQueryRepositoryImpl initialized with Supabase")
 
-    def get_by_id(self, id: str) -> Optional[ManualVersionEntity]:
+    async def get_by_id(self, id: str) -> Optional[ManualVersionEntity]:
         logging.info(f"Fetching manual_version with id={id}")
 
         response = (
@@ -41,7 +41,7 @@ class ManualVersionQueryRepositoryImpl(ManualVersionQueryRepository):
             else None
         )
 
-    def get_by_manual_version_brand_id(
+    async def get_by_manual_version_brand_id(
         self, manual_version_brand_id: str
     ) -> List[ManualVersionEntity]:
         logging.info(
@@ -62,7 +62,7 @@ class ManualVersionQueryRepositoryImpl(ManualVersionQueryRepository):
             else None
         )
 
-    def get_current_version_by_brand_id(
+    async def get_current_version_by_brand_id(
         self, brand_id: str
     ) -> Optional[ManualVersionEntity]:
         logging.info(
@@ -85,10 +85,10 @@ class ManualVersionQueryRepositoryImpl(ManualVersionQueryRepository):
 
         return None
 
-    def list_all(self) -> List[ManualVersionEntity]:
+    async def list_all(self) -> List[ManualVersionEntity]:
         logging.info("Fetching all  ")
 
-        response = self._client.table(self._table).select("*").execute()
+        response = await self._client.table(self._table).select("*").execute()
 
         db_manual_versions = response.data
         return [ManualVersionMapper.to_domain(db) for db in db_manual_versions]

@@ -18,37 +18,39 @@ from dddpy.content_log.usecase.content_log_factory import content_log_usecase_fa
 
 
 @router.get("/list_me")
-def get_list_me(
+async def get_list_me(
     current_user: dict = Depends(AuthChecker([UserRole.CREATOR])),
 ):
     logging.info("Listing all content_log")
 
     usecase = content_log_usecase_factory()
-    result_content_log = usecase.get_list_me(
+    result_content_log = await usecase.get_list_me(
         user_role=current_user["role"], user_id=current_user["id"]
     )
     return result_content_log
 
 
 @router.post("/create/{brand_id}")
-def create(
+async def create(
     brand_id: str,
     content_log_request: GenerateContentRequest,
     current_user: dict = Depends(AuthChecker([UserRole.CREATOR])),
 ):
     logging.info("create_content_log Route by user={current_user}")
     usecase = content_log_usecase_factory()
-    response = usecase.create(brand_id, content_log_request, current_user["id"])
-    return response.dict()
+    result_content_log = await usecase.create(
+        brand_id, content_log_request, current_user["id"]
+    )
+    return result_content_log.dict()
 
 
 @router.get(
     "/get_by_id/{id_content_log}",
     dependencies=[Depends(AuthChecker())],
 )
-def get_by_id(id_content_log: str):
+async def get_by_id(id_content_log: str):
     usecase = content_log_usecase_factory()
-    result_content_log = usecase.get_by_id(id_content_log)
+    result_content_log = await usecase.get_by_id(id_content_log)
     return result_content_log
 
 
@@ -56,9 +58,9 @@ def get_by_id(id_content_log: str):
     "/auditar-texto/{content_log_id}",
     dependencies=[Depends(AuthChecker([UserRole.APPROVER_A]))],
 )
-def auditar_texto(content_log_id: str):
+async def auditar_texto(content_log_id: str):
     usecase = content_log_usecase_factory()
-    result_content_log = usecase.auditar_texto(id=content_log_id)
+    result_content_log = await usecase.auditar_texto(id=content_log_id)
     return result_content_log
 
 
@@ -69,14 +71,14 @@ async def auditar_imagen(
     current_user: dict = Depends(AuthChecker([UserRole.APPROVER_B])),
 ):
     usecase = content_log_usecase_factory()
-    result = usecase.auditar_multimodal(
+    result = await usecase.auditar_multimodal(
         brand_id=brand_id, file_url=file_url, user_id=current_user["id"]
     )
     return result
 
 
 @router.put("/update/{content_log_id}")
-def update_audited_information(
+async def update_audited_information(
     content_log_id: str,
     content_log: UpdateContentLogSchema,
     current_user: dict = Depends(
@@ -85,7 +87,7 @@ def update_audited_information(
 ):
     logging.info("update_audited_information Route by user={current_user}")
     usecase = content_log_usecase_factory()
-    result_content_log = usecase.update_audited_information(
+    result_content_log = await usecase.update_audited_information(
         id=content_log_id, content_log_data=content_log, user_id=current_user["id"]
     )
     return result_content_log

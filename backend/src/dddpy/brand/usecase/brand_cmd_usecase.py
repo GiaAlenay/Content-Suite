@@ -16,7 +16,7 @@ class BrandCmdUseCase:
         self.repository = repository
         logging.info("BrandCmdUseCase initialized")
 
-    def create(self, brand_data: CreateBrandSchema):
+    async def create(self, brand_data: CreateBrandSchema):
         logging.info(f"Delegating brand creation for code={brand_data.code}")
         data = CreateBrandData(
             code=brand_data.code,
@@ -25,9 +25,11 @@ class BrandCmdUseCase:
             logo_url=brand_data.logo_url,
         )
 
-        return self.repository.create(data)
+        return await self.repository.create(data)
 
-    def update(self, id: str, brand_data: UpdateBrandSchema) -> Optional[BrandEntity]:
+    async def update(
+        self, id: str, brand_data: UpdateBrandSchema
+    ) -> Optional[BrandEntity]:
         logging.info(f"Delegating brand update for id={id}")
         data = UpdateBrandData(
             name=brand_data.name,
@@ -35,8 +37,8 @@ class BrandCmdUseCase:
             logo_url=brand_data.logo_url,
             status=brand_data.status,
         )
-        return self.repository.update(id, data)
+        return await self.repository.update(id, data)
 
-    def delete(self, id: str) -> bool:
+    async def delete(self, id: str) -> bool:
         logging.info(f"Delegating brand delete for id={id}")
-        return self.repository.delete(id)
+        return await self.repository.delete(id)

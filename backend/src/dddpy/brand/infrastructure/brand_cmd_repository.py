@@ -20,7 +20,7 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
         self._table = "brands"
         logging.info("BrandCmdRepositoryImpl initialized with Supabase Client")
 
-    def create(self, brand: CreateBrandData) -> Optional[BrandEntity]:
+    async def create(self, brand: CreateBrandData) -> Optional[BrandEntity]:
         logging.info(
             f"Creating brand: {brand.name}",
         )
@@ -28,7 +28,7 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
         try:
 
             data = BrandMapper.to_infrastructure_from_create(brand)
-            response = self._client.table(self._table).insert(data).execute()
+            response = await self._client.table(self._table).insert(data).execute()
             if not response or not response.data:
                 return None
 
@@ -44,7 +44,9 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
             )
             raise e
 
-    def update(self, brand_id: str, data: UpdateBrandData) -> Optional[BrandEntity]:
+    async def update(
+        self, brand_id: str, data: UpdateBrandData
+    ) -> Optional[BrandEntity]:
         logging.info(
             f"Updating brand with id={brand_id}",
         )
@@ -76,7 +78,7 @@ class BrandCmdRepositoryImpl(BrandCmdRepository):
             logging.error(f"Error al actualizar en Supabase: {str(e)}")
             raise e
 
-    def delete(self, brand_id: str) -> bool:
+    async def delete(self, brand_id: str) -> bool:
         logging.info(
             f"Deleting brand with id={brand_id}",
         )

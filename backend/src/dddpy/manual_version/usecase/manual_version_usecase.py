@@ -38,11 +38,13 @@ class ManualVersionUseCase:
         )
         logging.info("ManualVersionUseCase initialized")
 
-    def create(self, manual_version_data: CreateManualVersionSchema):
+    async def create(self, manual_version_data: CreateManualVersionSchema):
         logging.info("create")
         logging.info(f"Creating a new manual_version with data: {manual_version_data}")
 
-        new_manual_version = self.manual_version_cmd_usecase.create(manual_version_data)
+        new_manual_version = await self.manual_version_cmd_usecase.create(
+            manual_version_data
+        )
         success = ResponseSuccessSchema(
             success=True,
             message=ManualVersionSucessMessage.ManualVersion_CREATED,
@@ -51,9 +53,9 @@ class ManualVersionUseCase:
         logging.info(f"ManualVersion created successfully: {success}")
         return success
 
-    def get_by_id(self, id: str):
+    async def get_by_id(self, id: str):
         logging.info("get_by_id")
-        manual_version = self.manual_version_query_usecase.get_by_id(id)
+        manual_version = await self.manual_version_query_usecase.get_by_id(id)
         if not manual_version:
             raise ManualVersionNotFound()
         success = ResponseSuccessSchema(
@@ -64,7 +66,7 @@ class ManualVersionUseCase:
         logging.info(f"ManualVersion retrieved successfully by id={id}")
         return success
 
-    def get_by_manual_version_brand_id(self, manual_version_brand_id: str):
+    async def get_by_manual_version_brand_id(self, manual_version_brand_id: str):
         logging.info("get_by_manual_version_brand_id")
         manual_version = (
             self.manual_version_query_usecase.get_by_manual_version_brand_id(
@@ -82,11 +84,11 @@ class ManualVersionUseCase:
         )
         return success
 
-    def update(self, id: str, manual_version_data: UpdateManualVersionSchema):
+    async def update(self, id: str, manual_version_data: UpdateManualVersionSchema):
         logging.info("update")
         logging.info(f"Updating manual_version {id} with data: {manual_version_data}")
 
-        updated_manual_version = self.manual_version_cmd_usecase.update(
+        updated_manual_version = await self.manual_version_cmd_usecase.update(
             id, manual_version_data
         )
         if not updated_manual_version:
@@ -100,9 +102,9 @@ class ManualVersionUseCase:
         logging.info(f"ManualVersion updated successfully: {success}")
         return success
 
-    def list_all(self):
+    async def list_all(self):
         logging.info("list_all")
-        manual_version = self.manual_version_query_usecase.list_all()
+        manual_version = await self.manual_version_query_usecase.list_all()
         success = ResponseSuccessSchema(
             success=True,
             message=ManualVersionSucessMessage.ManualVersionS_GET,

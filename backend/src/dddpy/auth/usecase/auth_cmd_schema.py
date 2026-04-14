@@ -19,7 +19,7 @@ class RegisterSchema(BaseModel):
 
     @field_validator("password")
     @classmethod
-    def validate_password_complexity(cls, v: str) -> str:
+    async def validate_password_complexity(cls, v: str) -> str:
         if not re.search(r"[A-Z]", v):
             raise ValueError("Password must contain at least one uppercase letter")
         if not re.search(r"[a-z]", v):

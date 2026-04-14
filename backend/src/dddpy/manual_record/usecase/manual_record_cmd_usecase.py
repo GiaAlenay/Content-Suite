@@ -24,7 +24,7 @@ class ManualRecordCmdUseCase:
         self.repository = repository
         logging.info("ManualRecordCmdUseCase initialized")
 
-    def create(self, manual_record_data: CreateManualRecordSchema):
+    async def create(self, manual_record_data: CreateManualRecordSchema):
         logging.info(
             f"Delegating manual_record creation for brand_id={manual_record_data.brand_id}"
         )
@@ -38,9 +38,9 @@ class ManualRecordCmdUseCase:
             agent_feedback=manual_record_data.agent_feedback,
         )
 
-        return self.repository.create(data)
+        return await self.repository.create(data)
 
-    def update(
+    async def update(
         self, id: str, manual_record_data: UpdateManualRecordSchema
     ) -> Optional[ManualRecordEntity]:
         logging.info(f"Delegating manual_record update for id={id}")
@@ -49,4 +49,4 @@ class ManualRecordCmdUseCase:
             url_manual=manual_record_data.url_manual,
             agent_feedback=manual_record_data.agent_feedback,
         )
-        return self.repository.update(id, data)
+        return await self.repository.update(id, data)

@@ -21,9 +21,9 @@ logging = Logger("brand_manual_vector router")
     "/list",
     dependencies=[Depends(AuthChecker())],
 )
-def get_all():
+async def get_all():
     logging.info("Listing all brand_manual_vector")
-    result_brand_manual_vector = BrandManualVectorUseCase().list_all()
+    result_brand_manual_vector = await BrandManualVectorUseCase().list_all()
     return result_brand_manual_vector
 
 
@@ -31,8 +31,8 @@ def get_all():
     "/get_by_id/{id_brand_manual_vector}",
     dependencies=[Depends(AuthChecker())],
 )
-def get_by_id(id_brand_manual_vector: str):
-    result_brand_manual_vector = BrandManualVectorUseCase().get_by_id(
+async def get_by_id(id_brand_manual_vector: str):
+    result_brand_manual_vector = await BrandManualVectorUseCase().get_by_id(
         id_brand_manual_vector
     )
     return result_brand_manual_vector

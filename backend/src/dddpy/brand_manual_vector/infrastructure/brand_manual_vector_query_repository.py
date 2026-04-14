@@ -24,7 +24,9 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
         self._table = "brand_manuals_vectors"
         logging.info("BrandManualVectorQueryRepositoryImpl initialized with Supabase")
 
-    def search_brand_context(self, brand_id: str, vector: list[float], limit: int = 3):
+    async def search_brand_context(
+        self, brand_id: str, vector: list[float], limit: int = 3
+    ):
         logging.info(f"Invocando RPC match_brand_manuals para brand: {brand_id}")
 
         rpc_params = {
@@ -34,7 +36,7 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
             "target_brand_id": brand_id,
         }
 
-        response = self._client.rpc("match_brand_manuals", rpc_params).execute()
+        response = await self._client.rpc("match_brand_manuals", rpc_params).execute()
 
         if not response or not response.data:
             logging.warning("No se encontró contexto relevante en el manual.")
@@ -49,7 +51,7 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
             for item in response.data
         ]
 
-    def get_by_id(self, id: str) -> Optional[BrandManualVectorEntity]:
+    async def get_by_id(self, id: str) -> Optional[BrandManualVectorEntity]:
         logging.info(f"Fetching brand_manual_vector with id={id}")
         response = (
             self._client.table(self._table)
@@ -68,7 +70,7 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
             else None
         )
 
-    def get_by_brand_id(self, brand_id: str) -> List[BrandManualVectorEntity]:
+    async def get_by_brand_id(self, brand_id: str) -> List[BrandManualVectorEntity]:
         logging.info(f"Fetching brand manual vectors with brand_id={brand_id}")
 
         response = (
@@ -83,10 +85,10 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
         db_brand_manual_vectors = response.data
         return [BrandManualVectorMapper.to_domain(db) for db in db_brand_manual_vectors]
 
-    def list_all(self) -> List[BrandManualVectorEntity]:
+    async def list_all(self) -> List[BrandManualVectorEntity]:
         logging.info("Fetching all  ")
 
-        response = self._client.table(self._table).select("*").execute()
+        response = await self._client.table(self._table).select("*").execute()
 
         db_brand_manual_vectors = response.data
         return [BrandManualVectorMapper.to_domain(db) for db in db_brand_manual_vectors]

@@ -10,11 +10,11 @@ from dddpy.manual_record.domain.manual_record_data import (
 class ManualRecordCmdRepository(ABC):
 
     @abstractmethod
-    def create(self, manual_record: CreateManualRecordData) -> ManualRecordEntity:
+    async def create(self, manual_record: CreateManualRecordData) -> ManualRecordEntity:
         pass
 
     @abstractmethod
-    def update(
+    async def update(
         self, id: str, manual_record: UpdateManualRecordData
     ) -> Optional[ManualRecordEntity]:
         pass

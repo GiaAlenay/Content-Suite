@@ -8,17 +8,19 @@ from dddpy.brand_manual_vector.domain.brand_manual_vector_entity import (
 class BrandManualVectorQueryRepository(ABC):
 
     @abstractmethod
-    def get_by_id(self, id: str) -> Optional[BrandManualVectorEntity]:
+    async def get_by_id(self, id: str) -> Optional[BrandManualVectorEntity]:
         pass
 
     @abstractmethod
-    def get_by_brand_id(self, brand_id: str) -> List[BrandManualVectorEntity]:
+    async def get_by_brand_id(self, brand_id: str) -> List[BrandManualVectorEntity]:
         pass
 
     @abstractmethod
-    def list_all(self) -> List[BrandManualVectorEntity]:
+    async def list_all(self) -> List[BrandManualVectorEntity]:
         pass
 
     @abstractmethod
-    def search_brand_context(self, brand_id: str, vector: list[float], limit: int = 3):
+    async def search_brand_context(
+        self, brand_id: str, vector: list[float], limit: int = 3
+    ):
         pass

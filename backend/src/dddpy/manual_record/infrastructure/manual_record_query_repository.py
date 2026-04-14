@@ -19,7 +19,7 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
         self._table = "manual_record"
         logging.info("ManualRecordQueryRepositoryImpl initialized with Supabase")
 
-    def get_by_id(self, id: str) -> Optional[ManualRecordEntity]:
+    async def get_by_id(self, id: str) -> Optional[ManualRecordEntity]:
         logging.info(f"Fetching manual_record with id={id}")
 
         response = (
@@ -37,7 +37,7 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
             ManualRecordMapper.to_domain(db_manual_record) if db_manual_record else None
         )
 
-    def get_by_manual_record_brand_id(
+    async def get_by_manual_record_brand_id(
         self, manual_record_brand_id: str
     ) -> List[ManualRecordEntity]:
         logging.info(
@@ -56,7 +56,7 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
             ManualRecordMapper.to_domain(db_manual_record) if db_manual_record else None
         )
 
-    def get_current_version_by_brand_id(
+    async def get_current_version_by_brand_id(
         self, brand_id: str
     ) -> Optional[ManualRecordEntity]:
         logging.info(
@@ -79,10 +79,10 @@ class ManualRecordQueryRepositoryImpl(ManualRecordQueryRepository):
 
         return None
 
-    def list_all(self) -> List[ManualRecordEntity]:
+    async def list_all(self) -> List[ManualRecordEntity]:
         logging.info("Fetching all  ")
 
-        response = self._client.table(self._table).select("*").execute()
+        response = await self._client.table(self._table).select("*").execute()
 
         db_manual_records = response.data
         return [ManualRecordMapper.to_domain(db) for db in db_manual_records]

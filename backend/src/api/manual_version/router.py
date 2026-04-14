@@ -16,9 +16,9 @@ logging = Logger("routing_usecase")
     "/list",
     dependencies=[Depends(AuthChecker())],
 )
-def get_all():
+async def get_all():
     logging.info("list_manual_version Route")
-    result_manual_version = ManualVersionUseCase().list_all()
+    result_manual_version = await ManualVersionUseCase().list_all()
     return result_manual_version
 
 
@@ -26,6 +26,6 @@ def get_all():
     "/get_by_id/{id_manual_version}",
     dependencies=[Depends(AuthChecker())],
 )
-def get_by_id(id_manual_version: str):
-    result_manual_version = ManualVersionUseCase().get_by_id(id_manual_version)
+async def get_by_id(id_manual_version: str):
+    result_manual_version = await ManualVersionUseCase().get_by_id(id_manual_version)
     return result_manual_version

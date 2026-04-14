@@ -4,14 +4,15 @@ from typing import Optional, List, Dict, Any
 
 @dataclass(frozen=True)
 class CreateBrandManualVectorData:
-    brand_id: str
-    manual_record_id: str
+    manual_version_id: str
     content_chunk: str
     embedding: List[float]
-    creator_id: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
+    manual_section_id: Optional[str] = None
+    metadata: Dict[str, Any] = None
+    status: str = "draft"
 
 
 @dataclass(frozen=True)
 class UpdateBrandManualVectorData:
+    metadata: Optional[Dict[str, Any]] = None
     status: Optional[str] = None

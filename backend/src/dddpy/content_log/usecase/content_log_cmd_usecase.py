@@ -22,7 +22,7 @@ class ContentLogCmdUseCase:
         self.repository = repository
         logging.info("ContentLogCmdUseCase initialized")
 
-    def create(self, content_log_data: CreateContentLogSchema):
+    async def create(self, content_log_data: CreateContentLogSchema):
         logging.info(
             f"Delegating content_log creation for content_data={content_log_data.content_data}"
         )
@@ -38,9 +38,9 @@ class ContentLogCmdUseCase:
             parent_id=content_log_data.parent_id,
         )
 
-        return self.repository.create(data)
+        return await self.repository.create(data)
 
-    def update(
+    async def update(
         self, id: str, content_log_data: UpdateContentLogSchema
     ) -> Optional[ContentLogEntity]:
         logging.info(f"Delegating content_log update for id={id}")
@@ -49,8 +49,8 @@ class ContentLogCmdUseCase:
             status=content_log_data.status,
             agent_feedback=content_log_data.agent_feedback,
         )
-        return self.repository.update(id, data)
+        return await self.repository.update(id, data)
 
-    def delete(self, id: str) -> bool:
+    async def delete(self, id: str) -> bool:
         logging.info(f"Delegating content_log delete for id={id}")
-        return self.repository.delete(id)
+        return await self.repository.delete(id)

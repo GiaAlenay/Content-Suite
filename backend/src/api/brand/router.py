@@ -16,50 +16,50 @@ logging = Logger("brand router")
 
 
 @router.get("/list", dependencies=[Depends(AuthChecker())])
-def get_all():
+async def get_all():
     logging.info("list_brand Route")
-    result_brand = BrandUseCase().list_all()
+    result_brand = await BrandUseCase().list_all()
     return result_brand
 
 
 @router.get("/list_active_with_current_manual", dependencies=[Depends(AuthChecker())])
-def list_active_with_current_manual():
+async def list_active_with_current_manual():
     logging.info("list_active_with_current_manual Route")
-    result_brand = BrandUseCase().list_active_with_current_manual()
+    result_brand = await BrandUseCase().list_active_with_current_manual()
     return result_brand
 
 
 @router.post("/create", dependencies=[Depends(AuthChecker([UserRole.ADMIN]))])
-def create(new_brand: CreateBrandSchema):
+async def create(new_brand: CreateBrandSchema):
     logging.info("create_brand Route")
-    response = BrandUseCase().create(new_brand)
-    return response
+    result_brand = await BrandUseCase().create(new_brand)
+    return result_brand
 
 
 @router.get(
     "/get_by_id/{id_brand}",
     dependencies=[Depends(AuthChecker())],
 )
-def get_by_id(id_brand: str):
-    result_brand = BrandUseCase().get_by_id(id_brand)
+async def get_by_id(id_brand: str):
+    result_brand = await BrandUseCase().get_by_id(id_brand)
     return result_brand
 
 
 @router.get("/get_by_brand_name/{brand_name}", dependencies=[Depends(AuthChecker())])
-def get_by_brand_name(brand_name: str):
-    result_brand = BrandUseCase().get_by_brand_name(brand_name)
+async def get_by_brand_name(brand_name: str):
+    result_brand = await BrandUseCase().get_by_brand_name(brand_name)
     return result_brand
 
 
 @router.put("/update/{brand_id}", dependencies=[Depends(AuthChecker([UserRole.ADMIN]))])
-def update(brand_id: str, brand: UpdateBrandSchema):
-    result_brand = BrandUseCase().update(id=brand_id, brand_data=brand)
+async def update(brand_id: str, brand: UpdateBrandSchema):
+    result_brand = await BrandUseCase().update(id=brand_id, brand_data=brand)
     return result_brand
 
 
 @router.delete(
     "/delete/{brand_id}", dependencies=[Depends(AuthChecker([UserRole.ADMIN]))]
 )
-def delete(brand_id: str):
-    result_brand = BrandUseCase().delete(brand_id)
+async def delete(brand_id: str):
+    result_brand = await BrandUseCase().delete(brand_id)
     return result_brand

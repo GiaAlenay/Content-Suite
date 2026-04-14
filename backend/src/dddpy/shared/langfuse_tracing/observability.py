@@ -5,7 +5,7 @@ import asyncio
 
 
 def audit_trace(name: str):
-    def decorator(func):
+    async def decorator(func):
         @observe(name=name)
         @wraps(func)
         async def wrapper(*args, **kwargs):
@@ -18,7 +18,7 @@ def audit_trace(name: str):
             )
 
             if asyncio.iscoroutinefunction(func):
-                return await func(*args, **kwargs)
+                return func(*args, **kwargs)
             else:
                 return func(*args, **kwargs)
 

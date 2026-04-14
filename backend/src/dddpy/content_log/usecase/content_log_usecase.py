@@ -53,25 +53,25 @@ class ContentLogUseCase:
         self.auditor = auditor
         logging.info("ContentLogUseCase initialized with injected dependencies")
 
-    def create(
+    async def create(
         self,
         brand_id: str,
         content_log_request: GenerateContentRequest,
         creator_id: str,
     ):
-        brand = self.brand_query_usecase.get_by_id(brand_id)
+        brand = await self.brand_query_usecase.get_by_id(brand_id)
         if not brand or brand.status != "ACTIVE":
             raise BrandNotFound()
 
         last_content = None
         if content_log_request.parent_log_id:
-            previous_log = self.content_log_query_usecase.get_by_id(
+            previous_log = await self.content_log_query_usecase.get_by_id(
                 content_log_request.parent_log_id
             )
             if previous_log:
                 last_content = previous_log.content_data.get("text")
 
-        audit_result = self.auditor.audit_user_request(
+        audit_result = await self.auditor.audit_user_request(
             brand_id=brand_id,
             user_prompt=content_log_request.user_prompt,
             target_content=content_log_request.content_type,
@@ -88,7 +88,7 @@ class ContentLogUseCase:
             audit_result.get("improved_prompt") or content_log_request.user_prompt
         )
 
-        generated = self.content_generator.generate_content(
+        generated = await self.content_generator.generate_content(
             user_prompt=final_prompt,
             brand_name=brand.name,
             brand_id=brand_id,
@@ -107,7 +107,9 @@ class ContentLogUseCase:
             parent_id=content_log_request.parent_log_id,
         )
 
-        new_content_log = self.content_log_cmd_usecase.create(to_create_content_log)
+        new_content_log = await self.content_log_cmd_usecase.create(
+            to_create_content_log
+        )
 
         return ResponseSuccessSchema(
             success=True,
@@ -115,9 +117,9 @@ class ContentLogUseCase:
             data=new_content_log.to_dict(),
         )
 
-    def get_by_id(self, id: str):
+    async def get_by_id(self, id: str):
         logging.info("get_by_id")
-        content_log = self.content_log_query_usecase.get_by_id(id)
+        content_log = await self.content_log_query_usecase.get_by_id(id)
         if not content_log:
             raise ContentLogNotFound()
         success = ResponseSuccessSchema(
@@ -128,10 +130,10 @@ class ContentLogUseCase:
         logging.info(f"ContentLog retrieved successfully by id={id}")
         return success
 
-    def auditar_multimodal(self, brand_id: str, file_url: str, user_id: str):
+    async def auditar_multimodal(self, brand_id: str, file_url: str, user_id: str):
 
         logging.info(f"Iniciando auditoría multimodal para brand_id={brand_id}")
-        audit_result = self.auditor.audit_image_compliance(
+        audit_result = await self.auditor.audit_image_compliance(
             file_url=file_url, brand_id=brand_id
         )
 
@@ -145,7 +147,7 @@ class ContentLogUseCase:
             audit_by=user_id,
         )
 
-        new_log = self.content_log_cmd_usecase.create(to_create_content_log)
+        new_log = await self.content_log_cmd_usecase.create(to_create_content_log)
 
         return ResponseSuccessSchema(
             success=True,
@@ -153,20 +155,20 @@ class ContentLogUseCase:
             data={"audit": audit_result, "new_content_log_id": new_log.id},
         )
 
-    def auditar_texto(
+    async def auditar_texto(
         self,
         id: str,
     ):
         logging.info("update")
         logging.info(f"Audit content_log by id={id} ")
-        content_log = self.content_log_query_usecase.get_by_id(id)
+        content_log = await self.content_log_query_usecase.get_by_id(id)
         if not content_log:
             raise ContentLogNotFound()
 
         if content_log.status != "PENDING":
             raise ContentLogNotAllowedToChangeStatus()
 
-        audit_result = self.auditor.audit_text_compliance(
+        audit_result = await self.auditor.audit_text_compliance(
             content_to_audit=content_log.content_data["text"],
             brand_id=content_log.brand_id,
         )
@@ -178,12 +180,12 @@ class ContentLogUseCase:
         logging.info(f"ContentLog updated successfully: {success}")
         return success
 
-    def update_audited_information(
+    async def update_audited_information(
         self, id: str, content_log_data: UpdateContentLogSchema, user_id: str
     ):
         logging.info("update")
         logging.info(f"Updating content_log {id} with data: {content_log_data}")
-        content_log = self.content_log_query_usecase.get_by_id(id)
+        content_log = await self.content_log_query_usecase.get_by_id(id)
         if content_log_data.status and content_log_data.status != "PENDING":
             content_log_data.audit_by = user_id
         if not content_log:
@@ -197,13 +199,15 @@ class ContentLogUseCase:
         logging.info(f"ContentLog updated successfully: {success}")
         return success
 
-    def get_list_me(self, user_role: str, user_id: str):
+    async def get_list_me(self, user_role: str, user_id: str):
         logging.info("get_list_me")
         content_log = []
         if user_role == UserRole.ADMIN.value:
-            content_log = self.content_log_query_usecase.list_all()
+            content_log = await self.content_log_query_usecase.list_all()
         else:
-            content_log = self.content_log_query_usecase.list_by_creator_id(user_id)
+            content_log = await self.content_log_query_usecase.list_by_creator_id(
+                user_id
+            )
         success = ResponseSuccessSchema(
             success=True,
             message=ContentLogSucessMessage.CONTENTLOGS_GET,

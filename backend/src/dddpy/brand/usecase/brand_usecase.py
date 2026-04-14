@@ -31,17 +31,17 @@ class BrandUseCase:
         self.brand_query_usecase: BrandQueryUseCase = brand_query_usecase_factory()
         logging.info("BrandUseCase initialized")
 
-    def create(self, brand_data: CreateBrandSchema):
+    async def create(self, brand_data: CreateBrandSchema):
         print("estoy en create brand")
         logging.info("create")
         logging.info(f"Creating a new brand with data: {brand_data}")
 
-        existing_code = self.brand_query_usecase.get_by_code(brand_data.code)
+        existing_code = await self.brand_query_usecase.get_by_code(brand_data.code)
 
         if existing_code:
             raise RepeatedBrandCode()
 
-        new_brand = self.brand_cmd_usecase.create(brand_data)
+        new_brand = await self.brand_cmd_usecase.create(brand_data)
         success = ResponseSuccessSchema(
             success=True,
             message=BrandSucessMessage.BRAND_CREATED,
@@ -50,9 +50,9 @@ class BrandUseCase:
         logging.info(f"Brand created successfully: {success}")
         return success
 
-    def get_by_id(self, id: str):
+    async def get_by_id(self, id: str):
         logging.info("get_by_id")
-        brand = self.brand_query_usecase.get_by_id(id)
+        brand = await self.brand_query_usecase.get_by_id(id)
         if not brand or brand.status != "ACTIVE":
             raise BrandNotFound()
         success = ResponseSuccessSchema(
@@ -61,9 +61,9 @@ class BrandUseCase:
         logging.info(f"Brand retrieved successfully by id={id}")
         return success
 
-    def get_by_code(self, code: str):
+    async def get_by_code(self, code: str):
         logging.info("get_by_code")
-        brand = self.brand_query_usecase.get_by_code(code)
+        brand = await self.brand_query_usecase.get_by_code(code)
         if not brand or brand.status != "ACTIVE":
             raise BrandNotFound()
         success = ResponseSuccessSchema(
@@ -72,9 +72,9 @@ class BrandUseCase:
         logging.info(f"Brand retrieved successfully by id={id}")
         return success
 
-    def get_by_brand_name(self, brand_name: str):
+    async def get_by_brand_name(self, brand_name: str):
         logging.info("get_by_code")
-        brand = self.brand_query_usecase.get_by_brand_name(brand_name)
+        brand = await self.brand_query_usecase.get_by_brand_name(brand_name)
         if not brand or brand.status != "ACTIVE":
             raise BrandNotFound()
         success = ResponseSuccessSchema(
@@ -83,15 +83,15 @@ class BrandUseCase:
         logging.info(f"Brand retrieved successfully by name={brand_name}")
         return success
 
-    def update(self, id: str, brand_data: UpdateBrandSchema):
+    async def update(self, id: str, brand_data: UpdateBrandSchema):
         logging.info("update")
         logging.info(f"Updating brand {id} with data: {brand_data}")
 
-        brand = self.brand_query_usecase.get_by_id(id)
+        brand = await self.brand_query_usecase.get_by_id(id)
         if not brand:
             raise BrandNotFound()
 
-        updated_brand = self.brand_cmd_usecase.update(id, brand_data)
+        updated_brand = await self.brand_cmd_usecase.update(id, brand_data)
 
         success = ResponseSuccessSchema(
             success=True,
@@ -101,11 +101,11 @@ class BrandUseCase:
         logging.info(f"Brand updated successfully: {success}")
         return success
 
-    def delete(self, id: str):
+    async def delete(self, id: str):
         logging.info("delete")
         logging.info(f"Deleting brand {id}")
 
-        brand = self.brand_query_usecase.get_by_id(id)
+        brand = await self.brand_query_usecase.get_by_id(id)
         if not brand:
             raise BrandNotFound()
 
@@ -116,9 +116,9 @@ class BrandUseCase:
         logging.info(f"Brand deleted successfully: {success}")
         return success
 
-    def list_all(self):
+    async def list_all(self):
         logging.info("list_all")
-        brand = self.brand_query_usecase.list_all()
+        brand = await self.brand_query_usecase.list_all()
         success = ResponseSuccessSchema(
             success=True,
             message=BrandSucessMessage.BRANDS_GET,
@@ -127,9 +127,9 @@ class BrandUseCase:
         logging.info(f"Brands listed successfully: {len(brand)} brand")
         return success
 
-    def list_active_with_current_manual(self):
+    async def list_active_with_current_manual(self):
         logging.info("list_active_with_current_manual")
-        brand = self.brand_query_usecase.list_active_with_current_manual()
+        brand = await self.brand_query_usecase.list_active_with_current_manual()
         success = ResponseSuccessSchema(
             success=True,
             message=BrandSucessMessage.BRANDS_GET,

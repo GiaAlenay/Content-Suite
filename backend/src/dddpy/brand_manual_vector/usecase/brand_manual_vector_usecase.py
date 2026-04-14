@@ -40,13 +40,13 @@ class BrandManualVectorUseCase:
         )
         logging.info("BrandManualVectorUseCase initialized")
 
-    def create(self, brand_manual_vector_data: CreateBrandManualVectorSchema):
+    async def create(self, brand_manual_vector_data: CreateBrandManualVectorSchema):
         logging.info("create")
         logging.info(
             f"Creating a new brand_manual_vector with data: {brand_manual_vector_data}"
         )
 
-        new_brand_manual_vector = self.brand_manual_vector_cmd_usecase.create(
+        new_brand_manual_vector = await self.brand_manual_vector_cmd_usecase.create(
             brand_manual_vector_data
         )
         success = ResponseSuccessSchema(
@@ -57,9 +57,9 @@ class BrandManualVectorUseCase:
         logging.info(f"BrandManualVector created successfully: {success}")
         return success
 
-    def get_by_id(self, id: str):
+    async def get_by_id(self, id: str):
         logging.info("get_by_id")
-        brand_manual_vector = self.brand_manual_vector_query_usecase.get_by_id(id)
+        brand_manual_vector = await self.brand_manual_vector_query_usecase.get_by_id(id)
         if not brand_manual_vector:
             raise BrandManualVectorNotFound()
         success = ResponseSuccessSchema(
@@ -70,10 +70,10 @@ class BrandManualVectorUseCase:
         logging.info(f"BrandManualVector retrieved successfully by id={id}")
         return success
 
-    def get_by_brand_id(self, brand_id: str):
+    async def get_by_brand_id(self, brand_id: str):
         logging.info("get_by_brand_id")
-        brand_manual_vector = self.brand_manual_vector_query_usecase.get_by_brand_id(
-            brand_id
+        brand_manual_vector = (
+            await self.brand_manual_vector_query_usecase.get_by_brand_id(brand_id)
         )
         if not brand_manual_vector:
             raise BrandManualVectorNotFound()
@@ -85,7 +85,7 @@ class BrandManualVectorUseCase:
         logging.info(f"BrandManualVector retrieved successfully by brand_id={brand_id}")
         return success
 
-    def update(
+    async def update(
         self,
         id: str,
         brand_manual_vector_data: UpdateBrandManualVectorSchema,
@@ -94,7 +94,7 @@ class BrandManualVectorUseCase:
         logging.info(
             f"Updating brand_manual_vector {id} with data: {brand_manual_vector_data}"
         )
-        updated_brand_manual_vector = self.brand_manual_vector_cmd_usecase.update(
+        updated_brand_manual_vector = await self.brand_manual_vector_cmd_usecase.update(
             id, brand_manual_vector_data
         )
         if not updated_brand_manual_vector:
@@ -108,11 +108,11 @@ class BrandManualVectorUseCase:
         logging.info(f"BrandManualVector updated successfully: {success}")
         return success
 
-    def delete_by_brand_id(self, brand_id: str):
+    async def delete_by_brand_id(self, brand_id: str):
         logging.info("delete_by_brand_id")
         logging.info(f"Deleting brand_manual_vectors by brand_id= {brand_id}")
 
-        deleted = self.brand_manual_vector_cmd_usecase.delete(brand_id)
+        deleted = await self.brand_manual_vector_cmd_usecase.delete(brand_id)
         if not deleted:
             raise BrandManualVectorNotFound()
         success = ResponseSuccessSchema(
@@ -123,9 +123,9 @@ class BrandManualVectorUseCase:
         logging.info(f"BrandManualVector deleted successfully: {success}")
         return success
 
-    def list_all(self):
+    async def list_all(self):
         logging.info("list_all")
-        brand_manual_vector = self.brand_manual_vector_query_usecase.list_all()
+        brand_manual_vector = await self.brand_manual_vector_query_usecase.list_all()
         success = ResponseSuccessSchema(
             success=True,
             message=BrandManualVectorSucessMessage.BRANDMANUALVECTORS_GET,

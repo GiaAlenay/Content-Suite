@@ -70,7 +70,7 @@ class ManualGeneratorUseCase:
         self.storage = storage
         logging.info("ManualGeneratorUseCase initialized")
 
-    def _get_next_version(self, brand_id: str) -> int:
+    async def _get_next_version(self, brand_id: str) -> int:
         current_manual_version = (
             self.manual_record_query_usecase.get_current_version_by_brand_id(brand_id)
         )
@@ -78,10 +78,12 @@ class ManualGeneratorUseCase:
             return current_manual_version.version + 1
         return 1
 
-    def excecute(self, brand_id, raw_parameters: ManualRequestSchema, user_id: str):
+    async def excecute(
+        self, brand_id, raw_parameters: ManualRequestSchema, user_id: str
+    ):
         logging.info("exceute")
         logging.info(f"Creating a new manual for brand_id: {brand_id}")
-        brand = self.brand_query_usecase.get_by_id(brand_id)
+        brand = await self.brand_query_usecase.get_by_id(brand_id)
         if not brand or brand.status != "ACTIVE":
             raise BrandNotFound()
 
@@ -99,7 +101,7 @@ class ManualGeneratorUseCase:
                 current_manual_version.id
             )
 
-        full_manual = self.generator.generate_human_manual(
+        full_manual = await self.generator.generate_human_manual(
             brand_name=brand.name, raw_params=raw_parameters.model_dump()
         )
         to_create_manual_record = CreateManualRecordSchema(
@@ -108,7 +110,7 @@ class ManualGeneratorUseCase:
             version=version,
             raw_parameters=raw_parameters.model_dump(),
         )
-        new_manual_record = self.manual_record_cmd_usecase.create(
+        new_manual_record = await self.manual_record_cmd_usecase.create(
             to_create_manual_record
         )
         to_create_vector_data_list = (
@@ -131,9 +133,11 @@ class ManualGeneratorUseCase:
         logging.info(f"Manual Generated successfully: {success}")
         return success
 
-    def audit_and_generate(self, brand_id: str, raw_parameters: ManualRequestSchema):
-        brand = self.brand_query_usecase.get_by_id(brand_id)
-        audit_report = self.manual_prompt_auditor.verify_manual_params(
+    async def audit_and_generate(
+        self, brand_id: str, raw_parameters: ManualRequestSchema
+    ):
+        brand = await self.brand_query_usecase.get_by_id(brand_id)
+        audit_report = await self.manual_prompt_auditor.verify_manual_params(
             brand.description, raw_parameters.model_dump()
         )
         logging.info(f"audit : {audit_report}")
@@ -145,14 +149,14 @@ class ManualGeneratorUseCase:
                 data=audit_report,
             )
 
-        full_manual = self.generator.generate_human_manual(
+        full_manual = await self.generator.generate_human_manual(
             brand_name=brand.name,
             raw_params=raw_parameters.model_dump(),
             brand_description=brand.description,
             audit_feedback=audit_report["feedback"],
         )
 
-        new_manual_record = self.manual_record_cmd_usecase.create(
+        new_manual_record = await self.manual_record_cmd_usecase.create(
             CreateManualRecordSchema(
                 brand_id=brand_id,
                 full_manual=full_manual,
@@ -169,19 +173,19 @@ class ManualGeneratorUseCase:
             data=new_manual_record.to_dict(),
         )
 
-    def execute_refinement(self, manual_id: str, refinement_prompt: str):
-        previous_manual = self.manual_record_query_usecase.get_by_id(manual_id)
+    async def execute_refinement(self, manual_id: str, refinement_prompt: str):
+        previous_manual = await self.manual_record_query_usecase.get_by_id(manual_id)
         if not previous_manual:
             raise ManualRecordNotFound()
 
-        brand = self.brand_query_usecase.get_by_id(previous_manual.brand_id)
+        brand = await self.brand_query_usecase.get_by_id(previous_manual.brand_id)
 
         audit_context = {
             "original_form_params": previous_manual.raw_parameters,
             "new_refinement_instruction": refinement_prompt,
         }
 
-        refinement_audit = self.manual_prompt_auditor.verify_manual_params(
+        refinement_audit = await self.manual_prompt_auditor.verify_manual_params(
             brand_description=brand.description, raw_params=audit_context
         )
 
@@ -192,7 +196,7 @@ class ManualGeneratorUseCase:
                 data=refinement_audit,
             )
 
-        refined_content = self.generator.refine_manual(
+        refined_content = await self.generator.refine_manual(
             current_content=previous_manual.full_manual,
             refinement_instructions=refinement_prompt,
             brand_name=brand.name,
@@ -202,7 +206,7 @@ class ManualGeneratorUseCase:
         new_params = previous_manual.raw_parameters
         new_params["last_refinement"] = refinement_prompt
 
-        new_manual_record = self.manual_record_cmd_usecase.create(
+        new_manual_record = await self.manual_record_cmd_usecase.create(
             CreateManualRecordSchema(
                 brand_id=brand.id,
                 full_manual=refined_content,
@@ -219,9 +223,9 @@ class ManualGeneratorUseCase:
             data=new_manual_record.to_dict(),
         )
 
-    def confirm_manual(self, manual_id: str, user_id: str):
-        manual = self.manual_record_query_usecase.get_by_id(manual_id)
-        brand = self.brand_query_usecase.get_by_id(manual.brand_id)
+    async def confirm_manual(self, manual_id: str, user_id: str):
+        manual = await self.manual_record_query_usecase.get_by_id(manual_id)
+        brand = await self.brand_query_usecase.get_by_id(manual.brand_id)
 
         current_manual_version = (
             self.manual_record_query_usecase.get_current_version_by_brand_id(
@@ -249,7 +253,7 @@ class ManualGeneratorUseCase:
             to_create_vector_data_list
         )
 
-        pdf_bytes = self.pdf_generator.create_brand_manual_pdf(
+        pdf_bytes = await self.pdf_generator.create_brand_manual_pdf(
             brand_name=brand.name,
             brand_code=brand.code,
             parameters=manual.raw_parameters,
@@ -260,7 +264,7 @@ class ManualGeneratorUseCase:
 
         path_on_bucket = f"{brand.code}/manuals/{unique_name}"
 
-        pdf_url = self.storage.upload_file(
+        pdf_url = await self.storage.upload_file(
             file_bytes=pdf_bytes,
             destination_path=path_on_bucket,
             content_type="application/pdf",

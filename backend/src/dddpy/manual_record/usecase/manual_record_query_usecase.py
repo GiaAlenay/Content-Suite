@@ -17,26 +17,28 @@ class ManualRecordQueryUseCase:
         logging.info("ManualRecordQueryUseCase initialized")
         self.repository = repository
 
-    def get_current_version_by_brand_id(
+    async def get_current_version_by_brand_id(
         self, brand_id: str
     ) -> Optional[ManualRecordEntity]:
         logging.info(
             f"Delegating manual_record fetch by brand_id={brand_id} latest version"
         )
-        return self.repository.get_current_version_by_brand_id(brand_id)
+        return await self.repository.get_current_version_by_brand_id(brand_id)
 
-    def get_by_id(self, id: str) -> Optional[ManualRecordEntity]:
+    async def get_by_id(self, id: str) -> Optional[ManualRecordEntity]:
         logging.info(f"Delegating manual_record fetch by id={id}")
-        return self.repository.get_by_id(id)
+        return await self.repository.get_by_id(id)
 
-    def get_by_manual_record_brand_id(
+    async def get_by_manual_record_brand_id(
         self, manual_record_brand_id: str
     ) -> Optional[ManualRecordEntity]:
         logging.info(
             f"Delegating manual_record fetch by brand_id={manual_record_brand_id}"
         )
-        return self.repository.get_by_manual_record_brand_id(manual_record_brand_id)
+        return await self.repository.get_by_manual_record_brand_id(
+            manual_record_brand_id
+        )
 
-    def list_all(self) -> List[ManualRecordEntity]:
+    async def list_all(self) -> List[ManualRecordEntity]:
         logging.info("Delegating manual_record list_all")
-        return self.repository.list_all()
+        return await self.repository.list_all()

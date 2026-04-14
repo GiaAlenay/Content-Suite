@@ -22,7 +22,7 @@ class ManualRecordCmdRepositoryImpl(ManualRecordCmdRepository):
         self._table = "manual_record"
         logging.info("ManualRecordCmdRepositoryImpl initialized with Supabase Client")
 
-    def create(
+    async def create(
         self, manual_record: CreateManualRecordData
     ) -> Optional[ManualRecordEntity]:
         logging.info(f"Creating manual_record: {manual_record.brand_id}")
@@ -31,7 +31,7 @@ class ManualRecordCmdRepositoryImpl(ManualRecordCmdRepository):
 
             data = ManualRecordMapper.to_infrastructure_from_create(manual_record)
 
-            response = self._client.table(self._table).insert(data).execute()
+            response = await self._client.table(self._table).insert(data).execute()
 
             if not response.data:
                 return None
@@ -47,7 +47,7 @@ class ManualRecordCmdRepositoryImpl(ManualRecordCmdRepository):
             logging.error(f"Error creating manual_record in Supabase: {str(e)}")
             raise e
 
-    def update(
+    async def update(
         self, manual_record_id: str, data: UpdateManualRecordData
     ) -> Optional[ManualRecordEntity]:
         logging.info(f"Updating manual_record with id={manual_record_id}")

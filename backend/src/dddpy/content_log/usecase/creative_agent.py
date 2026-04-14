@@ -23,7 +23,7 @@ class CreativeEngineAgent:
         self.vectorize = vectorize_service
         self.content_parser = JsonOutputParser(pydantic_object=GeneratedContentSchema)
 
-    def generate_content(
+    async def generate_content(
         self,
         user_prompt: str,
         brand_name: str,
@@ -33,8 +33,8 @@ class CreativeEngineAgent:
         history_content: str = None,
     ) -> GeneratedContentSchema:
 
-        query_vector = self.vectorize.to_vectorize_one(user_prompt)
-        relevant_chunks = self.vector_repo.search_brand_context(
+        query_vector = await self.vectorize.to_vectorize_one(user_prompt)
+        relevant_chunks = await self.vector_repo.search_brand_context(
             brand_id=brand_id, vector=query_vector
         )
 
