@@ -13,7 +13,7 @@ from dddpy.brand_manual_vector.usecase.brand_manual_vector_query_usecase import 
 from dddpy.shared.vectorize.vector_service import VectorizationService
 
 
-class GovernanceAuditAgent:
+class GovernanceParamsAuditAgent:
     def __init__(
         self,
         vector_repo: BrandManualVectorQueryUseCase,

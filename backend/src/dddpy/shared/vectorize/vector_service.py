@@ -26,6 +26,15 @@ class VectorizationService:
     async def to_vectorize_one(self, prompt_origin: str):
         return self.embeddings.embed_query(prompt_origin)
 
+    async def to_vectorize_many(self, texts: list[str]):
+        """
+        Vectoriza una lista de strings en una sola llamada al modelo.
+        """
+        if not texts:
+            return []
+        # LangChain implementa aembed_documents para llamadas masivas
+        return await self.embeddings.aembed_documents(texts)
+
     # async def prepare_chunks_for_brand_manual_vector(
     #     self, manual_id: str, brand_id: str, full_manual: str, creator_id: str
     # ):

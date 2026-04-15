@@ -32,7 +32,7 @@ from dddpy.content_log.usecase.creative_agent import (
     CreativeEngineAgent,
 )
 from dddpy.content_log.usecase.governance_audit_agent import (
-    GovernanceAuditAgent,
+    GovernanceParamsAuditAgent,
 )
 
 
@@ -44,7 +44,7 @@ class ContentLogUseCase:
         content_log_query: ContentLogQueryUseCase,
         brand_query: BrandQueryUseCase,
         content_generator: CreativeEngineAgent,
-        auditor: GovernanceAuditAgent,
+        auditor: GovernanceParamsAuditAgent,
     ):
         self.content_log_cmd_usecase = content_log_cmd
         self.content_log_query_usecase = content_log_query

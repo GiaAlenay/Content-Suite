@@ -9,7 +9,7 @@ class CreateManualVersionSchema(BaseModel):
     raw_parameters: Dict[str, Any] = Field(
         default={}, json_schema_extra={"example": {"tone": "profesional"}}
     )
-    status: Optional[str] = "draft"
+    status: Optional[str] = "DRAFT"
     url_pdf_manual: Optional[str] = None
 
 

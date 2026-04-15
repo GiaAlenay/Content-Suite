@@ -8,8 +8,9 @@ from dddpy.manual_section.domain.manual_section_data import (
 from dddpy.manual_section.domain.manual_section_cmd_repository import (
     ManualSectionCmdRepository,
 )
-
+from dddpy.manual_section.domain.manual_section_entity import ManualSectionEntity
 from dddpy.shared.logging.logging import Logger
+from typing import List
 
 logging = Logger("ManualSectionCmdUseCase")
 
@@ -32,3 +33,18 @@ class ManualSectionCmdUseCase:
         )
 
         return await self.repository.create(data)
+
+    async def bulk_insert(
+        self, manual_section_list: list[CreateManualSectionSchema]
+    ) -> List[ManualSectionEntity]:
+        logging.info(f"Delegating creation list for ")
+        data_list = [
+            CreateManualSectionData(
+                manual_version_id=bmv.manual_version_id,
+                section_name=bmv.section_name,
+                content=bmv.content,
+                order_number=bmv.order_number,
+            )
+            for bmv in manual_section_list
+        ]
+        return await self.repository.bulk_insert(data_list)

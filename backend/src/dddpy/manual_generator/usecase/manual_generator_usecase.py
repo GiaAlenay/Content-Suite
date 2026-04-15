@@ -302,6 +302,7 @@ class ManualGeneratorUseCase:
 
         # 3. Ejecutar el Grafo (Nodos: Auditor -> Architect -> Persist -> Vectorize)
         initial_state = {
+            "brand_name": brand.name,
             "brand_id": brand_id,
             "brand_description": brand.description,
             "raw_params": params,

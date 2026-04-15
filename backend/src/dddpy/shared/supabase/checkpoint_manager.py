@@ -13,8 +13,16 @@ load_dotenv()
 DB_URL = os.getenv("DATABASE_URL")
 
 
-pool = AsyncConnectionPool(conninfo=DB_URL, max_size=20, min_size=1)
-
+pool = AsyncConnectionPool(
+    conninfo=DB_URL,
+    max_size=20,
+    min_size=1,
+    timeout=30.0,
+    kwargs={
+        "autocommit": True,
+        "prepare_threshold": 0,
+    },
+)
 
 try:
     from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver

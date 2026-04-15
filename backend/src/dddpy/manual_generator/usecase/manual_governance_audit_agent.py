@@ -1,11 +1,11 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from dddpy.shared.langfuse_tracing.observability import audit_trace
-from dddpy.content_log.usecase.governance_audit_agent import GovernanceAuditAgent
+from dddpy.content_log.usecase.governance_audit_agent import GovernanceParamsAuditAgent
 from dddpy.manual_generator.usecase.manual_generator_schema import AuditManualSchema
 
 
-class ManualGovernanceAuditor(GovernanceAuditAgent):
+class ManualGovernanceAuditor(GovernanceParamsAuditAgent):
     def __init__(self, vector_repo, vectorize_service):
         super().__init__(vector_repo, vectorize_service)
         self.manual_parser = JsonOutputParser(pydantic_object=AuditManualSchema)

@@ -16,7 +16,7 @@ from dddpy.brand_manual_vector.usecase.brand_manual_vector_factory import (
 )
 from dddpy.content_log.usecase.content_log_usecase import ContentLogUseCase
 from dddpy.content_log.usecase.governance_audit_agent import (
-    GovernanceAuditAgent,
+    GovernanceParamsAuditAgent,
 )
 
 
@@ -49,7 +49,7 @@ def creative_engine_factory():
 
 def governance_agent_factory():
     # Inyectamos las herramientas que el auditor necesita
-    return GovernanceAuditAgent(
+    return GovernanceParamsAuditAgent(
         vector_repo=brand_manual_vector_query_usecase_factory(),
         vectorize_service=VectorizationService(),
     )

@@ -10,6 +10,16 @@ from dddpy.manual_record.usecase.manual_record_factory import (
     manual_record_query_usecase_factory,
 )
 
+from dddpy.manual_version.usecase.manual_version_factory import (
+    manual_version_cmd_usecase_factory,
+    manual_version_query_usecase_factory,
+)
+
+from dddpy.manual_section.usecase.manual_section_factory import (
+    manual_section_cmd_usecase_factory,
+    manual_section_query_usecase_factory,
+)
+
 from dddpy.brand_manual_vector.usecase.brand_manual_vector_factory import (
     brand_manual_vector_cmd_usecase_factory,
 )
@@ -25,7 +35,9 @@ from dddpy.shared.upload.upload import StorageService
 from dddpy.shared.supabase.checkpoint_manager import get_db_checkpointer as checkpointer
 from dddpy.manual_generator.infraestructure.ai.model_factory import model_factory
 from dddpy.manual_generator.infraestructure.ai.graph import create_manual_graph
-from dddpy.manual_generator.infraestructure.ai.agents.AuditAgent import AuditAgent
+from dddpy.manual_generator.infraestructure.ai.agents.ParamsAuditAgent import (
+    ParamsAuditAgent,
+)
 from dddpy.manual_generator.infraestructure.ai.agents.ArchitectAgent import (
     ArchitectAgent,
 )
@@ -61,12 +73,14 @@ def manual_graph_factory(checkpointer):
 
     searcher = SearchAgent(llm)
     editor = EditorAgent(llm)
-    auditor = AuditAgent(llm)
+    auditor = ParamsAuditAgent(llm)
     architect = ArchitectAgent(llm)
     classifier = IntentClassifierAgent(llm)
 
-    manual_record_cmd = manual_record_cmd_usecase_factory()
-    vector_cmd = brand_manual_vector_cmd_usecase_factory()
+    manual_version_cmd = manual_version_cmd_usecase_factory()
+    manual_version_query = manual_version_query_usecase_factory()
+    manual_section_cmd = manual_section_cmd_usecase_factory()
+    brand_manual_vector_cmd = brand_manual_vector_cmd_usecase_factory()
     vectorize_service = VectorizationService()
 
     graph = create_manual_graph(
@@ -77,8 +91,10 @@ def manual_graph_factory(checkpointer):
         architect=architect,
         classifier=classifier,
         vectorize_service=vectorize_service,
-        manual_record_cmd=manual_record_cmd,
-        vector_cmd=vector_cmd,
+        manual_version_cmd=manual_version_cmd,
+        manual_version_query=manual_version_query,
+        manual_section_cmd=manual_section_cmd,
+        brand_manual_vector_cmd=brand_manual_vector_cmd,
     )
 
     return graph

@@ -13,7 +13,7 @@ from dddpy.manual_section.domain.manual_section_data import (
 from dddpy.shared.supabase.supabase_manager import supabase
 
 from dddpy.shared.logging.logging import Logger
-from typing import Optional
+from typing import Optional, List
 
 logging = Logger("ManualSectionCmdRepositoryImpl")
 
@@ -73,4 +73,22 @@ class ManualSectionCmdRepositoryImpl(ManualSectionCmdRepository):
 
         except Exception as e:
             logging.error(f"Error al actualizar en Supabase: {str(e)}")
+            raise e
+
+    async def bulk_insert(
+        self, manual_section_list: list[CreateManualSectionData]
+    ) -> List[ManualSectionEntity]:
+        try:
+            data_list = [
+                ManualSectionMapper.to_infrastructure_from_create(manual_section)
+                for manual_section in manual_section_list
+            ]
+            result = await self._client.table(self._table).insert(data_list).execute()
+            logging.info(
+                f"Se insertaron {len(manual_section_list)} secciones de manual."
+            )
+
+            return [ManualSectionMapper.to_domain(db) for db in result.data]
+        except Exception as e:
+            logging.error(f"Error en inserción masiva: {str(e)}")
             raise e

@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class IntentClassification(BaseModel):
-    intent: Literal["EDIT", "QA", "UNKNOWN"] = Field(
+    intent: Literal["EDIT", "QA", "RESTORE", "UNKNOWN"] = Field(
         description="La intención detectada"
     )
     reasoning: str = Field(description="Por qué se clasificó así")
@@ -17,7 +17,11 @@ class IntentClassifierAgent:
             [
                 (
                     "system",
-                    "Analiza el último mensaje del usuario. Determina si quiere EDITAR el manual (cambiar texto) o hacer una PREGUNTA (QA) sobre el contenido actual.",
+                    """Analiza el último mensaje del usuario para determinar su intención:
+            - EDIT: El usuario quiere modificar, agregar o eliminar contenido del manual actual.
+            - QA: El usuario tiene dudas o quiere consultar información del manual.
+            - RESTORE: El usuario quiere volver a una versión anterior, deshacer cambios o recuperar el estado previo.
+            - UNKNOWN: No se identifica ninguna de las anteriores.""",
                 ),
                 ("placeholder", "{messages}"),
             ]

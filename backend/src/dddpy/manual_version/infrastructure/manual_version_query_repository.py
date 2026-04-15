@@ -66,14 +66,15 @@ class ManualVersionQueryRepositoryImpl(ManualVersionQueryRepository):
         self, brand_id: str
     ) -> Optional[ManualVersionEntity]:
         logging.info(
-            f"Fetching latest version of manual_version with brand_id={brand_id}"
+            f"Fetching latest version of manual_version (highest version_number) with brand_id={brand_id}"
         )
 
         response = (
             self._client.table(self._table)
             .select("*")
             .eq("brand_id", brand_id)
-            .eq("is_current_version", True)
+            .neq("status", "INACTIVE")
+            .order("version_number", desc=True)
             .limit(1)
             .execute()
         )
