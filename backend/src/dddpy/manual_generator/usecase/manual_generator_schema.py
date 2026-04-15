@@ -42,8 +42,12 @@ class AuditManualSchema(BaseModel):
     suggestions: str = Field(description="Cómo mejorar los inputs para un mejor manual")
 
 
-class RefinementRequest(BaseModel):
-    refinement_prompt: str
+class ChatRequest(BaseModel):
+    brand_id: str = Field(
+        ..., description="El ID de la marca, usado como thread_id para el grafo"
+    )
+    user_id: str = Field(..., description="ID del usuario que envía el mensaje")
+    message: str = Field(..., description="El texto o prompt enviado por el usuario")
 
 
 class VectorMetadataSchema(BaseModel):

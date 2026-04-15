@@ -51,6 +51,25 @@ class BrandManualVectorQueryRepositoryImpl(BrandManualVectorQueryRepository):
             for item in response.data
         ]
 
+    async def search_similiar(
+        self, version_id: str, query_embedding: List[float], limit: int = 5
+    ):
+        """
+        Llama a una función RPC en Supabase para búsqueda vectorial.
+        Formato del fragmento: 'section_name: content_chunk'
+        """
+        response = await self._client.rpc(
+            "match_brand_manual_chunks",  # Debes tener esta función en tu DB
+            {
+                "query_embedding": query_embedding,
+                "filter_version_id": version_id,
+                "match_threshold": 0.5,
+                "match_count": limit,
+            },
+        ).execute()
+
+        return response.data
+
     async def get_by_id(self, id: str) -> Optional[BrandManualVectorEntity]:
         logging.info(f"Fetching brand_manual_vector with id={id}")
         response = (

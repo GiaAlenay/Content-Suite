@@ -48,9 +48,9 @@ class ManualRecordCmdRepositoryImpl(ManualRecordCmdRepository):
             raise e
 
     async def update(
-        self, manual_record_id: str, data: UpdateManualRecordData
+        self, manual_version_id: str, data: UpdateManualRecordData
     ) -> Optional[ManualRecordEntity]:
-        logging.info(f"Updating manual_record with id={manual_record_id}")
+        logging.info(f"Updating manual_record with id={manual_version_id}")
 
         try:
             update_values = ManualRecordMapper.to_infrastructure_from_update(data)
@@ -62,11 +62,11 @@ class ManualRecordCmdRepositoryImpl(ManualRecordCmdRepository):
             response = (
                 self._client.table(self._table)
                 .update(update_values)
-                .eq("id", manual_record_id)
+                .eq("id", manual_version_id)
                 .execute()
             )
 
-            logging.info(f"Update success for id={manual_record_id}: {response.data}")
+            logging.info(f"Update success for id={manual_version_id}: {response.data}")
             return response.data
 
         except Exception as e:

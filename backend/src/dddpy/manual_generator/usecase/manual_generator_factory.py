@@ -22,6 +22,18 @@ from dddpy.manual_generator.usecase.manual_governance_audit_agent import (
 )
 from dddpy.manual_generator.usecase.manual_generator_pdf import PDFGeneratorService
 from dddpy.shared.upload.upload import StorageService
+from dddpy.shared.supabase.checkpoint_manager import get_db_checkpointer as checkpointer
+from dddpy.manual_generator.infraestructure.ai.model_factory import model_factory
+from dddpy.manual_generator.infraestructure.ai.graph import create_manual_graph
+from dddpy.manual_generator.infraestructure.ai.agents.AuditAgent import AuditAgent
+from dddpy.manual_generator.infraestructure.ai.agents.ArchitectAgent import (
+    ArchitectAgent,
+)
+from dddpy.manual_generator.infraestructure.ai.agents.RetrievalAgent import SearchAgent
+from dddpy.manual_generator.infraestructure.ai.agents.IntentClassifierAgent import (
+    IntentClassifierAgent,
+)
+from dddpy.manual_generator.infraestructure.ai.agents.EditorAgent import EditorAgent
 
 
 def brand_architect_agent_factory():
@@ -43,8 +55,38 @@ def storage_service_factory():
     return StorageService()
 
 
+def manual_graph_factory(checkpointer):
+
+    llm = model_factory()
+
+    searcher = SearchAgent(llm)
+    editor = EditorAgent(llm)
+    auditor = AuditAgent(llm)
+    architect = ArchitectAgent(llm)
+    classifier = IntentClassifierAgent(llm)
+
+    manual_record_cmd = manual_record_cmd_usecase_factory()
+    vector_cmd = brand_manual_vector_cmd_usecase_factory()
+    vectorize_service = VectorizationService()
+
+    graph = create_manual_graph(
+        checkpointer=checkpointer,
+        auditor=auditor,
+        searcher=searcher,
+        editor=editor,
+        architect=architect,
+        classifier=classifier,
+        vectorize_service=vectorize_service,
+        manual_record_cmd=manual_record_cmd,
+        vector_cmd=vector_cmd,
+    )
+
+    return graph
+
+
 def manual_generator_usecase_factory():
     return ManualGeneratorUseCase(
+        graph_builder=manual_graph_factory(checkpointer),
         brand_query=brand_query_usecase_factory(),
         manual_record_cmd=manual_record_cmd_usecase_factory(),
         manual_record_query=manual_record_query_usecase_factory(),

@@ -50,13 +50,13 @@ class BrandManualVectorCmdUseCase:
         )
         return await self.repository.update(id, data)
 
-    async def deactivate_by_manual_record_id(
-        self, manual_record_id: str
+    async def deactivate_by_manual_version_id(
+        self, manual_version_id: str
     ) -> List[Dict[str, Any]]:
         logging.info(
-            f"Delegating brand_manual_vector deactivation for manual_record_id={manual_record_id}"
+            f"Delegating brand_manual_vector deactivation for manual_version_id={manual_version_id}"
         )
-        return await self.repository.deactivate_by_manual_record_id(manual_record_id)
+        return await self.repository.deactivate_by_manual_version_id(manual_version_id)
 
     async def delete(self, id: str) -> bool:
         logging.info(f"Delegating brand_manual_vector delete for id={id}")

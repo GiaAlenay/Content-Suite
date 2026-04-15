@@ -23,27 +23,27 @@ class VectorizationService:
         )
         self.splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=60)
 
-    async def prepare_chunks_for_brand_manual_vector(
-        self, manual_id: str, brand_id: str, full_manual: str, creator_id: str
-    ):
-        chunks = await self.splitter.split_text(full_manual)
-        vector_items = []
-
-        vectors = await self.embeddings.embed_documents(chunks)
-
-        for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
-            vector_items.append(
-                CreateBrandManualVectorSchema(
-                    brand_id=brand_id,
-                    manual_record_id=manual_id,
-                    content_chunk=chunk,
-                    embedding=vector,
-                    metadata={"chunk_index": i, "total_chunks": len(chunks)},
-                    creator_id=creator_id,
-                )
-            )
-
-        return vector_items
-
     async def to_vectorize_one(self, prompt_origin: str):
         return self.embeddings.embed_query(prompt_origin)
+
+    # async def prepare_chunks_for_brand_manual_vector(
+    #     self, manual_id: str, brand_id: str, full_manual: str, creator_id: str
+    # ):
+    #     chunks = await self.splitter.split_text(full_manual)
+    #     vector_items = []
+
+    #     vectors = await self.embeddings.embed_documents(chunks)
+
+    #     for i, (chunk, vector) in enumerate(zip(chunks, vectors)):
+    #         vector_items.append(
+    #             CreateBrandManualVectorSchema(
+    #                 brand_id=brand_id,
+    #                 manual_version_id=manual_id,
+    #                 content_chunk=chunk,
+    #                 embedding=vector,
+    #                 metadata={"chunk_index": i, "total_chunks": len(chunks)},
+    #                 creator_id=creator_id,
+    #             )
+    #         )
+
+    #     return vector_items

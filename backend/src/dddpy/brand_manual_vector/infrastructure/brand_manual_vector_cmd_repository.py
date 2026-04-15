@@ -78,11 +78,11 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             logging.error(f"Error al actualizar en Supabase: {str(e)}")
             raise e
 
-    async def deactivate_by_manual_record_id(
-        self, manual_record_id: str
+    async def deactivate_by_manual_version_id(
+        self, manual_version_id: str
     ) -> List[Dict[str, Any]]:
         logging.info(
-            f"Deactivating all ACTIVE vectors for manual_record_id={manual_record_id}"
+            f"Deactivating all ACTIVE vectors for manual_version_id={manual_version_id}"
         )
 
         try:
@@ -91,7 +91,7 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             response = (
                 self._client.table(self._table)
                 .update(update_values)
-                .eq("manual_record_id", manual_record_id)
+                .eq("manual_version_id", manual_version_id)
                 .eq("status", "ACTIVE")
                 .execute()
             )

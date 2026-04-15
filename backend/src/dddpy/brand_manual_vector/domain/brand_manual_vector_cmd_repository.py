@@ -28,8 +28,8 @@ class BrandManualVectorCmdRepository(ABC):
         pass
 
     @abstractmethod
-    async def deactivate_by_manual_record_id(
-        self, manual_record_id: str
+    async def deactivate_by_manual_version_id(
+        self, manual_version_id: str
     ) -> List[Dict[str, Any]]:
         pass
 

@@ -48,6 +48,7 @@ import time
 class ManualGeneratorUseCase:
     def __init__(
         self,
+        graph_builder,
         brand_query: BrandQueryUseCase,
         manual_record_cmd: ManualRecordCmdUseCase,
         manual_record_query: ManualRecordQueryUseCase,
@@ -59,6 +60,7 @@ class ManualGeneratorUseCase:
         storage: StorageService,
     ):
         logging.info("__init__")
+        self.graph_builder = graph_builder
         self.brand_query_usecase = brand_query
         self.manual_record_cmd_usecase = manual_record_cmd
         self.manual_record_query_usecase = manual_record_query
@@ -97,7 +99,7 @@ class ManualGeneratorUseCase:
                 current_manual_version.id,
                 UpdateManualRecordSchema(is_current_version=False),
             )
-            self.brand_manual_vector_cmd_usecase.deactivate_by_manual_record_id(
+            self.brand_manual_vector_cmd_usecase.deactivate_by_manual_version_id(
                 current_manual_version.id
             )
 
@@ -237,7 +239,7 @@ class ManualGeneratorUseCase:
                 current_manual_version.id,
                 UpdateManualRecordSchema(is_current_version=False),
             )
-            self.brand_manual_vector_cmd_usecase.deactivate_by_manual_record_id(
+            self.brand_manual_vector_cmd_usecase.deactivate_by_manual_version_id(
                 current_manual_version.id
             )
 
@@ -285,3 +287,88 @@ class ManualGeneratorUseCase:
         )
         logging.info(f"Manual Generated successfully: {success}")
         return success
+
+    async def initialize_generation(self, brand_id: str, params: dict):
+        """
+        LÓGICA: Paso 1, 2 y 3.
+        Carga la descripción de la marca y arranca el flujo hasta la vectorización.
+        """
+        # 1. Obtener contexto inicial desde infraestructura
+        brand = await self.brand_query_usecase.get_by_id(brand_id)
+        if not brand or brand.status != "ACTIVE":
+            raise Exception("Brand no encontrado o inactivo.")
+
+        config = {"configurable": {"thread_id": brand_id}}
+
+        # 3. Ejecutar el Grafo (Nodos: Auditor -> Architect -> Persist -> Vectorize)
+        initial_state = {
+            "brand_id": brand_id,
+            "brand_description": brand.description,
+            "raw_params": params,
+            "messages": [],
+        }
+
+        # El grafo corre hasta el primer END o INTERRUPT
+        final_state = await self.graph_builder.ainvoke(initial_state, config)
+
+        return {
+            "version_id": final_state.get("manual_version_id"),
+            "content": final_state.get("full_content"),
+            "audit": final_state.get("audit_report"),
+        }
+
+    async def process_chat_interaction(self, brand_id: str, user_id: str, message: str):
+        """
+        LÓGICA: Paso 4.b.
+        Continúa un hilo existente para editar o preguntar.
+        """
+        config = {"configurable": {"thread_id": brand_id}}
+
+        # Recuperamos el estado actual para obtener el manual_version_id
+        current_state = await self.graph_builder.get_state(config)
+        version_id = current_state.values.get("manual_version_id")
+
+        # 1. Registrar el mensaje del usuario en la tabla chat_history
+        session_id = await self.chat_repo.get_or_create_session(
+            user_id, brand_id, version_id
+        )
+        await self.chat_repo.add_history(session_id, version_id, "user", message)
+
+        # 2. Invocar al Grafo (Nodos: Classifier -> Editor/QA -> Vectorize)
+        # Al pasar el nuevo mensaje, LangGraph rehidrata el estado anterior de Postgres
+        input_data = {"messages": [("user", message)]}
+        result = await self.graph_builder.ainvoke(input_data, config)
+
+        # 3. Registrar la respuesta del sistema
+        last_ai_msg = result["messages"][-1].content
+        await self.chat_repo.add_history(session_id, version_id, "system", last_ai_msg)
+
+        return {
+            "response": last_ai_msg,
+            "new_content": result.get("full_content"),  # Si hubo edición
+        }
+
+    async def approve_and_finalize(self, brand_id: str):
+        """
+        LÓGICA: Paso 4.a.
+        Cierre administrativo fuera del flujo de IA.
+        """
+        config = {"configurable": {"thread_id": brand_id}}
+        state = await self.graph_builder.get_state(config)
+        version_id = state.values.get("manual_version_id")
+
+        if not version_id:
+            raise Exception("No active version found to approve")
+
+        # 1. Cambiar status a 'active' en la DB
+        await self.version_repo.update_status_and_pdf(version_id, "active")
+
+        # 2. Generar PDF (Servicio externo)
+        pdf_url = await self.pdf_service.generate(
+            version_id, state.values.get("full_content")
+        )
+
+        # 3. Guardar URL final
+        await self.version_repo.update_status_and_pdf(version_id, "active", pdf_url)
+
+        return {"status": "success", "pdf_url": pdf_url}

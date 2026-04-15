@@ -74,3 +74,13 @@ class ManualVersionCmdRepositoryImpl(ManualVersionCmdRepository):
         except Exception as e:
             logging.error(f"Error al actualizar en Supabase: {str(e)}")
             raise e
+
+    async def update_status_and_pdf(
+        self, id: str, status: str, url_pdf: Optional[str] = None
+    ):
+        """Para el nodo de Aprobación Final"""
+        update_data = {"status": status}
+        if url_pdf:
+            update_data["url_pdf_manual"] = url_pdf
+
+        await self._client.table(self._table).update(update_data).eq("id", id).execute()
