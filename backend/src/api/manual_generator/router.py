@@ -89,5 +89,5 @@ async def approve_manual(
     brand_id: str,
     use_case: ManualGeneratorUseCase = Depends(manual_generator_usecase_factory),
 ):
-      result = await use_case.approve_and_finalize(brand_id=brand_id)
+    result = await use_case.approve_and_finalize(brand_id=brand_id)
     return result
