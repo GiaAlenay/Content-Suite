@@ -293,14 +293,13 @@ class ManualGeneratorUseCase:
         LÓGICA: Paso 1, 2 y 3.
         Carga la descripción de la marca y arranca el flujo hasta la vectorización.
         """
-        # 1. Obtener contexto inicial desde infraestructura
+
         brand = await self.brand_query_usecase.get_by_id(brand_id)
         if not brand or brand.status != "ACTIVE":
             raise Exception("Brand no encontrado o inactivo.")
 
         config = {"configurable": {"thread_id": brand_id}}
 
-        # 3. Ejecutar el Grafo (Nodos: Auditor -> Architect -> Persist -> Vectorize)
         initial_state = {
             "brand_name": brand.name,
             "brand_id": brand_id,
@@ -309,44 +308,47 @@ class ManualGeneratorUseCase:
             "messages": [],
         }
 
-        # El grafo corre hasta el primer END o INTERRUPT
         final_state = await self.graph_builder.ainvoke(initial_state, config)
 
-        return {
-            "version_id": final_state.get("manual_version_id"),
-            "content": final_state.get("full_content"),
-            "audit": final_state.get("audit_report"),
-        }
+        return ResponseSuccessSchema(
+            success=True,
+            message=ManualGeneratorSucessMessage.MANUAL_DRAFT_GENERATED,
+            data={
+                "manual_version_id": final_state.get("manual_version_id"),
+                "full_content": final_state.get("full_content"),
+                "audit_report": final_state.get("audit_report"),
+            },
+        )
 
-    async def process_chat_interaction(self, brand_id: str, user_id: str, message: str):
-        """
-        LÓGICA: Paso 4.b.
-        Continúa un hilo existente para editar o preguntar.
-        """
+    async def process_chat_interaction(self, brand_id: str, message: str):
+        # 1. Recuperamos la última versión para que los agentes tengan contexto
+        current_version = (
+            await self.manual_version_query.get_current_version_by_brand_id(brand_id)
+        )
+
+        if not current_version:
+            raise Exception("No existe un borrador de manual para esta marca.")
+
         config = {"configurable": {"thread_id": brand_id}}
 
-        # Recuperamos el estado actual para obtener el manual_version_id
-        current_state = await self.graph_builder.get_state(config)
-        version_id = current_state.values.get("manual_version_id")
+        # 2. El estado inicial para el chat
+        # Pasamos el contenido actual para que el Editor/QA sepa sobre qué trabajar
+        initial_state = {
+            "brand_id": brand_id,
+            "manual_version_id": current_version["id"],
+            "full_content": current_version["full_content"],
+            "messages": [HumanMessage(content=message)],  # El nuevo mensaje del usuario
+        }
 
-        # 1. Registrar el mensaje del usuario en la tabla chat_history
-        session_id = await self.chat_repo.get_or_create_session(
-            user_id, brand_id, version_id
+        # 3. Ejecutamos el grafo empezando desde el clasificador
+        final_state = await self.graph_builder.ainvoke(
+            initial_state, config, start_node="classifier"
         )
-        await self.chat_repo.add_history(session_id, version_id, "user", message)
-
-        # 2. Invocar al Grafo (Nodos: Classifier -> Editor/QA -> Vectorize)
-        # Al pasar el nuevo mensaje, LangGraph rehidrata el estado anterior de Postgres
-        input_data = {"messages": [("user", message)]}
-        result = await self.graph_builder.ainvoke(input_data, config)
-
-        # 3. Registrar la respuesta del sistema
-        last_ai_msg = result["messages"][-1].content
-        await self.chat_repo.add_history(session_id, version_id, "system", last_ai_msg)
 
         return {
-            "response": last_ai_msg,
-            "new_content": result.get("full_content"),  # Si hubo edición
+            "answer": final_state["messages"][-1].content,
+            "intent": final_state.get("last_intent"),
+            "new_version_id": final_state.get("manual_version_id"),
         }
 
     async def approve_and_finalize(self, brand_id: str):

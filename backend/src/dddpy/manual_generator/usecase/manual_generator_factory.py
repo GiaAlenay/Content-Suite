@@ -41,11 +41,33 @@ from dddpy.manual_generator.infraestructure.ai.agents.ParamsAuditAgent import (
 from dddpy.manual_generator.infraestructure.ai.agents.ArchitectAgent import (
     ArchitectAgent,
 )
-from dddpy.manual_generator.infraestructure.ai.agents.RetrievalAgent import SearchAgent
-from dddpy.manual_generator.infraestructure.ai.agents.IntentClassifierAgent import (
-    IntentClassifierAgent,
+from dddpy.manual_generator.infraestructure.ai.agents.IntentOrchestratorAgent import (
+    IntentOrchestratorAgent,
 )
+
+from dddpy.manual_generator.infraestructure.ai.agents.PromptAuditAgent import (
+    PromptAuditAgent,
+)
+
+from dddpy.manual_generator.infraestructure.ai.agents.ContextDiscoveryAgent import (
+    ContextDiscoveryAgent,
+)
+
+from dddpy.manual_generator.infraestructure.ai.agents.PromptUpgraderAgent import (
+    PromptUpgraderAgent,
+)
+from dddpy.manual_generator.infraestructure.ai.agents.QAAgent import QAAgent
 from dddpy.manual_generator.infraestructure.ai.agents.EditorAgent import EditorAgent
+
+from dddpy.chat_session.usecase.chat_session_factory import (
+    chat_session_cmd_usecase_factory,
+    chat_session_query_usecase_factory,
+)
+
+from dddpy.chat_history.usecase.chat_history_factory import (
+    chat_history_cmd_usecase_factory,
+    chat_history_query_usecase_factory,
+)
 
 
 def brand_architect_agent_factory():
@@ -71,12 +93,19 @@ def manual_graph_factory(checkpointer):
 
     llm = model_factory()
 
-    searcher = SearchAgent(llm)
-    editor = EditorAgent(llm)
-    auditor = ParamsAuditAgent(llm)
-    architect = ArchitectAgent(llm)
-    classifier = IntentClassifierAgent(llm)
+    architect_agent = ArchitectAgent(llm)
+    context_discovery_agent = ContextDiscoveryAgent(llm)
+    editor_agent = EditorAgent(llm)
+    intent_specify_agent = IntentOrchestratorAgent(llm)
+    params_auditor_agent = ParamsAuditAgent(llm)
+    prompt_auditor_agent = PromptAuditAgent(llm)
+    prompt_upgrade_agent = PromptUpgraderAgent(llm)
+    qa_agent = QAAgent(llm)
 
+    chat_session_cmd = chat_session_cmd_usecase_factory()
+    chat_session_query = chat_session_query_usecase_factory()
+    chat_history_cmd = chat_history_cmd_usecase_factory()
+    chat_history_query = chat_history_query_usecase_factory()
     manual_version_cmd = manual_version_cmd_usecase_factory()
     manual_version_query = manual_version_query_usecase_factory()
     manual_section_cmd = manual_section_cmd_usecase_factory()
@@ -85,11 +114,18 @@ def manual_graph_factory(checkpointer):
 
     graph = create_manual_graph(
         checkpointer=checkpointer,
-        auditor=auditor,
-        searcher=searcher,
-        editor=editor,
-        architect=architect,
-        classifier=classifier,
+        params_auditor_agent=params_auditor_agent,
+        editor_agent=editor_agent,
+        architect_agent=architect_agent,
+        prompt_upgrade_agent=prompt_upgrade_agent,
+        intent_specify_agent=intent_specify_agent,
+        prompt_auditor_agent=prompt_auditor_agent,
+        context_discovery_agent=context_discovery_agent,
+        qa_agent=qa_agent,
+        chat_session_cmd=chat_session_cmd,
+        chat_session_query=chat_session_query,
+        chat_history_cmd=chat_history_cmd,
+        chat_history_query=chat_history_query,
         vectorize_service=vectorize_service,
         manual_version_cmd=manual_version_cmd,
         manual_version_query=manual_version_query,

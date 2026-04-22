@@ -6,7 +6,6 @@ from dddpy.chat_history.domain.chat_history_cmd_repository import (
 
 from dddpy.chat_history.domain.chat_history_data import (
     CreateChatHistoryData,
-    UpdateChatHistoryData,
 )
 from dddpy.shared.supabase.supabase_manager import supabase
 
@@ -45,30 +44,4 @@ class ChatHistoryCmdRepositoryImpl(ChatHistoryCmdRepository):
 
         except Exception as e:
             logging.error(f"Error creating chat_history in Supabase: {str(e)}")
-            raise e
-
-    async def update(
-        self, chat_history_id: str, data: UpdateChatHistoryData
-    ) -> Optional[ChatHistoryEntity]:
-        logging.info(f"Updating chat_history with id={chat_history_id}")
-
-        try:
-            update_values = ChatHistoryMapper.to_infrastructure_from_update(data)
-
-            if not update_values:
-                logging.warning("No hay valores para actualizar")
-                return {}
-
-            response = (
-                self._client.table(self._table)
-                .update(update_values)
-                .eq("id", chat_history_id)
-                .execute()
-            )
-
-            logging.info(f"Update success for id={chat_history_id}: {response.data}")
-            return response.data
-
-        except Exception as e:
-            logging.error(f"Error al actualizar en Supabase: {str(e)}")
             raise e

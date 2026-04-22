@@ -13,5 +13,5 @@ class CreateChatHistoryData:
     manual_version_id: str
     role: str
     content: str
-    metadata: Dict[str, Any] = None
     order_number: int
+    metadata: Dict[str, Any] = None
