@@ -24,6 +24,7 @@ class ManualState(TypedDict):
     # IDs de rastreo y contexto base
     brand_id: str
     brand_name: str
+    brand_code: str
     brand_description: str
     manual_version_id: Optional[str]
     chat_session_id: Optional[str]
@@ -47,3 +48,4 @@ class ManualState(TypedDict):
 
     # Control de flujo
     next_step: str
+    pdf_url: Optional[str]

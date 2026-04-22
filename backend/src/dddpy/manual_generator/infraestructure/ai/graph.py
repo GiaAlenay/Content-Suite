@@ -39,6 +39,8 @@ def create_manual_graph(
     prompt_upgrade_agent,
     qa_agent,
     vectorize_service,
+    pdf_generator_service,
+    storage_service,
     manual_version_cmd,
     manual_version_query,
     manual_section_cmd,
@@ -122,6 +124,9 @@ def create_manual_graph(
         partial(
             node_approve_manual,
             manual_version_cmd=manual_version_cmd,
+            pdf_generator_service=pdf_generator_service,
+            storage_service=storage_service,
+            brand_manual_vector_cmd=brand_manual_vector_cmd,
         ),
     )
 

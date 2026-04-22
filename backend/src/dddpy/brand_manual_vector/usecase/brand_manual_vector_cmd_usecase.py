@@ -39,6 +39,16 @@ class BrandManualVectorCmdUseCase:
 
         return await self.repository.create(data)
 
+    async def bulk_update_status_by_manual_version_id(
+        self, version_id: str, status: str
+    ) -> bool:
+        logging.info(
+            f"Delegating brand_manual_vector bulk_update_status_by_manual_version_id for version_id={version_id}"
+        )
+        return await self.repository.bulk_update_status_by_manual_version_id(
+            version_id=version_id, status=status
+        )
+
     async def update(
         self,
         id: str,

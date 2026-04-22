@@ -24,6 +24,12 @@ class BrandManualVectorCmdRepository(ABC):
         pass
 
     @abstractmethod
+    async def bulk_update_status_by_manual_version_id(
+        self, version_id: str, status: str
+    ) -> bool:
+        pass
+
+    @abstractmethod
     async def delete(self, id: str) -> bool:
         pass
 

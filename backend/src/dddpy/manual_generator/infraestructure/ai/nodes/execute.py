@@ -20,8 +20,14 @@ from dddpy.manual_section.usecase.manual_section_query_usecase import (
 from dddpy.brand_manual_vector.usecase.brand_manual_vector_cmd_usecase import (
     BrandManualVectorCmdUseCase,
 )
-
+from dddpy.manual_generator.usecase.manual_generator_pdf import PDFGeneratorService
+from dddpy.shared.upload.upload import StorageService
 from langchain_core.messages import AIMessage
+import time
+from dddpy.manual_version.usecase.manual_version_cmd_schema import (
+    UpdateManualVersionSchema,
+)
+import asyncio
 
 
 async def node_editor(state: ManualState, editor_agent: EditorAgent):
@@ -83,11 +89,19 @@ async def node_qa(state: ManualState, qa_agent: QAAgent):
 
 
 async def node_approve_manual(
-    state: ManualState, manual_version_cmd: ManualVersionCmdUseCase
+    state: ManualState,
+    manual_version_cmd: ManualVersionCmdUseCase,
+    brand_manual_vector_cmd: BrandManualVectorCmdUseCase,
+    pdf_generator_service: PDFGeneratorService,
+    storage_service: StorageService,
 ):
     """
     Responsabilidad: Marcar la versión actual como definitiva.
     """
+    brand_name = state.get("brand_name")
+    brand_code = state.get("brand_code")
+    manual_raw_parameters = state.get("raw_params")
+    full_content = state.get("full_content")
     version_id = state.get("manual_version_id")
 
     if not version_id:
@@ -98,17 +112,41 @@ async def node_approve_manual(
             "next_step": "end",
         }
 
-    # 1. Actualizamos el estado en la base de datos
-    # Esto podría disparar otras acciones, como generar un PDF o enviar un email.
-    await manual_version_cmd.update_status(version_id, status="PUBLISHED")
+    pdf_bytes = await pdf_generator_service.create_brand_manual_pdf(
+        brand_name=brand_name,
+        brand_code=brand_code,
+        parameters=manual_raw_parameters,
+        content=full_content,
+    )
+    unique_name = f"manual_{int(time.time())}.pdf"
 
-    # 2. Preparamos el mensaje final de éxito
+    path_on_bucket = f"{brand_code}/manuals/{unique_name}"
+
+    pdf_url = await storage_service.upload_file(
+        file_bytes=pdf_bytes,
+        destination_path=path_on_bucket,
+        content_type="application/pdf",
+    )
+    status = "ACTIVE"
+    version_task = manual_version_cmd.update(
+        version_id, UpdateManualVersionSchema(status=status, url_manual=pdf_url)
+    )
+    vector_task = brand_manual_vector_cmd.bulk_update_status_by_manual_version_id(
+        version_id, status
+    )
+
+    await asyncio.gather(version_task, vector_task)
+
     response = (
         "¡Felicidades! El Manual de Marca ha sido aprobado y guardado como versión final. "
         "Ya puedes descargar el documento o compartirlo."
     )
 
-    return {"messages": [AIMessage(content=response)], "next_step": "end"}
+    return {
+        "messages": [AIMessage(content=response)],
+        "next_step": "end",
+        "pdf_url": pdf_url,
+    }
 
 
 # async def node_approve_manual(

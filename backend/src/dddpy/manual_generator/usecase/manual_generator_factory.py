@@ -5,10 +5,6 @@ from dddpy.manual_generator.usecase.manual_generator_usecase import (
     ManualGeneratorUseCase,
 )
 from dddpy.brand.usecase.brand_factory import brand_query_usecase_factory
-from dddpy.manual_record.usecase.manual_record_factory import (
-    manual_record_cmd_usecase_factory,
-    manual_record_query_usecase_factory,
-)
 
 from dddpy.manual_version.usecase.manual_version_factory import (
     manual_version_cmd_usecase_factory,
@@ -68,6 +64,8 @@ from dddpy.chat_history.usecase.chat_history_factory import (
     chat_history_cmd_usecase_factory,
     chat_history_query_usecase_factory,
 )
+from dddpy.manual_generator.usecase.manual_generator_pdf import PDFGeneratorService
+from dddpy.shared.upload.upload import StorageService
 
 
 def brand_architect_agent_factory():
@@ -111,6 +109,8 @@ def manual_graph_factory(checkpointer):
     manual_section_cmd = manual_section_cmd_usecase_factory()
     brand_manual_vector_cmd = brand_manual_vector_cmd_usecase_factory()
     vectorize_service = VectorizationService()
+    pdf_generator_service = PDFGeneratorService()
+    storage_service = StorageService()
 
     graph = create_manual_graph(
         checkpointer=checkpointer,
@@ -127,6 +127,8 @@ def manual_graph_factory(checkpointer):
         chat_history_cmd=chat_history_cmd,
         chat_history_query=chat_history_query,
         vectorize_service=vectorize_service,
+        pdf_generator_service=pdf_generator_service,
+        storage_service=storage_service,
         manual_version_cmd=manual_version_cmd,
         manual_version_query=manual_version_query,
         manual_section_cmd=manual_section_cmd,
@@ -140,8 +142,8 @@ def manual_generator_usecase_factory():
     return ManualGeneratorUseCase(
         graph_builder=manual_graph_factory(checkpointer),
         brand_query=brand_query_usecase_factory(),
-        manual_record_cmd=manual_record_cmd_usecase_factory(),
-        manual_record_query=manual_record_query_usecase_factory(),
+        manual_version_cmd=manual_version_cmd_usecase_factory(),
+        manual_version_query=manual_version_query_usecase_factory(),
         vector_cmd=brand_manual_vector_cmd_usecase_factory(),
         vectorize_service=VectorizationService(),
         brand_architect=brand_architect_agent_factory(),

@@ -78,6 +78,18 @@ class BrandManualVectorCmdRepositoryImpl(BrandManualVectorCmdRepository):
             logging.error(f"Error al actualizar en Supabase: {str(e)}")
             raise e
 
+    # En dddpy/manual_generator/infrastructure/brand_manual_vector_repository.py
+
+    async def bulk_update_status_by_manual_version_id(
+        self, version_id: str, status: str
+    ):
+        return (
+            self._client.table(self._table)
+            .update({"status": status})
+            .eq("manual_version_id", version_id)
+            .execute()
+        )
+
     async def deactivate_by_manual_version_id(
         self, manual_version_id: str
     ) -> List[Dict[str, Any]]:
